@@ -33,7 +33,7 @@ Project Apero is a Streamlit application that replicates a simple chat interface
 3. **Install the required packages:**
 
    ```bash
-   pip install -r requirements.txt
+   pip install openai==0.28 streamlit
    ```
 
 4. **Configure your OpenAI API key:**
