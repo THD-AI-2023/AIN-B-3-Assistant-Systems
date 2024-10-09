@@ -2,7 +2,7 @@
 
 Project Apero is a Streamlit application that replicates a simple chat interface similar to ChatGPT, using OpenAI's GPT-3.5-turbo model.
 
-![Project Apero Banner](https://your-image-url.com/banner.png)
+![Project Apero Banner](./banner.png)
 
 ## Table of Contents
 
