@@ -45,7 +45,7 @@
 
 2. **Set Up Virtual Environment:**
     ```bash
-    python3 -m venv venv
+    py -3.9 -m venv venv 
     source venv/bin/activate  # On Windows: venv\Scripts\activate
     ```
 
@@ -69,7 +69,7 @@
 ### Running the Streamlit App
 
 ```bash
-streamlit run app.py
+streamlit run src/app.py
 ```
 
 Access the application at `http://localhost:8501`.

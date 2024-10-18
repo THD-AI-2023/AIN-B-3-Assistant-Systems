@@ -106,7 +106,7 @@ Create a data-driven web application that implements the following requests:
 
 16. Select a use case for which the "right fit" question for chatbots has a positive answer. Argue about why using a chatbot fo the feature makes sense.
 
-17.Create sample dialogs for the use case. Document them in the Wiki.
+17. Create sample dialogs for the use case. Document them in the Wiki.
 
 18. Create a high-level (dialog) flow for the use case. Also document it in the Wiki.
 
@@ -146,7 +146,7 @@ Student 1:
 
 3) Sample dialogs
 
-Other student:
+Student 2:
 
 4) Strategies for outliers and fake data
 

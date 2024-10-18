@@ -1,3 +1,0 @@
-[submodule "demo-uber-nyc-pickups"]
-    path = demo-uber-nyc-pickups
-    url = https://github.com/streamlit/demo-uber-nyc-pickups.git

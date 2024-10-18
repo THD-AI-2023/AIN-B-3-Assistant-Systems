@@ -21,3 +21,6 @@ ENV/
 
 # Output files
 output.json
+
+# Kaggle API credentials
+.kaggle/kaggle.json

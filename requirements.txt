@@ -1,0 +1,7 @@
+streamlit
+pydeck
+protobuf
+pandas
+scikit-learn
+matplotlib
+rasa
