@@ -47,10 +47,10 @@ services:
       - rasa
       - rasa_action
 
-  # duckling:
-  #   image: rasa/duckling
-  #   container_name: duckling
-  #   ports:
-  #     - "8000:8000"
-  #   command: ["duckling-example"]
-  #   restart: unless-stopped
+  duckling:
+    image: rasa/duckling
+    container_name: duckling
+    ports:
+      - "8000:8000"
+    command: ["duckling-example"]
+    restart: unless-stopped

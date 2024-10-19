@@ -1,7 +1,7 @@
 FROM python:3.9
 
 # Set work directory
-WORKDIR /appd
+WORKDIR /app
 
 # Install Python dependencies
 COPY requirements.txt .
