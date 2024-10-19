@@ -1,0 +1,108 @@
+version: "3.0"
+
+nlu:
+- intent: greet
+  examples: |
+    - Hi
+    - Hello
+    - Hey
+    - Hi there
+    - Good morning
+    - Good evening
+
+- intent: goodbye
+  examples: |
+    - Bye
+    - Goodbye
+    - See you later
+    - Bye bye
+    - Catch you later
+
+- intent: affirm
+  examples: |
+    - Yes
+    - Yeah
+    - Absolutely
+    - Sure
+    - Definitely
+    - Of course
+
+- intent: deny
+  examples: |
+    - No
+    - Nope
+    - Not really
+    - No way
+    - Absolutely not
+
+- intent: ask_recommendation
+  examples: |
+    - Can you recommend something for me?
+    - I need a suggestion
+    - What do you recommend?
+    - Recommend a product
+    - Suggest a service
+
+- intent: ask_data_analysis
+  examples: |
+    - Show me the data analysis results
+    - What insights do you have from the data?
+    - Can you display the data visuals?
+    - I want to see the data trends
+    - Provide data analysis summaries
+
+- intent: ask_recommendation_by_feature
+  examples: |
+    - Recommend based on my age
+    - Suggest something for someone with hypertension
+    - What do you recommend for females?
+    - Based on my BMI, what should I try?
+    - Recommend services considering my heart disease status
+
+- intent: chitchat/ask_howareyou
+  examples: |
+    - How are you?
+    - How do you feel today?
+    - What's up?
+    - How's it going?
+    - How are things?
+
+- intent: chitchat/telljoke
+  examples: |
+    - Tell me a joke
+    - Make me laugh
+    - I want to hear a joke
+    - Share a funny story
+    - Do you know any jokes?
+
+- intent: out_of_scope
+  examples: |
+    - What's the meaning of life?
+    - Tell me about quantum physics
+    - Can you sing a song?
+    - What's your favorite movie?
+    - How do airplanes fly?
+
+- intent: ask_event_info
+  examples: |
+    - When is the next event?
+    - Tell me about upcoming events
+    - Are there any events near me?
+    - What's the schedule for events?
+    - When is the next Rasa event?
+
+- intent: ask_event_location
+  examples: |
+    - Where is the next event?
+    - In which city is the upcoming event?
+    - Are there events in Berlin?
+    - Tell me the location of the next event
+    - Where will the next Rasa meetup be?
+
+- intent: ask_faq
+  examples: |
+    - What channels does Rasa support?
+    - How big is the Rasa community?
+    - What is the difference between Core and NLU?
+    - What is Rasa X?
+    - Can I build a voice bot with Rasa?

@@ -1,0 +1,62 @@
+version: "3.0"
+
+intents:
+  - greet
+  - goodbye
+  - affirm
+  - deny
+  - ask_recommendation
+  - ask_data_analysis
+  - ask_recommendation_by_feature
+  - chitchat/ask_howareyou
+  - chitchat/telljoke
+  - out_of_scope
+  - ask_event_info
+  - ask_event_location
+  - ask_faq
+
+entities:
+  - age
+  - hypertension
+  - gender
+  - bmi
+  - heart_disease
+  - location
+
+slots:
+  age:
+    type: float
+  hypertension:
+    type: bool
+  gender:
+    type: text
+  bmi:
+    type: float
+  heart_disease:
+    type: bool
+  location:
+    type: text
+
+responses:
+  utter_greet:
+    - text: "Hello! How can I assist you today?"
+
+  utter_goodbye:
+    - text: "Goodbye! Have a great day!"
+
+  utter_howareyou:
+    - text: "I'm just a bot, but I'm here to help you!"
+
+  utter_joke:
+    - text: "Why did the computer show up at work late? It had a hard drive!"
+
+  utter_out_of_scope:
+    - text: "I'm sorry, I can't help with that. Could you ask something else related to the application?"
+
+actions:
+  - action_generate_recommendation
+  - action_show_data_analysis
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true
