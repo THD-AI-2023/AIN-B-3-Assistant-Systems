@@ -1,8 +1,11 @@
+# src/app.py
+
 import streamlit as st
 from data.data_loader import load_data
 from data.data_preprocessor import preprocess_data
 from models.recommendation_model import RecommendationModel
-# from chatbot.rasa_chatbot import Chatbot
+from chatbot.rasa_chatbot import Chatbot
+import os
 
 def main():
     st.set_page_config(page_title="Project Apero", layout="wide")
@@ -19,27 +22,29 @@ def main():
 
     # Initialize recommendation model
     rec_model = RecommendationModel(processed_data)
-    # TODO: Implement the training of recommendation models
-    # rec_model.train_models()
+    rec_model.train_models()
 
     if choice == "Home":
-        st.subheader("Welcome to the Project Apero")
+        st.subheader("Welcome to Project Apero")
         st.write("Use the sidebar to navigate through the application.")
 
     elif choice == "Data Analysis":
         st.subheader("Data Analysis & Visualization")
         # TODO: Add data visualization components using Streamlit
+        st.write("Data analysis and visualization will be implemented here.")
 
     elif choice == "Recommendations":
         st.subheader("Personalized Recommendations")
         # TODO: Implement the recommendation system interface
+        st.write("Recommendation system interface will be implemented here.")
 
     elif choice == "Chatbot":
         st.subheader("Chatbot Assistance")
-        # TODO: Integrate the Rasa chatbot with the Streamlit frontend
-        # chatbot = Chatbot()
-        # chatbot.run()
-        st.write("Chatbot integration will be implemented here.")
+        if "key" not in st.session_state:
+            st.session_state["key"] = os.urandom(24).hex()
+        rasa_server_url = os.getenv("RASA_SERVER", "http://rasa:5005/webhooks/rest/webhook")
+        chatbot = Chatbot(rasa_url=rasa_server_url, session_id=st.session_state["key"])
+        chatbot.run()
 
 if __name__ == "__main__":
     main()

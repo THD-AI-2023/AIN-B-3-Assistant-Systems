@@ -15,7 +15,7 @@
 
 ### Introduction
 
-The **Assistance Systems Project (AIN-B)** aims to develop a streamlined, data-driven recommendation system integrated with a chatbot to enhance user interaction and provide personalized suggestions. Utilizing technologies such as Streamlit for the frontend, Rasa for chatbot functionality, and Scikit-Learn for machine learning models, the project seeks to deliver an efficient and intuitive system within a limited timeframe.
+The **Assistance Systems Project (AIN-B)** aims to develop a streamlined, data-driven recommendation system integrated with a chatbot to enhance user interaction and provide personalized suggestions. Utilizing technologies such as Streamlit for the frontend, Rasa for chatbot functionality, and Pandas for data manipulation, the project seeks to deliver an efficient and intuitive system tailored to user needs.
 
 This Requirements Specification Document outlines the essential functional and non-functional requirements necessary to achieve the project's objectives, ensuring clarity and alignment among all stakeholders for successful and timely completion.
 
@@ -44,6 +44,7 @@ The system must perform the following core functionalities to constitute a Minim
 
 4. **Chatbot Integration**
    - **Rasa Chatbot:** Develop a Rasa-powered chatbot to assist users with navigating the application and obtaining recommendations.
+   - **Context-Aware Conversations:** Enable the chatbot to understand and utilize the context from user interactions and data analysis results.
    - **Dialog Management:** Create sample dialogs and a high-level dialog flow to ensure coherent and context-aware interactions.
 
 5. **Documentation and Wiki Integration**
@@ -106,39 +107,39 @@ The system must perform the following core functionalities to constitute a Minim
 To facilitate communication between the frontend, backend, and chatbot, the system must expose the following API endpoints:
 
 1. **Data Management**
-   - `POST /api/data/upload`
+   - **POST /api/data/upload**
      - *Description:* Upload a new dataset.
      - *Request Body:* `multipart/form-data` with CSV file.
      - *Response:* `{ "message": "Data uploaded and processed successfully." }`
 
-   - `GET /api/data`
+   - **GET /api/data**
      - *Description:* Retrieve available datasets.
      - *Response:* `{ "datasets": [ "dataset1.csv", "dataset2.csv", ... ] }`
 
 2. **Recommendation Engine**
-   - `GET /api/recommendations`
+   - **GET /api/recommendations**
      - *Description:* Get personalized recommendations based on user inputs.
      - *Request Parameters:* Input parameters from interactive widgets.
      - *Response:* `{ "recommendations": [ ... ] }`
 
 3. **Chatbot Integration**
-   - `POST /api/chatbot/message`
+   - **POST /api/chatbot/message**
      - *Description:* Send a message to the chatbot and receive a response.
      - *Request Body:* `{ "message": "string" }`
      - *Response:* `{ "response": "string" }`
 
 4. **Documentation and Wiki**
-   - `GET /api/wiki/content`
+   - **GET /api/wiki/content**
      - *Description:* Fetch content from the project's wiki.
      - *Response:* `{ "content": "string" }`
 
 5. **Video/Screencast Management**
-   - `POST /api/videos/upload`
+   - **POST /api/videos/upload**
      - *Description:* Upload a project demonstration video.
      - *Request Body:* `multipart/form-data` with video file.
      - *Response:* `{ "message": "Video uploaded successfully." }`
 
-   - `GET /api/videos`
+   - **GET /api/videos**
      - *Description:* Retrieve available demonstration videos.
      - *Response:* `{ "videos": [ "video1.mp4", "video2.mp4", ... ] }`
 
@@ -224,6 +225,6 @@ To ensure clarity and alignment among all stakeholders, the gathered requirement
 
 This Requirements Specification Document serves as a comprehensive guide for the **Assistance Systems Project (AIN-B)**, outlining the essential functionalities, user interactions, and technical specifications required to achieve the project's objectives efficiently. By adhering to this specification, the development team can ensure a structured and effective approach, fostering collaboration and alignment among all stakeholders for a successful and timely project completion.
 
----
-
 **Note:** This document is subject to updates and revisions as the project progresses. All stakeholders are encouraged to review and provide feedback to ensure the system meets the desired goals and standards.
+
+---

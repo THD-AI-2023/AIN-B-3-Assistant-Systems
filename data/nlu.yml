@@ -1,0 +1,59 @@
+version: "2.0"
+
+nlu:
+- intent: greet
+  examples: |
+    - Hi
+    - Hello
+    - Hey
+    - Hi there
+    - Good morning
+    - Good evening
+
+- intent: goodbye
+  examples: |
+    - Bye
+    - Goodbye
+    - See you later
+    - Bye bye
+    - Catch you later
+
+- intent: affirm
+  examples: |
+    - Yes
+    - Yeah
+    - Absolutely
+    - Sure
+    - Definitely
+    - Of course
+
+- intent: deny
+  examples: |
+    - No
+    - Nope
+    - Not really
+    - No way
+    - Absolutely not
+
+- intent: chitchat
+  examples: |
+    - How are you?
+    - Tell me a joke
+    - What's your name?
+    - What's the meaning of life?
+    - Can you sing a song?
+    - Do you like pizza?
+    - What's your favorite color?
+    - Tell me something interesting
+    - Do you have any hobbies?
+    - What's your favorite movie?
+    - Can you dance?
+    - Do you like music?
+    - What's your favorite book?
+    - Do you have any pets?
+    - What's the weather like?
+    - Do you know any fun facts?
+    - What's your favorite food?
+    - Are you a robot?
+    - How old are you?
+    - Where are you from?

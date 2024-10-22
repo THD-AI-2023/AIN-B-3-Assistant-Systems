@@ -24,7 +24,7 @@ This document outlines the system architecture, data flow, and validates the cho
 
 The high-level architecture of the project encompasses the primary components and their interactions. The system is divided into three main layers: **Frontend**, **Backend**, and **Data Processing**.
 
-```mermaid
+~~~mermaid
 graph TD
     A[User Interface] -->|Interacts via| B(Streamlit Frontend)
     B --> |Sends Requests| C(API Gateway)
@@ -35,7 +35,7 @@ graph TD
     F --> H[Data Repository]
     G --> H
     H --> I[Data Sources]
-```
+~~~
 
 **Components:**
 
@@ -55,7 +55,7 @@ graph TD
 
 ### 1. Generating Recommendations
 
-```mermaid
+~~~mermaid
 sequenceDiagram
     participant User
     participant Frontend
@@ -74,11 +74,11 @@ sequenceDiagram
     Recommendation_Engine-->>API_Gateway: Send recommendations
     API_Gateway-->>Frontend: Deliver recommendations
     Frontend-->>User: Display recommendations
-```
+~~~
 
 ### 2. Chatbot Interaction
 
-```mermaid
+~~~mermaid
 sequenceDiagram
     participant User
     participant Frontend
@@ -97,7 +97,7 @@ sequenceDiagram
     Chatbot_Service-->>API_Gateway: Send response
     API_Gateway-->>Frontend: Deliver chatbot response
     Frontend-->>User: Display response
-```
+~~~
 
 ---
 
@@ -105,7 +105,7 @@ sequenceDiagram
 
 The data flow within the system ensures efficient movement from data ingestion to user-facing recommendations and chatbot interactions.
 
-```mermaid
+~~~mermaid
 flowchart LR
     A[Data Sources] -->|Import Data| B[Data Repository]
     B -->|Data Cleaning & Preprocessing| C[Data Processing Module]
@@ -120,7 +120,7 @@ flowchart LR
     H -->|Access Data| B
     G -->|Deliver to Frontend| I[Streamlit Frontend]
     H -->|Respond to User| I
-```
+~~~
 
 **Components:**
 
