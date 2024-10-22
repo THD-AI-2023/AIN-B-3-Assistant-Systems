@@ -10,8 +10,6 @@ intents:
   - ask_recommendation_by_feature
   - chitchat
   - out_of_scope
-  - ask_event_info
-  - ask_event_location
   - ask_faq
 
 entities:
@@ -61,29 +59,34 @@ responses:
   utter_goodbye:
     - text: "Goodbye! Have a great day!"
 
-  utter_howareyou:
-    - text: "I'm just a bot, but I'm here to help you!"
-
-  utter_joke:
-    - text: "Why did the computer show up at work late? It had a hard drive!"
+  utter_chitchat:
+    - text: "I'm doing well, thank you! How can I help you today?"  # For "How are you?"
+    - text: "Why did the computer show up at work late? It had a hard drive!"  # For "Tell me a joke"
+    - text: "I'm your friendly assistant bot, here to help you with recommendations and data analysis."  # For "What's your name?"
+    - text: "42 is the answer to the ultimate question of life, the universe, and everything."  # For "What's the meaning of life?"
+    - text: "I'd love to sing, but I'm better at helping you with recommendations!"  # For "Can you sing a song?"
+    - text: "I don't eat, but if I could, I'd enjoy pizza!"  # For "Do you like pizza?"
+    - text: "I like all colors in the digital spectrum."  # For "What's your favorite color?"
+    - text: "Did you know that the world's oldest piece of chewing gum is over 9,000 years old?"  # For "Tell me something interesting"
+    - text: "I enjoy learning new things to assist you better."  # For "Do you have any hobbies?"
+    - text: "I don't watch movies, but I hear 'The Matrix' is a classic!"  # For "What's your favorite movie?"
+    - text: "I can dance through data to find the best recommendations for you!"  # For "Can you dance?"
+    - text: "Music is fascinating, though I experience it differently."  # For "Do you like music?"
+    - text: "I'm a fan of any book that helps me learn more."  # For "What's your favorite book?"
+    - text: "I don't have pets, but I can fetch information for you!"  # For "Do you have any pets?"
+    - text: "Weather doesn't affect me, but I hope it's nice where you are!"  # For "What's the weather like?"
+    - text: "Octopuses have three hearts!"  # For "Do you know any fun facts?"
+    - text: "I'm powered by data and algorithms."  # For "What's your favorite food?"
+    - text: "Yes, I am a robot, here to assist you."  # For "Are you a robot?"
+    - text: "I was created recently to help you."  # For "How old are you?"
+    - text: "I'm from the cloud."  # For "Where are you from?"
 
   utter_out_of_scope:
     - text: "I'm sorry, I can't help with that. Could you ask something else related to the application?"
 
-  utter_affirm:
-    - text: "Great! How can I help you further?"
-
-  utter_deny:
-    - text: "No problem. Let me know if you need anything else."
-
-  utter_anything_else:
-    - text: "Is there anything else I can help you with?"
-
 actions:
   - action_generate_recommendation
   - action_show_data_analysis
-  - action_provide_event_info
-  - action_provide_event_location
   - action_provide_faq
 
 session_config:

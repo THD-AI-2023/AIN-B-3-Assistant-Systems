@@ -1,3 +1,5 @@
+# src/app.py
+
 import streamlit as st
 from data.data_loader import load_data
 from data.data_preprocessor import preprocess_data
@@ -38,8 +40,10 @@ def main():
 
     elif choice == "Chatbot":
         st.subheader("Chatbot Assistance")
-        rasa_server_url = os.getenv("RASA_SERVER", "http://localhost:5005/webhooks/rest/webhook")
-        chatbot = Chatbot(rasa_url=rasa_server_url)
+        if "key" not in st.session_state:
+            st.session_state["key"] = os.urandom(24).hex()
+        rasa_server_url = os.getenv("RASA_SERVER", "http://rasa:5005/webhooks/rest/webhook")
+        chatbot = Chatbot(rasa_url=rasa_server_url, session_id=st.session_state["key"])
         chatbot.run()
 
 if __name__ == "__main__":
