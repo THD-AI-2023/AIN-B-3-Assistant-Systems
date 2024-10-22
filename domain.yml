@@ -1,4 +1,4 @@
-version: "3.0"
+version: "2.0"
 
 intents:
   - greet
@@ -8,8 +8,7 @@ intents:
   - ask_recommendation
   - ask_data_analysis
   - ask_recommendation_by_feature
-  - chitchat/ask_howareyou
-  - chitchat/telljoke
+  - chitchat
   - out_of_scope
   - ask_event_info
   - ask_event_location
@@ -26,16 +25,34 @@ entities:
 slots:
   age:
     type: float
+    mappings:
+      - type: from_entity
+        entity: age
   hypertension:
     type: bool
+    mappings:
+      - type: from_entity
+        entity: hypertension
   gender:
     type: text
+    mappings:
+      - type: from_entity
+        entity: gender
   bmi:
     type: float
+    mappings:
+      - type: from_entity
+        entity: bmi
   heart_disease:
     type: bool
+    mappings:
+      - type: from_entity
+        entity: heart_disease
   location:
     type: text
+    mappings:
+      - type: from_entity
+        entity: location
 
 responses:
   utter_greet:
@@ -53,9 +70,21 @@ responses:
   utter_out_of_scope:
     - text: "I'm sorry, I can't help with that. Could you ask something else related to the application?"
 
+  utter_affirm:
+    - text: "Great! How can I help you further?"
+
+  utter_deny:
+    - text: "No problem. Let me know if you need anything else."
+
+  utter_anything_else:
+    - text: "Is there anything else I can help you with?"
+
 actions:
   - action_generate_recommendation
   - action_show_data_analysis
+  - action_provide_event_info
+  - action_provide_event_location
+  - action_provide_faq
 
 session_config:
   session_expiration_time: 60

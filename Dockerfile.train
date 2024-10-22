@@ -1,0 +1,19 @@
+FROM python:3.9
+
+# Install Rasa
+RUN pip install rasa
+
+# Set the working directory
+WORKDIR /app
+
+# Copy all project files into the container
+COPY . /app
+
+# Ensure the models directory exists
+RUN mkdir -p /app/models
+
+# Make the training script executable
+RUN chmod +x /app/train_and_rename.sh
+
+# Set the default command to execute the training script
+CMD ["/app/train_and_rename.sh"]

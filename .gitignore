@@ -25,5 +25,5 @@ output.json
 # Kaggle API credentials
 .kaggle/kaggle.json
 
-# models
-models/*.pkl
+# Models
+models/*.tar.gz

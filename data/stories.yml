@@ -1,4 +1,4 @@
-version: "3.0"
+version: "2.0"
 
 stories:
 - story: Greet and ask for recommendation
@@ -24,16 +24,7 @@ stories:
   - intent: goodbye
   - action: utter_goodbye
 
-- story: Chatbot chitchat
-  steps:
-  - intent: chitchat/ask_howareyou
-  - action: utter_howareyou
-  - intent: chitchat/telljoke
-  - action: utter_joke
-  - intent: goodbye
-  - action: utter_goodbye
-
 - story: Out of scope query
   steps:
-  - intent: ask_meaning_of_life
+  - intent: out_of_scope
   - action: utter_out_of_scope

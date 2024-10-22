@@ -1,4 +1,4 @@
-version: "3.0"
+version: "2.0"
 
 nlu:
 - intent: greet
@@ -59,16 +59,13 @@ nlu:
     - Based on my BMI, what should I try?
     - Recommend services considering my heart disease status
 
-- intent: chitchat/ask_howareyou
+- intent: chitchat
   examples: |
     - How are you?
     - How do you feel today?
     - What's up?
     - How's it going?
     - How are things?
-
-- intent: chitchat/telljoke
-  examples: |
     - Tell me a joke
     - Make me laugh
     - I want to hear a joke

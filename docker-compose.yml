@@ -1,9 +1,8 @@
-version: '3.8'
-
 services:
   rasa:
-    image: rasa/rasa:3.4.0
+    image: rasa/rasa:3.6.2-full
     container_name: rasa_server
+    platform: linux/amd64
     ports:
       - "5005:5005"
     volumes:
@@ -12,45 +11,45 @@ services:
       - ./config.yml:/app/config.yml
       - ./domain.yml:/app/domain.yml
       - ./endpoints.yml:/app/endpoints.yml
-      - ./actions:/app/actions
-    command: >
-      run
-      --model /app/models
-      --enable-api
-      --cors "*"
-      --debug
+      - ./credentials.yml:/app/credentials.yml
+    command:
+      - run
+      - --enable-api
+      - --cors
+      - "*"
+      - --debug
     depends_on:
       - rasa_action
+    restart: unless-stopped
 
   rasa_action:
-    image: rasa/rasa-sdk:3.4.0
+    build:
+      context: ./actions
+      dockerfile: Dockerfile
     container_name: rasa_action_server
+    platform: linux/amd64
     ports:
       - "5055:5055"
-    volumes:
-      - ./actions:/app/actions
-    command: >
-      run
-      --actions actions
-      --debug
+    restart: unless-stopped
 
   streamlit:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: streamlit_app
+    platform: linux/amd64
     ports:
       - "8501:8501"
     environment:
       - RASA_SERVER=http://rasa:5005/webhooks/rest/webhook
     depends_on:
       - rasa
-      - rasa_action
+    restart: unless-stopped
 
   duckling:
     image: rasa/duckling
     container_name: duckling
+    platform: linux/amd64
     ports:
       - "8000:8000"
-    command: ["duckling-example"]
     restart: unless-stopped
