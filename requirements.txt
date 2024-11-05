@@ -3,6 +3,9 @@ pydeck
 protobuf
 pandas
 scikit-learn
+faker
+seaborn
+altair
 matplotlib
 rasa
 sqlalchemy<2.0

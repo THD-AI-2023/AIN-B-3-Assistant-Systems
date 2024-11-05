@@ -16,10 +16,11 @@ from sklearn.metrics import (
 )
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
-from sklearn.pipeline import Pipeline
 from imblearn.over_sampling import SMOTE
 from data.data_loader import load_data
 from data.data_preprocessor import preprocess_data
+from data.data_augmentation import augment_data
+from data.data_visualization import visualize_data
 from chatbot.rasa_chatbot import Chatbot
 
 
@@ -41,15 +42,23 @@ def main():
 
         # Load and preprocess data
         data = load_data()
-        processed_data = preprocess_data(data)
+        data = preprocess_data(data)
+
+        # Augment data with Faker-generated data
+        data = augment_data(data, augmentation_factor=0.3)  # 30% synthetic data
+        data.reset_index(drop=True, inplace=True)  # Reset index after augmentation
 
         # Display the preprocessed data
         st.write("### Preprocessed Data")
-        st.dataframe(processed_data.head())
+        # st.dataframe(data.head(100))  # Show 100 rows
+        st.dataframe(data)
+
+        # Visualize data
+        visualize_data(data)
 
         # Define features and target variable
-        X = processed_data.drop(columns=["stroke"])
-        y = processed_data["stroke"]
+        X = data.drop(columns=["stroke"])
+        y = data["stroke"]
 
         # Split the dataset into training and testing sets with stratification
         X_train_raw, X_test_raw, y_train, y_test = train_test_split(
@@ -172,7 +181,9 @@ def main():
         # Use each model to predict the sample input
         for model_name, model in models.items():
             sample_prediction = model.predict(sample_input_processed)
-            st.write(f"{model_name} prediction for the sample input: {sample_prediction[0]}")
+            st.write(
+                f"{model_name} prediction for the sample input: {sample_prediction[0]}"
+            )
 
     elif choice == "Recommendations":
         st.subheader("Personalized Recommendations")
