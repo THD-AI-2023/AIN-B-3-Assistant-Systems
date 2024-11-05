@@ -1,5 +1,7 @@
 # src/app.py
 
+import os
+import pandas as pd
 import streamlit as st
 from data.data_loader import load_data
 from data.data_preprocessor import preprocess_data
@@ -30,8 +32,8 @@ def main():
 
     elif choice == "Data Analysis":
         st.subheader("Data Analysis & Visualization")
-        # TODO: Add data visualization components using Streamlit
-        st.write("Data analysis and visualization will be implemented here.")
+        df = load_data("data/raw/healthcare-dataset-stroke-data.csv")
+        st.dataframe(df)
 
     elif choice == "Recommendations":
         st.subheader("Personalized Recommendations")
