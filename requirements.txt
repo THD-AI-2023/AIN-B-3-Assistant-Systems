@@ -1,0 +1,8 @@
+streamlit
+pydeck
+protobuf
+pandas
+scikit-learn
+matplotlib
+rasa
+sqlalchemy<2.0
