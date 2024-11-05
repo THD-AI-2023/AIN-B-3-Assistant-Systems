@@ -1,16 +1,27 @@
-# src/app.py
-
 import os
 import pandas as pd
 import streamlit as st
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
-from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import (
+    accuracy_score,
+    classification_report,
+    confusion_matrix,
+    precision_score,
+    recall_score,
+    f1_score,
+    roc_auc_score,
+)
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.pipeline import Pipeline
+from imblearn.over_sampling import SMOTE
 from data.data_loader import load_data
 from data.data_preprocessor import preprocess_data
-from models.recommendation_model import RecommendationModel
 from chatbot.rasa_chatbot import Chatbot
+
 
 def main():
     st.set_page_config(page_title="Project Apero", layout="wide")
@@ -21,81 +32,147 @@ def main():
     menu = ["Home", "Data Analysis", "Recommendations", "Chatbot"]
     choice = st.sidebar.selectbox("Menu", menu)
 
-    # Load and preprocess data
-    data = load_data()
-    processed_data = preprocess_data(data)
-
-    # Initialize recommendation model
-    rec_model = RecommendationModel(processed_data)
-    rec_model.train_models()
-
     if choice == "Home":
         st.subheader("Welcome to Project Apero")
         st.write("Use the sidebar to navigate through the application.")
 
     elif choice == "Data Analysis":
-        data = pd.read_csv("data/processed/cleaned_file.csv")
-        st.dataframe(data)
-        
+        st.subheader("Data Analysis")
+
+        # Load and preprocess data
+        data = load_data()
+        processed_data = preprocess_data(data)
+
+        # Display the preprocessed data
+        st.write("### Preprocessed Data")
+        st.dataframe(processed_data.head())
+
         # Define features and target variable
-        X = data.drop(columns=['id', 'stroke'])  # Drop non-predictor columns
-        y = data['stroke'] # predictor column
+        X = processed_data.drop(columns=["stroke"])
+        y = processed_data["stroke"]
 
-        # Convert categorical variables to dummy/indicator variables (as in the mapping)
-        X = pd.get_dummies(X, drop_first=True)
+        # Split the dataset into training and testing sets with stratification
+        X_train_raw, X_test_raw, y_train, y_test = train_test_split(
+            X, y, test_size=0.2, stratify=y, random_state=42
+        )
 
-        # Split the dataset into training and testing sets
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42) # test on 20% of the dataset
+        # Define categorical and numerical columns
+        categorical_cols = [
+            "gender",
+            "ever_married",
+            "work_type",
+            "Residence_type",
+            "smoking_status",
+        ]
+        numerical_cols = [
+            "age",
+            "hypertension",
+            "heart_disease",
+            "avg_glucose_level",
+            "bmi",
+        ]
 
-        # Initialize models
+        # Define preprocessing steps
+        preprocessor = ColumnTransformer(
+            transformers=[
+                (
+                    "num",
+                    StandardScaler(),
+                    numerical_cols,
+                ),
+                (
+                    "cat",
+                    OneHotEncoder(drop="first", handle_unknown="ignore"),
+                    categorical_cols,
+                ),
+            ]
+        )
+
+        # Fit and transform the training data; transform the test data
+        X_train = preprocessor.fit_transform(X_train_raw)
+        X_test = preprocessor.transform(X_test_raw)
+
+        # Handle class imbalance using SMOTE on the training data
+        sm = SMOTE(random_state=42)
+        X_train_res, y_train_res = sm.fit_resample(X_train, y_train)
+
+        # Initialize models with class weights to handle imbalance
         models = {
-            'Logistic Regression': LogisticRegression(max_iter=1000),
-            'Support Vector Machine': SVC()
+            "Logistic Regression": LogisticRegression(
+                max_iter=1000, class_weight="balanced"
+            ),
+            "Support Vector Machine": SVC(class_weight="balanced", probability=True),
+            "Random Forest": RandomForestClassifier(class_weight="balanced"),
         }
 
         # Train and evaluate each model
         for model_name, model in models.items():
             # Train the model
-            model.fit(X_train, y_train)
-            
+            model.fit(X_train_res, y_train_res)
+
             # Make predictions
             y_pred = model.predict(X_test)
-            
-            print(y_pred) # shows how basically the entirety of the testing set shows a value of 0, even when it should be 1
+            y_prob = (
+                model.predict_proba(X_test)[:, 1]
+                if hasattr(model, "predict_proba")
+                else model.decision_function(X_test)
+            )
 
-            # Calculate accuracy
+            # Calculate evaluation metrics
             accuracy = accuracy_score(y_test, y_pred)
-            
-            # Print results
-            print(f"{model_name} Accuracy: {accuracy:.4f}")
-            print(confusion_matrix(y_test, y_pred))
-            print(classification_report(y_test, y_pred))
-            print("=" * 60)  # Separator between models
+            precision = precision_score(y_test, y_pred)
+            recall = recall_score(y_test, y_pred)
+            f1 = f1_score(y_test, y_pred)
+            roc_auc = roc_auc_score(y_test, y_prob)
 
-        # A sample row which "should" output 1, but outputs 0
-        new_row = pd.DataFrame({
-            'gender': ['Female'],
-            'age': [79.0],
-            'hypertension': [1],
-            'heart_disease': [0],
-            'ever_married': ['Yes'],
-            'work_type': ['Self-employed'],
-            'Residence_type': ['Rural'],
-            'avg_glucose_level': [174.12],
-            'bmi': [24.0],
-            'smoking_status': ['never smoked']
-        })
+            # Display results
+            st.write(f"### {model_name}")
+            st.write(f"**Accuracy:** {accuracy:.4f}")
+            st.write(f"**Precision:** {precision:.4f}")
+            st.write(f"**Recall:** {recall:.4f}")
+            st.write(f"**F1 Score:** {f1:.4f}")
+            st.write(f"**ROC AUC Score:** {roc_auc:.4f}")
 
-        # Apply the same encoding to the new row as was applied to X
-        new_row = pd.get_dummies(new_row, drop_first=True)
+            st.write("**Confusion Matrix:**")
+            cm = confusion_matrix(y_test, y_pred)
+            cm_df = pd.DataFrame(
+                cm,
+                index=["Actual Negative", "Actual Positive"],
+                columns=["Predicted Negative", "Predicted Positive"],
+            )
+            st.dataframe(cm_df)
 
-        # Align the new row DataFrame with the training set to ensure the same columns
-        new_row = new_row.reindex(columns=X.columns, fill_value=0)
+            st.write("**Classification Report:**")
+            st.text(classification_report(y_test, y_pred))
+            st.write("-" * 60)
 
-        # Use each model to predict the new row
+        # Sample input for prediction
+        st.write("### Sample Prediction")
+        sample_input = pd.DataFrame(
+            {
+                "gender": ["Female"],
+                "age": [79.0],
+                "hypertension": [1],
+                "heart_disease": [0],
+                "ever_married": ["Yes"],
+                "work_type": ["Self-employed"],
+                "Residence_type": ["Rural"],
+                "avg_glucose_level": [174.12],
+                "bmi": [24.0],
+                "smoking_status": ["never smoked"],
+            }
+        )
+
+        st.write("**Sample Input:**")
+        st.dataframe(sample_input)
+
+        # Preprocess the sample input
+        sample_input_processed = preprocessor.transform(sample_input)
+
+        # Use each model to predict the sample input
         for model_name, model in models.items():
-            new_prediction = model.predict(new_row)
-            print(f"{model_name} prediction for the new row: {new_prediction[0]}")
+            sample_prediction = model.predict(sample_input_processed)
+            st.write(f"{model_name} prediction for the sample input: {sample_prediction[0]}")
 
     elif choice == "Recommendations":
         st.subheader("Personalized Recommendations")
@@ -106,9 +183,12 @@ def main():
         st.subheader("Chatbot Assistance")
         if "key" not in st.session_state:
             st.session_state["key"] = os.urandom(24).hex()
-        rasa_server_url = os.getenv("RASA_SERVER", "http://rasa:5005/webhooks/rest/webhook")
+        rasa_server_url = os.getenv(
+            "RASA_SERVER", "http://localhost:5005/webhooks/rest/webhook"
+        )
         chatbot = Chatbot(rasa_url=rasa_server_url, session_id=st.session_state["key"])
         chatbot.run()
+
 
 if __name__ == "__main__":
     main()

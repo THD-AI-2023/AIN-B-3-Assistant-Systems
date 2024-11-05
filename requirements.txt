@@ -6,3 +6,5 @@ scikit-learn
 matplotlib
 rasa
 sqlalchemy<2.0
+imblearn
+
