@@ -40,21 +40,28 @@ def main():
     elif choice == "Data Analysis":
         st.subheader("Data Analysis")
 
+        # Sidebar progress bar for data loading
+        data_load_bar = st.sidebar.progress(0)
+        st.sidebar.write("Loading data...")
+
         # Load and preprocess data
         data = load_data()
+        data_load_bar.progress(25)
         data = preprocess_data(data)
-
-        # Augment data with Faker-generated data
-        data = augment_data(data, augmentation_factor=0.3)  # 30% synthetic data
-        data.reset_index(drop=True, inplace=True)  # Reset index after augmentation
+        data_load_bar.progress(50)
+        data.reset_index(drop=True, inplace=True)  # Reset index
+        data_load_bar.progress(75)
 
         # Display the preprocessed data
         st.write("### Preprocessed Data")
-        # st.dataframe(data.head(100))  # Show 100 rows
+        # st.dataframe(data.head(20))  # Show 20 rows
         st.dataframe(data)
 
         # Visualize data
         visualize_data(data)
+        data_load_bar.progress(100)
+        data_load_bar.empty()
+        st.sidebar.write("Data loaded and preprocessed.")
 
         # Define features and target variable
         X = data.drop(columns=["stroke"])
@@ -64,6 +71,13 @@ def main():
         X_train_raw, X_test_raw, y_train, y_test = train_test_split(
             X, y, test_size=0.2, stratify=y, random_state=42
         )
+
+        # Augment the training data
+        augmented_X_train_raw, augmented_y_train = augment_data(
+            X_train_raw, y_train, augmentation_factor=0.3
+        )
+        augmented_X_train_raw.reset_index(drop=True, inplace=True)
+        augmented_y_train.reset_index(drop=True, inplace=True)
 
         # Define categorical and numerical columns
         categorical_cols = [
@@ -97,27 +111,39 @@ def main():
             ]
         )
 
-        # Fit and transform the training data; transform the test data
-        X_train = preprocessor.fit_transform(X_train_raw)
+        # Fit preprocessor on real training data
+        X_train_real = preprocessor.fit_transform(X_train_raw)
         X_test = preprocessor.transform(X_test_raw)
 
-        # Handle class imbalance using SMOTE on the training data
+        # Handle class imbalance using SMOTE on real data
         sm = SMOTE(random_state=42)
-        X_train_res, y_train_res = sm.fit_resample(X_train, y_train)
+        X_train_res_real, y_train_res_real = sm.fit_resample(
+            X_train_real, y_train.reset_index(drop=True)
+        )
 
         # Initialize models with class weights to handle imbalance
         models = {
             "Logistic Regression": LogisticRegression(
-                max_iter=1000, class_weight="balanced"
+                max_iter=1000, class_weight="balanced", solver="liblinear"
             ),
             "Support Vector Machine": SVC(class_weight="balanced", probability=True),
             "Random Forest": RandomForestClassifier(class_weight="balanced"),
         }
 
-        # Train and evaluate each model
-        for model_name, model in models.items():
+        # Sidebar progress bar for model training on real data
+        st.sidebar.write("Training models on real data...")
+        model_train_bar_real = st.sidebar.progress(0)
+        total_models = len(models)
+
+        # Train and evaluate models on real data only
+        st.write("## Models Trained on Real Data Only")
+        for idx, (model_name, model) in enumerate(models.items()):
+            st.write(f"### {model_name}")
             # Train the model
-            model.fit(X_train_res, y_train_res)
+            model.fit(X_train_res_real, y_train_res_real)
+
+            # Update progress bar
+            model_train_bar_real.progress(int(((idx + 1) / total_models) * 100))
 
             # Make predictions
             y_pred = model.predict(X_test)
@@ -129,13 +155,12 @@ def main():
 
             # Calculate evaluation metrics
             accuracy = accuracy_score(y_test, y_pred)
-            precision = precision_score(y_test, y_pred)
-            recall = recall_score(y_test, y_pred)
-            f1 = f1_score(y_test, y_pred)
+            precision = precision_score(y_test, y_pred, zero_division=0)
+            recall = recall_score(y_test, y_pred, zero_division=0)
+            f1 = f1_score(y_test, y_pred, zero_division=0)
             roc_auc = roc_auc_score(y_test, y_prob)
 
             # Display results
-            st.write(f"### {model_name}")
             st.write(f"**Accuracy:** {accuracy:.4f}")
             st.write(f"**Precision:** {precision:.4f}")
             st.write(f"**Recall:** {recall:.4f}")
@@ -152,8 +177,70 @@ def main():
             st.dataframe(cm_df)
 
             st.write("**Classification Report:**")
-            st.text(classification_report(y_test, y_pred))
+            st.text(classification_report(y_test, y_pred, zero_division=0))
             st.write("-" * 60)
+
+        st.sidebar.write("Model training on real data completed.")
+
+        # Preprocess augmented training data
+        X_train_augmented = preprocessor.transform(augmented_X_train_raw)
+
+        # Handle class imbalance using SMOTE on augmented data
+        sm = SMOTE(random_state=42)
+        X_train_res_augmented, y_train_res_augmented = sm.fit_resample(
+            X_train_augmented, augmented_y_train.reset_index(drop=True)
+        )
+
+        # Sidebar progress bar for model training on augmented data
+        st.sidebar.write("Training models on augmented data...")
+        model_train_bar_aug = st.sidebar.progress(0)
+
+        # Train and evaluate models on augmented data
+        st.write("## Models Trained on Augmented Data")
+        for idx, (model_name, model) in enumerate(models.items()):
+            st.write(f"### {model_name}")
+            # Train the model
+            model.fit(X_train_res_augmented, y_train_res_augmented)
+
+            # Update progress bar
+            model_train_bar_aug.progress(int(((idx + 1) / total_models) * 100))
+
+            # Make predictions
+            y_pred = model.predict(X_test)
+            y_prob = (
+                model.predict_proba(X_test)[:, 1]
+                if hasattr(model, "predict_proba")
+                else model.decision_function(X_test)
+            )
+
+            # Calculate evaluation metrics
+            accuracy = accuracy_score(y_test, y_pred)
+            precision = precision_score(y_test, y_pred, zero_division=0)
+            recall = recall_score(y_test, y_pred, zero_division=0)
+            f1 = f1_score(y_test, y_pred, zero_division=0)
+            roc_auc = roc_auc_score(y_test, y_prob)
+
+            # Display results
+            st.write(f"**Accuracy:** {accuracy:.4f}")
+            st.write(f"**Precision:** {precision:.4f}")
+            st.write(f"**Recall:** {recall:.4f}")
+            st.write(f"**F1 Score:** {f1:.4f}")
+            st.write(f"**ROC AUC Score:** {roc_auc:.4f}")
+
+            st.write("**Confusion Matrix:**")
+            cm = confusion_matrix(y_test, y_pred)
+            cm_df = pd.DataFrame(
+                cm,
+                index=["Actual Negative", "Actual Positive"],
+                columns=["Predicted Negative", "Predicted Positive"],
+            )
+            st.dataframe(cm_df)
+
+            st.write("**Classification Report:**")
+            st.text(classification_report(y_test, y_pred, zero_division=0))
+            st.write("-" * 60)
+
+        st.sidebar.write("Model training on augmented data completed.")
 
         # Sample input for prediction
         st.write("### Sample Prediction")
@@ -179,11 +266,15 @@ def main():
         sample_input_processed = preprocessor.transform(sample_input)
 
         # Use each model to predict the sample input
+        st.write("#### Predictions from Models Trained on Real Data")
         for model_name, model in models.items():
             sample_prediction = model.predict(sample_input_processed)
-            st.write(
-                f"{model_name} prediction for the sample input: {sample_prediction[0]}"
-            )
+            st.write(f"{model_name} prediction: {sample_prediction[0]}")
+
+        st.write("#### Predictions from Models Trained on Augmented Data")
+        for model_name, model in models.items():
+            sample_prediction = model.predict(sample_input_processed)
+            st.write(f"{model_name} prediction: {sample_prediction[0]}")
 
     elif choice == "Recommendations":
         st.subheader("Personalized Recommendations")

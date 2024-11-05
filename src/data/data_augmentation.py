@@ -4,17 +4,26 @@ import numpy as np
 import random
 
 
-def augment_data(data, augmentation_factor=0.3):
+def augment_data(X, y, augmentation_factor=0.3):
     """
-    Augments the dataset with synthetic data generated using Faker.
+    Augments the training dataset with synthetic data generated using Faker.
 
     Parameters:
-    - data (pd.DataFrame): The original dataset.
-    - augmentation_factor (float): The fraction of the original data to generate.
+    - X (pd.DataFrame): The original training features.
+    - y (pd.Series): The original training target.
 
     Returns:
-    - pd.DataFrame: The augmented dataset.
+    - augmented_X (pd.DataFrame): The augmented training features.
+    - augmented_y (pd.Series): The augmented training target.
     """
+    # Reset indices of X and y to ensure alignment
+    X = X.reset_index(drop=True)
+    y = y.reset_index(drop=True)
+
+    # Combine X and y into a single DataFrame
+    data = X.copy()
+    data['stroke'] = y
+
     fake = Faker()
     num_new_samples = int(len(data) * augmentation_factor)
     synthetic_data = []
@@ -35,7 +44,7 @@ def augment_data(data, augmentation_factor=0.3):
         avg_glucose_level = random.uniform(glucose_min, glucose_max)
         bmi = random.uniform(bmi_min, bmi_max)
         smoking_status = random.choice(['never smoked', 'formerly smoked', 'smokes', 'Unknown'])
-        stroke = random.choice([0, 1])  # You may adjust the probability if needed
+        stroke = random.choice([0, 1])  # Adjust probability if needed
 
         synthetic_data.append({
             'gender': gender,
@@ -52,6 +61,18 @@ def augment_data(data, augmentation_factor=0.3):
         })
 
     synthetic_df = pd.DataFrame(synthetic_data)
+
     augmented_data = pd.concat([data, synthetic_df], ignore_index=True)
 
-    return augmented_data
+    # Check for NaN values in 'stroke' column and drop them if any
+    if augmented_data['stroke'].isnull().any():
+        augmented_data = augmented_data.dropna(subset=['stroke'])
+
+    # Ensure 'stroke' column is of integer type
+    augmented_data['stroke'] = augmented_data['stroke'].astype(int)
+
+    # Separate features and target
+    augmented_X = augmented_data.drop(columns=['stroke'])
+    augmented_y = augmented_data['stroke']
+
+    return augmented_X, augmented_y
