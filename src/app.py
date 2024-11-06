@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import streamlit as st
+import time
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
@@ -40,28 +41,31 @@ def main():
     elif choice == "Data Analysis":
         st.subheader("Data Analysis")
 
-        # Sidebar progress bar for data loading
-        data_load_bar = st.sidebar.progress(0)
-        st.sidebar.write("Loading data...")
+        # Placeholders for status messages and progress bars in the sidebar
+        status_text = st.sidebar.empty()
+        progress_bar = st.sidebar.progress(0)
 
-        # Load and preprocess data
+        # Data loading and preprocessing
+        status_text.text("Loading data...")
         data = load_data()
-        data_load_bar.progress(25)
+        progress_bar.progress(25)
         data = preprocess_data(data)
-        data_load_bar.progress(50)
+        progress_bar.progress(50)
         data.reset_index(drop=True, inplace=True)  # Reset index
-        data_load_bar.progress(75)
+        progress_bar.progress(75)
 
         # Display the preprocessed data
         st.write("### Preprocessed Data")
-        # st.dataframe(data.head(20))  # Show 20 rows
-        st.dataframe(data)
+        st.dataframe(data.head(20))  # Show 20 rows
 
         # Visualize data
         visualize_data(data)
-        data_load_bar.progress(100)
-        data_load_bar.empty()
-        st.sidebar.write("Data loaded and preprocessed.")
+        progress_bar.progress(100)
+        time.sleep(0.5)
+        progress_bar.empty()
+        status_text.text("Data loading complete.")
+        time.sleep(1)
+        status_text.empty()
 
         # Define features and target variable
         X = data.drop(columns=["stroke"])
@@ -130,20 +134,20 @@ def main():
             "Random Forest": RandomForestClassifier(class_weight="balanced"),
         }
 
-        # Sidebar progress bar for model training on real data
-        st.sidebar.write("Training models on real data...")
-        model_train_bar_real = st.sidebar.progress(0)
-        total_models = len(models)
+        # Training models on real data
+        status_text = st.sidebar.empty()
+        progress_bar = st.sidebar.progress(0)
 
-        # Train and evaluate models on real data only
-        st.write("## Models Trained on Real Data Only")
+        status_text.text("Training models on real data...")
+        total_models = len(models)
         for idx, (model_name, model) in enumerate(models.items()):
-            st.write(f"### {model_name}")
             # Train the model
             model.fit(X_train_res_real, y_train_res_real)
 
-            # Update progress bar
-            model_train_bar_real.progress(int(((idx + 1) / total_models) * 100))
+            # Update progress bar and status message
+            progress = int(((idx + 1) / total_models) * 100)
+            progress_bar.progress(progress)
+            status_text.text(f"Training models on real data... ({progress}%)")
 
             # Make predictions
             y_pred = model.predict(X_test)
@@ -161,6 +165,7 @@ def main():
             roc_auc = roc_auc_score(y_test, y_prob)
 
             # Display results
+            st.write(f"### {model_name}")
             st.write(f"**Accuracy:** {accuracy:.4f}")
             st.write(f"**Precision:** {precision:.4f}")
             st.write(f"**Recall:** {recall:.4f}")
@@ -180,7 +185,11 @@ def main():
             st.text(classification_report(y_test, y_pred, zero_division=0))
             st.write("-" * 60)
 
-        st.sidebar.write("Model training on real data completed.")
+        # After training all models on real data
+        progress_bar.empty()
+        status_text.text("Model training on real data complete.")
+        time.sleep(1)
+        status_text.empty()
 
         # Preprocess augmented training data
         X_train_augmented = preprocessor.transform(augmented_X_train_raw)
@@ -191,19 +200,20 @@ def main():
             X_train_augmented, augmented_y_train.reset_index(drop=True)
         )
 
-        # Sidebar progress bar for model training on augmented data
-        st.sidebar.write("Training models on augmented data...")
-        model_train_bar_aug = st.sidebar.progress(0)
+        # Training models on augmented data
+        status_text = st.sidebar.empty()
+        progress_bar = st.sidebar.progress(0)
 
-        # Train and evaluate models on augmented data
-        st.write("## Models Trained on Augmented Data")
+        status_text.text("Training models on augmented data...")
+        total_models = len(models)
         for idx, (model_name, model) in enumerate(models.items()):
-            st.write(f"### {model_name}")
             # Train the model
             model.fit(X_train_res_augmented, y_train_res_augmented)
 
-            # Update progress bar
-            model_train_bar_aug.progress(int(((idx + 1) / total_models) * 100))
+            # Update progress bar and status message
+            progress = int(((idx + 1) / total_models) * 100)
+            progress_bar.progress(progress)
+            status_text.text(f"Training models on augmented data... ({progress}%)")
 
             # Make predictions
             y_pred = model.predict(X_test)
@@ -221,6 +231,7 @@ def main():
             roc_auc = roc_auc_score(y_test, y_prob)
 
             # Display results
+            st.write(f"### {model_name}")
             st.write(f"**Accuracy:** {accuracy:.4f}")
             st.write(f"**Precision:** {precision:.4f}")
             st.write(f"**Recall:** {recall:.4f}")
@@ -240,7 +251,11 @@ def main():
             st.text(classification_report(y_test, y_pred, zero_division=0))
             st.write("-" * 60)
 
-        st.sidebar.write("Model training on augmented data completed.")
+        # After training all models on augmented data
+        progress_bar.empty()
+        status_text.text("Model training on augmented data complete.")
+        time.sleep(1)
+        status_text.empty()
 
         # Sample input for prediction
         st.write("### Sample Prediction")
