@@ -30,3 +30,7 @@ output.json
 models/chatbot/*.tar.gz
 models/*.tag.gz
 models/data_analysis/*.pkl
+
+# Processed CSV files
+data/processed/cleaned_file.csv
+data/processed/filtered_data.csv
