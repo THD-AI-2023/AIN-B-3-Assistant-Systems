@@ -35,6 +35,29 @@ nlu:
     - No way
     - Absolutely not
 
+- intent: ask_data_analysis
+  examples: |
+    - Can you provide a data analysis summary?
+    - Please show me the data analysis.
+    - I'd like to see the data analysis.
+    - Show me the data correlations.
+    - Provide the descriptive statistics.
+    - Can you display the data insights?
+    - I want to see the data analysis summary.
+    - Give me a summary of the data.
+    - Please provide data analysis.
+    - Show data analysis results.
+    - Could you present the data analysis?
+    - I'd like to review the data analysis.
+    - Can you share the data analysis with me?
+    - What are the data correlations?
+    - Could you explain the data analysis?
+    - I'd like to understand the data better.
+    - Show me the statistical summary.
+    - Provide the data analysis.
+    - Give me the insights from the data.
+    - Please display the data summary.
+
 - intent: chitchat
   examples: |
     - How are you?
@@ -44,7 +67,6 @@ nlu:
     - Can you sing a song?
     - Do you like pizza?
     - What's your favorite color?
-    - Tell me something interesting
     - Do you have any hobbies?
     - What's your favorite movie?
     - Can you dance?
@@ -52,8 +74,35 @@ nlu:
     - What's your favorite book?
     - Do you have any pets?
     - What's the weather like?
-    - Do you know any fun facts?
     - What's your favorite food?
     - Are you a robot?
     - How old are you?
     - Where are you from?
+
+- intent: chitchat
+  examples: |
+    - How are you?
+    - Tell me a joke
+    - What's your name?
+    - What's the meaning of life?
+    - Can you sing a song?
+    - Do you like pizza?
+    - What's your favorite color?
+    - Do you have any hobbies?
+    - What's your favorite movie?
+    - Can you dance?
+    - Do you like music?
+    - What's your favorite book?
+    - Do you have any pets?
+    - What's the weather like?
+    - What's your favorite food?
+    - Are you a robot?
+    - How old are you?
+    - Where are you from?
+
+- intent: out_of_scope
+  examples: |
+    - What's the capital of France?
+    - How do I bake a cake?
+    - Tell me about quantum physics.
+    - What's the population of Mars?

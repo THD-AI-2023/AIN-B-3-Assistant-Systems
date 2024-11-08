@@ -12,27 +12,30 @@ def main():
     menu = ["Home", "Data Analysis", "Recommendations", "Chatbot"]
     choice = st.sidebar.selectbox("Menu", menu)
 
+    if "data_analysis" not in st.session_state:
+        st.session_state["data_analysis"] = DataAnalysis()
+
     if choice == "Home":
         st.subheader("Welcome to Project Apero")
         st.write("Use the sidebar to navigate through the application.")
 
     elif choice == "Data Analysis":
-        data_analysis = DataAnalysis()
+        data_analysis = st.session_state["data_analysis"]
         data_analysis.run()
 
     elif choice == "Recommendations":
         st.subheader("Personalized Recommendations")
-        # TODO: Implement the recommendation system interface
-        st.write("Recommendation system interface will be implemented here.")
+        st.write("This section will display personalized recommendations based on your data filters.")
+        # TODO: Implement recommendation system interface here if needed.
 
     elif choice == "Chatbot":
         st.subheader("Chatbot Assistance")
-        if "key" not in st.session_state:
-            st.session_state["key"] = os.urandom(24).hex()
+        if "session_id" not in st.session_state:
+            st.session_state["session_id"] = os.urandom(24).hex()
         rasa_server_url = os.getenv(
             "RASA_SERVER", "http://localhost:5005/webhooks/rest/webhook"
         )
-        chatbot = Chatbot(rasa_url=rasa_server_url, session_id=st.session_state["key"])
+        chatbot = Chatbot(rasa_url=rasa_server_url, session_id=st.session_state["session_id"])
         chatbot.run()
 
 if __name__ == "__main__":

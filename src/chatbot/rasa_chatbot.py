@@ -44,15 +44,28 @@ class Chatbot:
 
         st.markdown("### Chatbot")
 
-        for message in st.session_state["messages"]:
-            if message["role"] == "user":
-                with st.chat_message("user"):
-                    st.markdown(message["content"])
-            else:
-                with st.chat_message("assistant"):
-                    st.markdown(message["content"])
+        # Display message suggestions if no messages have been sent yet
+        if not st.session_state["messages"]:
+            with st.sidebar:
+                st.write("#### Message Suggestions")
+                suggestions = [
+                    "Hello!",
+                    "Can you provide a data analysis summary?",
+                    "I need a health recommendation.",
+                    "Tell me a joke.",
+                    "What's your favorite color?"
+                ]
+                for suggestion in suggestions:
+                    if st.button(suggestion):
+                        st.session_state["input"] = suggestion
 
-        if prompt := st.chat_input("Enter your message:"):
+        # Check if there is an input from suggestions or chat input
+        if "input" in st.session_state:
+            prompt = st.session_state.pop("input")
+        else:
+            prompt = st.chat_input("Enter your message:")
+
+        if prompt:
             st.session_state["messages"].append({"role": "user", "content": prompt})
             with st.chat_message("user"):
                 st.markdown(prompt)

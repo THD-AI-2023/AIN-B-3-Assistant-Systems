@@ -1,3 +1,4 @@
+import os
 import time
 import pandas as pd
 import streamlit as st
@@ -24,7 +25,7 @@ from data.data_visualization import visualize_data
 
 class DataAnalysis:
     """
-    A class to encapsulate the data analysis logic.
+    A class to encapsulate the data analysis logic with interactive widgets.
     """
 
     def __init__(self):
@@ -57,7 +58,7 @@ class DataAnalysis:
 
     def run(self):
         """
-        Executes the data analysis workflow.
+        Executes the data analysis workflow with interactive widgets.
         """
         st.subheader("Data Analysis")
 
@@ -68,15 +69,15 @@ class DataAnalysis:
         # Data loading and preprocessing
         self.load_and_preprocess_data(status_text, progress_bar)
 
-        # Display the preprocessed data
-        st.write("### Preprocessed Data")
-        st.dataframe(self.data.head(20))  # Show 20 rows
+        # Display data filters
+        self.display_filters()
 
         # Visualize data
         self.visualize_data(status_text, progress_bar)
 
         # Split data
-        self.split_data()
+        if not self.split_data():
+            return  # Stop execution if splitting fails
 
         # Augment data
         self.augment_data()
@@ -88,10 +89,12 @@ class DataAnalysis:
         self.fit_preprocessor()
 
         # Train models on real data
-        self.train_models_on_real_data(status_text, progress_bar)
+        if not self.train_models_on_real_data(status_text, progress_bar):
+            return  # Stop execution if training fails
 
         # Train models on augmented data
-        self.train_models_on_augmented_data(status_text, progress_bar)
+        if not self.train_models_on_augmented_data(status_text, progress_bar):
+            return  # Stop execution if training fails
 
         # Make sample prediction
         self.make_sample_prediction()
@@ -107,6 +110,80 @@ class DataAnalysis:
         progress_bar.progress(50)
         self.data.reset_index(drop=True, inplace=True)
         progress_bar.progress(75)
+
+    def display_filters(self):
+        """
+        Displays interactive widgets for data filtering within a collapsible expander.
+        """
+        with st.expander("Data Filters", expanded=False):
+            st.write("### Filter the Data")
+
+            # Initialize session state for filters
+            if 'age_range' not in st.session_state:
+                st.session_state['age_range'] = (int(self.data['age'].min()), int(self.data['age'].max()))
+            if 'gender_selected' not in st.session_state:
+                st.session_state['gender_selected'] = self.data['gender'].unique().tolist()
+            if 'hypertension_selected' not in st.session_state:
+                st.session_state['hypertension_selected'] = self.data['hypertension'].unique().tolist()
+            if 'heart_disease_selected' not in st.session_state:
+                st.session_state['heart_disease_selected'] = self.data['heart_disease'].unique().tolist()
+            if 'smoking_selected' not in st.session_state:
+                st.session_state['smoking_selected'] = self.data['smoking_status'].unique().tolist()
+
+            # Age filter
+            age_min, age_max = int(self.data['age'].min()), int(self.data['age'].max())
+            age_range = st.slider('Age Range', min_value=age_min, max_value=age_max, value=st.session_state['age_range'])
+            st.session_state['age_range'] = age_range
+
+            # Gender filter
+            gender_options = self.data['gender'].unique().tolist()
+            gender_selected = st.multiselect('Gender', options=gender_options, default=st.session_state['gender_selected'])
+            st.session_state['gender_selected'] = gender_selected
+
+            # Hypertension filter
+            hypertension_options = self.data['hypertension'].unique().tolist()
+            hypertension_selected = st.multiselect('Hypertension', options=hypertension_options, default=st.session_state['hypertension_selected'])
+            st.session_state['hypertension_selected'] = hypertension_selected
+
+            # Heart disease filter
+            heart_disease_options = self.data['heart_disease'].unique().tolist()
+            heart_disease_selected = st.multiselect('Heart Disease', options=heart_disease_options, default=st.session_state['heart_disease_selected'])
+            st.session_state['heart_disease_selected'] = heart_disease_selected
+
+            # Smoking status filter
+            smoking_options = self.data['smoking_status'].unique().tolist()
+            smoking_selected = st.multiselect('Smoking Status', options=smoking_options, default=st.session_state['smoking_selected'])
+            st.session_state['smoking_selected'] = smoking_selected
+
+        # Filter the data based on selections
+        filtered_data = self.data[
+            (self.data['age'] >= st.session_state['age_range'][0]) &
+            (self.data['age'] <= st.session_state['age_range'][1]) &
+            (self.data['gender'].isin(st.session_state['gender_selected'])) &
+            (self.data['hypertension'].isin(st.session_state['hypertension_selected'])) &
+            (self.data['heart_disease'].isin(st.session_state['heart_disease_selected'])) &
+            (self.data['smoking_status'].isin(st.session_state['smoking_selected']))
+        ]
+
+        if filtered_data.empty:
+            st.error("No data available for the selected filters. Please adjust your filters.")
+            st.stop()
+
+        # Update the data attribute to use the filtered data
+        self.data = filtered_data.reset_index(drop=True)
+
+        # Store filtered data in session state
+        st.session_state['filtered_data'] = self.data
+
+        # Save the filtered data to a CSV file for chatbot access
+        filtered_data_path = os.path.join("data", "processed", "filtered_data.csv")
+        os.makedirs(os.path.dirname(filtered_data_path), exist_ok=True)
+        self.data.to_csv(filtered_data_path, index=False)
+
+        # Display the filtered data
+        st.write("### Filtered Data")
+        st.dataframe(self.data.head(20))  # Show first 20 rows
+
 
     def visualize_data(self, status_text, progress_bar):
         """
@@ -128,6 +205,16 @@ class DataAnalysis:
         self.X = self.data.drop(columns=["stroke"])
         self.y = self.data["stroke"]
 
+        # Check if there are enough samples to split
+        if len(self.X) < 10:
+            st.error("Not enough data to split into training and testing sets. Please adjust your filters.")
+            return False
+
+        # Check if both classes are present
+        if len(self.y.unique()) < 2:
+            st.error("Data does not contain both classes after filtering. Please adjust your filters.")
+            return False
+
         # Split the dataset with stratification
         (
             self.X_train_raw,
@@ -137,6 +224,7 @@ class DataAnalysis:
         ) = train_test_split(
             self.X, self.y, test_size=0.2, stratify=self.y, random_state=42
         )
+        return True
 
     def augment_data(self):
         """
@@ -182,9 +270,13 @@ class DataAnalysis:
         """
         # Handle class imbalance using SMOTE on real data
         sm = SMOTE(random_state=42)
-        X_train_res_real, y_train_res_real = sm.fit_resample(
-            self.X_train_real, self.y_train.reset_index(drop=True)
-        )
+        try:
+            X_train_res_real, y_train_res_real = sm.fit_resample(
+                self.X_train_real, self.y_train.reset_index(drop=True)
+            )
+        except ValueError as e:
+            st.error(f"SMOTE error: {e}")
+            return False
 
         # Initialize models
         self.models = {
@@ -200,7 +292,11 @@ class DataAnalysis:
         total_models = len(self.models)
         for idx, (model_name, model) in enumerate(self.models.items()):
             # Train the model
-            model.fit(X_train_res_real, y_train_res_real)
+            try:
+                model.fit(X_train_res_real, y_train_res_real)
+            except Exception as e:
+                st.error(f"Error training {model_name}: {e}")
+                continue
 
             # Update progress bar and status message
             progress = int(((idx + 1) / total_models) * 100)
@@ -215,6 +311,7 @@ class DataAnalysis:
         status_text.text("Model training on real data complete.")
         time.sleep(1)
         status_text.empty()
+        return True
 
     def train_models_on_augmented_data(self, status_text, progress_bar):
         """
@@ -225,16 +322,24 @@ class DataAnalysis:
 
         # Handle class imbalance using SMOTE on augmented data
         sm = SMOTE(random_state=42)
-        X_train_res_augmented, y_train_res_augmented = sm.fit_resample(
-            X_train_augmented, self.augmented_y_train.reset_index(drop=True)
-        )
+        try:
+            X_train_res_augmented, y_train_res_augmented = sm.fit_resample(
+                X_train_augmented, self.augmented_y_train.reset_index(drop=True)
+            )
+        except ValueError as e:
+            st.error(f"SMOTE error: {e}")
+            return False
 
         # Training models on augmented data
         status_text.text("Training models on augmented data...")
         total_models = len(self.models)
         for idx, (model_name, model) in enumerate(self.models.items()):
             # Train the model
-            model.fit(X_train_res_augmented, y_train_res_augmented)
+            try:
+                model.fit(X_train_res_augmented, y_train_res_augmented)
+            except Exception as e:
+                st.error(f"Error training {model_name}: {e}")
+                continue
 
             # Update progress bar and status message
             progress = int(((idx + 1) / total_models) * 100)
@@ -249,6 +354,7 @@ class DataAnalysis:
         status_text.text("Model training on augmented data complete.")
         time.sleep(1)
         status_text.empty()
+        return True
 
     def evaluate_model(self, model, model_name, data_type):
         """

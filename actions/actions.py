@@ -1,10 +1,34 @@
 from typing import Any, Text, Dict, List
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
-from rasa_sdk.events import SlotSet
 import pandas as pd
-import joblib
 import os
+
+class ActionShowDataAnalysis(Action):
+    def name(self) -> Text:
+        return "action_show_data_analysis"
+
+    def run(self, dispatcher: CollectingDispatcher,
+            tracker: Tracker,
+            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
+
+        # Load the filtered data
+        data_path = os.path.join("data", "processed", "filtered_data.csv")
+        if not os.path.exists(data_path):
+            dispatcher.utter_message(text="Filtered data is not available.")
+            return []
+
+        data = pd.read_csv(data_path)
+
+        # Provide correlation matrix
+        correlation = data.corr().to_string()
+        dispatcher.utter_message(text=f"Here are the data correlations:\n```\n{correlation}\n```")
+
+        # Provide descriptive statistics
+        descriptive = data.describe().to_string()
+        dispatcher.utter_message(text=f"Here are the descriptive statistics:\n```\n{descriptive}\n```")
+
+        return []
 
 class ActionGenerateRecommendation(Action):
     def name(self) -> Text:
@@ -21,10 +45,8 @@ class ActionGenerateRecommendation(Action):
         bmi = tracker.get_slot("bmi")
         heart_disease = tracker.get_slot("heart_disease")
 
-        # TODO: Implement logic to generate recommendations based on user data
-        # Example:
         # Load the trained model
-        model_path = os.path.join("models", "recommendation_model.pkl")
+        model_path = os.path.join("models", "best_model.pkl")
         if not os.path.exists(model_path):
             dispatcher.utter_message(text="Recommendation model is not available.")
             return []
@@ -40,37 +62,19 @@ class ActionGenerateRecommendation(Action):
             'heart_disease': [heart_disease]
         })
 
-        # Generate prediction
-        prediction = model.predict(input_data)[0]
-        recommendation = "Based on your data, we recommend the following services: ..."
-
-        dispatcher.utter_message(text=recommendation)
-        return []
-
-class ActionShowDataAnalysis(Action):
-    def name(self) -> Text:
-        return "action_show_data_analysis"
-
-    def run(self, dispatcher: CollectingDispatcher,
-            tracker: Tracker,
-            domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-
-        # TODO: Implement logic to fetch and display data analysis results
-        # Example:
-        # Load preprocessed data
-        data_path = os.path.join("data", "processed", "processed_data.csv")
-        if not os.path.exists(data_path):
-            dispatcher.utter_message(text="Data analysis results are not available.")
+        # Preprocess input data
+        # Load the preprocessor
+        preprocessor_path = os.path.join("models", "preprocessor.pkl")
+        if not os.path.exists(preprocessor_path):
+            dispatcher.utter_message(text="Preprocessor is not available.")
             return []
 
-        data = pd.read_csv(data_path)
+        preprocessor = joblib.load(preprocessor_path)
+        input_data_processed = preprocessor.transform(input_data)
 
-        # Provide correlation matrix
-        correlation = data.corr().to_string()
-        dispatcher.utter_message(text=f"Here are the data correlations:\n```\n{correlation}\n```")
+        # Generate prediction
+        prediction = model.predict(input_data_processed)[0]
+        recommendation = f"Based on your data, we predict a stroke risk of {prediction}. Please consult a healthcare professional for personalized advice."
 
-        # Provide descriptive statistics
-        descriptive = data.describe().to_string()
-        dispatcher.utter_message(text=f"Here are the descriptive statistics:\n```\n{descriptive}\n```")
-
+        dispatcher.utter_message(text=recommendation)
         return []
