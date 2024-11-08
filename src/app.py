@@ -1,4 +1,5 @@
 import os
+import pandas as pd
 import streamlit as st
 from chatbot.rasa_chatbot import Chatbot
 from data.data_analysis import DataAnalysis
@@ -12,24 +13,53 @@ def main():
     menu = ["Home", "Data Analysis", "Recommendations", "Chatbot"]
     choice = st.sidebar.selectbox("Menu", menu)
 
+    # Initialize DataAnalysis instance in session state
     if "data_analysis" not in st.session_state:
         st.session_state["data_analysis"] = DataAnalysis()
 
     data_analysis = st.session_state["data_analysis"]
 
-    # Display saved model files in the sidebar
-    with st.sidebar.expander("Saved Models", expanded=True):
-        model_dir = "models"
-        if os.path.exists(model_dir):
-            model_files = os.listdir(model_dir)
+    # Display saved data analysis model files in the sidebar
+    with st.sidebar.expander("Data Analysis Models", expanded=True):
+        data_analysis_model_dir = os.path.join("models", "data_analysis")
+        if os.path.exists(data_analysis_model_dir):
+            model_files = os.listdir(data_analysis_model_dir)
             if model_files:
-                st.write("**Available Models:**")
+                st.write("**Available Data Analysis Models:**")
                 for model_file in model_files:
                     st.write(f"- {model_file}")
             else:
-                st.write("No models found.")
+                st.write("No data analysis models found.")
         else:
-            st.write("Models directory does not exist.")
+            st.write("Data analysis models directory does not exist.")
+
+    # Display chatbot model files in the sidebar
+    with st.sidebar.expander("Chatbot Models", expanded=True):
+        chatbot_model_dir = os.path.join("models", "chatbot")
+        if os.path.exists(chatbot_model_dir):
+            chatbot_model_files = os.listdir(chatbot_model_dir)
+            if chatbot_model_files:
+                st.write("**Available Chatbot Models:**")
+                for model_file in chatbot_model_files:
+                    st.write(f"- {model_file}")
+            else:
+                st.write("No chatbot models found.")
+        else:
+            st.write("Chatbot models directory does not exist.")
+
+    # Display model evaluations in the sidebar
+    with st.sidebar.expander("Model Evaluations", expanded=False):
+        eval_dir = os.path.join("models", "data_analysis", "evaluations")
+        eval_file = os.path.join(eval_dir, "model_evaluations.csv")
+        if os.path.exists(eval_file):
+            try:
+                evaluations = pd.read_csv(eval_file)
+                st.write("**Data Analysis Model Evaluations:**")
+                st.dataframe(evaluations)
+            except Exception as e:
+                st.write(f"Error loading model evaluations: {e}")
+        else:
+            st.write("Model evaluations are not available.")
 
     if choice == "Home":
         st.subheader("Welcome to Project Apero")

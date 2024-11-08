@@ -20,50 +20,31 @@ class ActionShowDataAnalysis(Action):
 
         data = pd.read_csv(data_path)
 
-        # Load the models
-        models = {}
-        model_names = [
-            "Logistic_Regression_real.pkl",
-            "Support_Vector_Machine_real.pkl",
-            "Random_Forest_real.pkl",
-            "Logistic_Regression_augmented.pkl",
-            "Support_Vector_Machine_augmented.pkl",
-            "Random_Forest_augmented.pkl",
-        ]
-        missing_models = []
-        for model_name in model_names:
-            model_path = os.path.join("models", model_name)
-            if os.path.exists(model_path):
-                try:
-                    models[model_name] = joblib.load(model_path)
-                except Exception as e:
-                    dispatcher.utter_message(text=f"Error loading model {model_name}: {e}")
-            else:
-                missing_models.append(model_name)
+        # Select only numerical columns for correlation
+        numerical_columns = ["age", "hypertension", "heart_disease", "avg_glucose_level", "bmi", "stroke"]
+        data_numeric = data[numerical_columns]
 
-        if missing_models:
-            dispatcher.utter_message(text=f"The following models are missing: {', '.join(missing_models)}.")
-            return []
-
-        # Provide correlation matrix
+        # Compute correlation matrix
         try:
-            correlation = data.corr().to_string()
+            correlation = data_numeric.corr().to_string()
             dispatcher.utter_message(text=f"Here are the data correlations:\n```\n{correlation}\n```")
         except Exception as e:
             dispatcher.utter_message(text=f"Error generating correlation matrix: {e}")
 
         # Provide descriptive statistics
         try:
-            descriptive = data.describe().to_string()
+            descriptive = data_numeric.describe().to_string()
             dispatcher.utter_message(text=f"Here are the descriptive statistics:\n```\n{descriptive}\n```")
         except Exception as e:
             dispatcher.utter_message(text=f"Error generating descriptive statistics: {e}")
 
-        evaluation_path = os.path.join("models", "model_evaluations.csv")
+        # Provide model evaluation summaries if available
+        evaluation_path = os.path.join("models", "data_analysis", "evaluations", "model_evaluations.csv")
         if os.path.exists(evaluation_path):
             try:
                 evaluations = pd.read_csv(evaluation_path)
-                dispatcher.utter_message(text=f"**Model Evaluations:**\n```\n{evaluations.to_string(index=False)}\n```")
+                evaluations_str = evaluations.to_string(index=False)
+                dispatcher.utter_message(text=f"**Model Evaluations:**\n```\n{evaluations_str}\n```")
             except Exception as e:
                 dispatcher.utter_message(text=f"Error loading model evaluations: {e}")
         else:
@@ -91,9 +72,9 @@ class ActionGenerateRecommendation(Action):
             dispatcher.utter_message(text="I'm missing some information to provide a recommendation. Please provide all required details.")
             return []
 
-        # Load the best performing model
+        # Load the best performing data analysis model
         # Assuming Random Forest on augmented data is the best model
-        model_path = os.path.join("models", "Random_Forest_augmented.pkl")
+        model_path = os.path.join("models", "data_analysis", "Random_Forest_augmented.pkl")
         if not os.path.exists(model_path):
             dispatcher.utter_message(text="Recommendation model is not available.")
             return []
@@ -105,7 +86,7 @@ class ActionGenerateRecommendation(Action):
             return []
 
         # Load preprocessor
-        preprocessor_path = os.path.join("models", "preprocessor.pkl")
+        preprocessor_path = os.path.join("models", "data_analysis", "preprocessor.pkl")
         if not os.path.exists(preprocessor_path):
             dispatcher.utter_message(text="Preprocessor is not available.")
             return []

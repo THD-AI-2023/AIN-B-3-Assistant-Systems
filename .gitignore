@@ -26,5 +26,6 @@ output.json
 .kaggle/kaggle.json
 
 # Models
-models/*.tar.gz
-models/*.pkl
+models/chatbot/*.tar.gz
+models/*.tag.gz
+models/data_analysis/*.pkl
