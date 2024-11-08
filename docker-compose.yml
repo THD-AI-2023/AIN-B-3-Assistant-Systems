@@ -30,6 +30,9 @@ services:
     platform: linux/amd64
     ports:
       - "5055:5055"
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
     restart: unless-stopped
 
   streamlit:
@@ -40,6 +43,9 @@ services:
     platform: linux/amd64
     ports:
       - "8501:8501"
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
     environment:
       - RASA_SERVER=http://rasa:5005/webhooks/rest/webhook
     depends_on:

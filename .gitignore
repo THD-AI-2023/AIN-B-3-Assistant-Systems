@@ -27,3 +27,4 @@ output.json
 
 # Models
 models/*.tar.gz
+models/*.pkl

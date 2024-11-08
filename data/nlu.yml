@@ -58,26 +58,17 @@ nlu:
     - Give me the insights from the data.
     - Please display the data summary.
 
-- intent: chitchat
+- intent: ask_recommendation
   examples: |
-    - How are you?
-    - Tell me a joke
-    - What's your name?
-    - What's the meaning of life?
-    - Can you sing a song?
-    - Do you like pizza?
-    - What's your favorite color?
-    - Do you have any hobbies?
-    - What's your favorite movie?
-    - Can you dance?
-    - Do you like music?
-    - What's your favorite book?
-    - Do you have any pets?
-    - What's the weather like?
-    - What's your favorite food?
-    - Are you a robot?
-    - How old are you?
-    - Where are you from?
+    - Can you generate a recommendation for me?
+    - I need a health recommendation.
+    - Provide a recommendation.
+    - Suggest something based on my data.
+    - Give me a recommendation.
+    - What do you recommend?
+    - I'd like a recommendation.
+    - Recommend something for me.
+    - Can you offer a recommendation?
 
 - intent: chitchat
   examples: |

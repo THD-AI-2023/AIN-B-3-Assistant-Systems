@@ -15,12 +15,27 @@ def main():
     if "data_analysis" not in st.session_state:
         st.session_state["data_analysis"] = DataAnalysis()
 
+    data_analysis = st.session_state["data_analysis"]
+
+    # Display saved model files in the sidebar
+    with st.sidebar.expander("Saved Models", expanded=True):
+        model_dir = "models"
+        if os.path.exists(model_dir):
+            model_files = os.listdir(model_dir)
+            if model_files:
+                st.write("**Available Models:**")
+                for model_file in model_files:
+                    st.write(f"- {model_file}")
+            else:
+                st.write("No models found.")
+        else:
+            st.write("Models directory does not exist.")
+
     if choice == "Home":
         st.subheader("Welcome to Project Apero")
         st.write("Use the sidebar to navigate through the application.")
 
     elif choice == "Data Analysis":
-        data_analysis = st.session_state["data_analysis"]
         data_analysis.run()
 
     elif choice == "Recommendations":

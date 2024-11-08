@@ -22,6 +22,7 @@ from data.data_loader import load_data
 from data.data_preprocessor import preprocess_data
 from data.data_augmentation import augment_data
 from data.data_visualization import visualize_data
+import joblib
 
 class DataAnalysis:
     """
@@ -69,7 +70,7 @@ class DataAnalysis:
         # Data loading and preprocessing
         self.load_and_preprocess_data(status_text, progress_bar)
 
-        # Display data filters
+        # Display data filters within a collapsible expander
         self.display_filters()
 
         # Visualize data
@@ -88,13 +89,13 @@ class DataAnalysis:
         # Fit preprocessor
         self.fit_preprocessor()
 
-        # Train models on real data
-        if not self.train_models_on_real_data(status_text, progress_bar):
-            return  # Stop execution if training fails
-
-        # Train models on augmented data
-        if not self.train_models_on_augmented_data(status_text, progress_bar):
-            return  # Stop execution if training fails
+        # Check if models are already trained and saved
+        if not self.models_trained():
+            # Train models
+            self.train_models(status_text, progress_bar)
+        else:
+            st.success("Models are already trained and loaded.")
+            self.load_trained_models()
 
         # Make sample prediction
         self.make_sample_prediction()
@@ -105,11 +106,14 @@ class DataAnalysis:
         """
         status_text.text("Loading data...")
         self.data = load_data()
-        progress_bar.progress(25)
+        if self.data.empty:
+            st.error("Failed to load data.")
+            st.stop()
+        progress_bar.progress(10)
         self.data = preprocess_data(self.data)
-        progress_bar.progress(50)
+        progress_bar.progress(30)
         self.data.reset_index(drop=True, inplace=True)
-        progress_bar.progress(75)
+        progress_bar.progress(50)
 
     def display_filters(self):
         """
@@ -184,16 +188,15 @@ class DataAnalysis:
         st.write("### Filtered Data")
         st.dataframe(self.data.head(20))  # Show first 20 rows
 
-
     def visualize_data(self, status_text, progress_bar):
         """
         Visualizes the data.
         """
         visualize_data(self.data)
-        progress_bar.progress(100)
+        progress_bar.progress(80)
         time.sleep(0.5)
         progress_bar.empty()
-        status_text.text("Data loading complete.")
+        status_text.text("Data loading and visualization complete.")
         time.sleep(1)
         status_text.empty()
 
@@ -216,15 +219,14 @@ class DataAnalysis:
             return False
 
         # Split the dataset with stratification
-        (
-            self.X_train_raw,
-            self.X_test_raw,
-            self.y_train,
-            self.y_test,
-        ) = train_test_split(
-            self.X, self.y, test_size=0.2, stratify=self.y, random_state=42
-        )
-        return True
+        try:
+            self.X_train_raw, self.X_test_raw, self.y_train, self.y_test = train_test_split(
+                self.X, self.y, test_size=0.2, stratify=self.y, random_state=42
+            )
+            return True
+        except ValueError as e:
+            st.error(f"Error during train-test split: {e}")
+            return False
 
     def augment_data(self):
         """
@@ -258,15 +260,57 @@ class DataAnalysis:
 
     def fit_preprocessor(self):
         """
-        Fits the preprocessor on the training data.
+        Fits the preprocessor on the training data and saves it.
         """
         # Fit preprocessor on real training data
         self.X_train_real = self.preprocessor.fit_transform(self.X_train_raw)
         self.X_test = self.preprocessor.transform(self.X_test_raw)
 
-    def train_models_on_real_data(self, status_text, progress_bar):
+        # Save the preprocessor to disk
+        preprocessor_path = os.path.join("models", "preprocessor.pkl")
+        os.makedirs(os.path.dirname(preprocessor_path), exist_ok=True)
+        joblib.dump(self.preprocessor, preprocessor_path)
+
+    def models_trained(self):
         """
-        Trains machine learning models on the real data.
+        Checks if models are already trained and loaded.
+        """
+        model_files = [
+            "Logistic_Regression_real.pkl",
+            "Support_Vector_Machine_real.pkl",
+            "Random_Forest_real.pkl",
+            "Logistic_Regression_augmented.pkl",
+            "Support_Vector_Machine_augmented.pkl",
+            "Random_Forest_augmented.pkl",
+        ]
+        for model_file in model_files:
+            model_path = os.path.join("models", model_file)
+            if not os.path.exists(model_path):
+                return False
+        return True
+
+    def load_trained_models(self):
+        """
+        Loads trained models from disk.
+        """
+        model_names = [
+            "Logistic_Regression_real.pkl",
+            "Support_Vector_Machine_real.pkl",
+            "Random_Forest_real.pkl",
+            "Logistic_Regression_augmented.pkl",
+            "Support_Vector_Machine_augmented.pkl",
+            "Random_Forest_augmented.pkl",
+        ]
+        for model_name in model_names:
+            model_path = os.path.join("models", model_name)
+            try:
+                self.models[model_name] = joblib.load(model_path)
+            except Exception as e:
+                st.error(f"Error loading model {model_name}: {e}")
+
+    def train_models(self, status_text, progress_bar):
+        """
+        Trains machine learning models on real and augmented data, saves them, and displays evaluation metrics.
         """
         # Handle class imbalance using SMOTE on real data
         sm = SMOTE(random_state=42)
@@ -275,131 +319,133 @@ class DataAnalysis:
                 self.X_train_real, self.y_train.reset_index(drop=True)
             )
         except ValueError as e:
-            st.error(f"SMOTE error: {e}")
-            return False
+            st.error(f"SMOTE error on real data: {e}")
+            return
 
         # Initialize models
         self.models = {
-            "Logistic Regression": LogisticRegression(
+            "Logistic_Regression_real.pkl": LogisticRegression(
                 max_iter=1000, class_weight="balanced", solver="liblinear"
             ),
-            "Support Vector Machine": SVC(class_weight="balanced", probability=True),
-            "Random Forest": RandomForestClassifier(class_weight="balanced"),
+            "Support_Vector_Machine_real.pkl": SVC(
+                class_weight="balanced", probability=True, random_state=42
+            ),
+            "Random_Forest_real.pkl": RandomForestClassifier(
+                class_weight="balanced", random_state=42
+            ),
         }
 
         # Training models on real data
         status_text.text("Training models on real data...")
         total_models = len(self.models)
         for idx, (model_name, model) in enumerate(self.models.items()):
-            # Train the model
             try:
                 model.fit(X_train_res_real, y_train_res_real)
+                st.write(f"Trained {model_name.split('_')[0]} on real data.")
+                # Save the model
+                model_path = os.path.join("models", model_name)
+                joblib.dump(model, model_path)
+                st.write(f"Saved {model_name} to disk.")
+                # Evaluate model
+                self.evaluate_model(model, model_name, self.X_test, self.y_test, data_type="Real Data")
             except Exception as e:
                 st.error(f"Error training {model_name}: {e}")
                 continue
-
-            # Update progress bar and status message
-            progress = int(((idx + 1) / total_models) * 100)
+            # Update progress
+            progress = int(((idx + 1) / total_models) * 50)
             progress_bar.progress(progress)
-            status_text.text(f"Training models on real data... ({progress}%)")
-
-            # Evaluate and display results
-            self.evaluate_model(model, model_name, "Real Data")
-
-        # After training all models on real data
-        progress_bar.empty()
-        status_text.text("Model training on real data complete.")
-        time.sleep(1)
-        status_text.empty()
-        return True
-
-    def train_models_on_augmented_data(self, status_text, progress_bar):
-        """
-        Trains machine learning models on the augmented data.
-        """
-        # Preprocess augmented training data
-        X_train_augmented = self.preprocessor.transform(self.augmented_X_train_raw)
 
         # Handle class imbalance using SMOTE on augmented data
-        sm = SMOTE(random_state=42)
+        sm_aug = SMOTE(random_state=42)
         try:
-            X_train_res_augmented, y_train_res_augmented = sm.fit_resample(
-                X_train_augmented, self.augmented_y_train.reset_index(drop=True)
+            X_train_res_augmented, y_train_res_augmented = sm_aug.fit_resample(
+                self.preprocessor.transform(self.augmented_X_train_raw),
+                self.augmented_y_train.reset_index(drop=True),
             )
         except ValueError as e:
-            st.error(f"SMOTE error: {e}")
-            return False
+            st.error(f"SMOTE error on augmented data: {e}")
+            return
+
+        # Initialize models for augmented data
+        augmented_models = {
+            "Logistic_Regression_augmented.pkl": LogisticRegression(
+                max_iter=1000, class_weight="balanced", solver="liblinear"
+            ),
+            "Support_Vector_Machine_augmented.pkl": SVC(
+                class_weight="balanced", probability=True, random_state=42
+            ),
+            "Random_Forest_augmented.pkl": RandomForestClassifier(
+                class_weight="balanced", random_state=42
+            ),
+        }
 
         # Training models on augmented data
         status_text.text("Training models on augmented data...")
-        total_models = len(self.models)
-        for idx, (model_name, model) in enumerate(self.models.items()):
-            # Train the model
+        for idx, (model_name, model) in enumerate(augmented_models.items()):
             try:
                 model.fit(X_train_res_augmented, y_train_res_augmented)
+                st.write(f"Trained {model_name.split('_')[0]} on augmented data.")
+                # Save the model
+                model_path = os.path.join("models", model_name)
+                joblib.dump(model, model_path)
+                st.write(f"Saved {model_name} to disk.")
+                # Add to main models dict
+                self.models[model_name] = model
+                # Evaluate model
+                self.evaluate_model(model, model_name, self.X_test, self.y_test, data_type="Augmented Data")
             except Exception as e:
                 st.error(f"Error training {model_name}: {e}")
                 continue
-
-            # Update progress bar and status message
-            progress = int(((idx + 1) / total_models) * 100)
+            # Update progress
+            progress = 50 + int(((idx + 1) / len(augmented_models)) * 50)  # Next 50% for augmented data
             progress_bar.progress(progress)
-            status_text.text(f"Training models on augmented data... ({progress}%)")
 
-            # Evaluate and display results
-            self.evaluate_model(model, model_name, "Augmented Data")
-
-        # After training all models on augmented data
         progress_bar.empty()
-        status_text.text("Model training on augmented data complete.")
+        status_text.text("Model training complete.")
         time.sleep(1)
         status_text.empty()
-        return True
 
-    def evaluate_model(self, model, model_name, data_type):
+    def evaluate_model(self, model, model_name, X_test, y_test, data_type=""):
         """
         Evaluates the model and displays metrics.
-
-        Parameters:
-        - model: Trained machine learning model.
-        - model_name (str): Name of the model.
-        - data_type (str): Indicates whether the model was trained on real or augmented data.
         """
-        # Make predictions
-        y_pred = model.predict(self.X_test)
-        y_prob = (
-            model.predict_proba(self.X_test)[:, 1]
-            if hasattr(model, "predict_proba")
-            else model.decision_function(self.X_test)
-        )
+        try:
+            y_pred = model.predict(X_test)
+            y_prob = (
+                model.predict_proba(X_test)[:, 1]
+                if hasattr(model, "predict_proba")
+                else model.decision_function(X_test)
+            )
 
-        # Calculate evaluation metrics
-        accuracy = accuracy_score(self.y_test, y_pred)
-        precision = precision_score(self.y_test, y_pred, zero_division=0)
-        recall = recall_score(self.y_test, y_pred, zero_division=0)
-        f1 = f1_score(self.y_test, y_pred, zero_division=0)
-        roc_auc = roc_auc_score(self.y_test, y_prob)
+            # Calculate evaluation metrics
+            accuracy = accuracy_score(y_test, y_pred)
+            precision = precision_score(y_test, y_pred, zero_division=0)
+            recall = recall_score(y_test, y_pred, zero_division=0)
+            f1 = f1_score(y_test, y_pred, zero_division=0)
+            roc_auc = roc_auc_score(y_test, y_prob)
 
-        # Display results
-        st.write(f"### {model_name} (Trained on {data_type})")
-        st.write(f"**Accuracy:** {accuracy:.4f}")
-        st.write(f"**Precision:** {precision:.4f}")
-        st.write(f"**Recall:** {recall:.4f}")
-        st.write(f"**F1 Score:** {f1:.4f}")
-        st.write(f"**ROC AUC Score:** {roc_auc:.4f}")
+            # Display results
+            st.write(f"### {model_name.split('_')[0]} Evaluation ({data_type})")
+            st.write(f"**Accuracy:** {accuracy:.4f}")
+            st.write(f"**Precision:** {precision:.4f}")
+            st.write(f"**Recall:** {recall:.4f}")
+            st.write(f"**F1 Score:** {f1:.4f}")
+            st.write(f"**ROC AUC Score:** {roc_auc:.4f}")
 
-        st.write("**Confusion Matrix:**")
-        cm = confusion_matrix(self.y_test, y_pred)
-        cm_df = pd.DataFrame(
-            cm,
-            index=["Actual Negative", "Actual Positive"],
-            columns=["Predicted Negative", "Predicted Positive"],
-        )
-        st.dataframe(cm_df)
+            st.write("**Confusion Matrix:**")
+            cm = confusion_matrix(y_test, y_pred)
+            cm_df = pd.DataFrame(
+                cm,
+                index=["Actual Negative", "Actual Positive"],
+                columns=["Predicted Negative", "Predicted Positive"],
+            )
+            st.dataframe(cm_df)
 
-        st.write("**Classification Report:**")
-        st.text(classification_report(self.y_test, y_pred, zero_division=0))
-        st.write("-" * 60)
+            st.write("**Classification Report:**")
+            st.text(classification_report(y_test, y_pred, zero_division=0))
+            st.write("-" * 60)
+        except Exception as e:
+            st.error(f"Error evaluating {model_name}: {e}")
 
     def make_sample_prediction(self):
         """
@@ -412,11 +458,11 @@ class DataAnalysis:
                 "age": [79.0],
                 "hypertension": [1],
                 "heart_disease": [0],
+                "avg_glucose_level": [174.12],
+                "bmi": [24.0],
                 "ever_married": ["Yes"],
                 "work_type": ["Self-employed"],
                 "Residence_type": ["Rural"],
-                "avg_glucose_level": [174.12],
-                "bmi": [24.0],
                 "smoking_status": ["never smoked"],
             }
         )
@@ -425,15 +471,31 @@ class DataAnalysis:
         st.dataframe(sample_input)
 
         # Preprocess the sample input
-        sample_input_processed = self.preprocessor.transform(sample_input)
+        try:
+            sample_input_processed = self.preprocessor.transform(sample_input)
+        except Exception as e:
+            st.error(f"Error preprocessing sample input: {e}")
+            return
 
         # Use each model to predict the sample input
         st.write("#### Predictions from Models Trained on Real Data")
-        for model_name, model in self.models.items():
-            sample_prediction = model.predict(sample_input_processed)
-            st.write(f"{model_name} prediction: {sample_prediction[0]}")
+        real_model_names = ["Logistic_Regression_real.pkl", "Support_Vector_Machine_real.pkl", "Random_Forest_real.pkl"]
+        for model_name in real_model_names:
+            model = self.models.get(model_name)
+            if model:
+                try:
+                    sample_prediction = model.predict(sample_input_processed)[0]
+                    st.write(f"{model_name.split('_')[0]} prediction: {sample_prediction}")
+                except Exception as e:
+                    st.error(f"Error making prediction with {model_name}: {e}")
 
         st.write("#### Predictions from Models Trained on Augmented Data")
-        for model_name, model in self.models.items():
-            sample_prediction = model.predict(sample_input_processed)
-            st.write(f"{model_name} prediction: {sample_prediction[0]}")
+        augmented_model_names = ["Logistic_Regression_augmented.pkl", "Support_Vector_Machine_augmented.pkl", "Random_Forest_augmented.pkl"]
+        for model_name in augmented_model_names:
+            model = self.models.get(model_name)
+            if model:
+                try:
+                    sample_prediction = model.predict(sample_input_processed)[0]
+                    st.write(f"{model_name.split('_')[0]} prediction: {sample_prediction}")
+                except Exception as e:
+                    st.error(f"Error making prediction with {model_name}: {e}")

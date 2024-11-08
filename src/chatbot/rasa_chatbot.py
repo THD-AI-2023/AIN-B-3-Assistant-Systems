@@ -1,5 +1,3 @@
-# src/chatbot/rasa_chatbot.py
-
 import streamlit as st
 import requests
 import os
