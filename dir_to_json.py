@@ -7,7 +7,7 @@ import mimetypes
 PARTIAL_READ_EXTENSIONS = {'.csv', '.jsonl', '.txt', '.log'}  # Add more extensions as needed
 
 # Initialize explicit filenames to ignore
-EXPLICIT_IGNORE_FILES = {'LICENSE', 'CHANGELOG.md'}  # Default filenames
+EXPLICIT_IGNORE_FILES = {'LICENSE', 'CHANGELOG.md', 'dir_to_json.py'}  # Default filenames
 
 def parse_ignore_file(ignore_file_path):
     """

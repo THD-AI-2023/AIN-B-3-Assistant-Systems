@@ -78,6 +78,19 @@ class DataAnalysis:
         # Visualize data
         self.visualize_data(status_text, progress_bar)
 
+        # Split data
+        if not self.split_data():
+            return  # Stop execution if splitting fails
+
+        # Augment data
+        self.augment_data()
+
+        # Define preprocessor
+        self.define_preprocessor()
+
+        # Fit preprocessor
+        self.fit_preprocessor()
+
         # Check if filters have changed to determine if retraining is needed
         if filters_changed:
             st.info("Data filters have changed. Retraining models...")
