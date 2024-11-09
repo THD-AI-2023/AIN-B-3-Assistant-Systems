@@ -42,26 +42,31 @@ class Chatbot:
 
         st.markdown("### Chatbot")
 
-        # Display message suggestions if no messages have been sent yet
-        if not st.session_state["messages"]:
-            with st.sidebar:
-                st.write("#### Message Suggestions")
-                suggestions = [
-                    "Hello!",
-                    "Can you provide a data analysis summary?",
-                    "I need a health recommendation.",
-                    "Tell me a joke.",
-                    "What's your favorite color?"
-                ]
-                for suggestion in suggestions:
-                    if st.button(suggestion):
-                        st.session_state["input"] = suggestion
+        # Display message suggestions
+        with st.sidebar:
+            st.write("#### Message Suggestions")
+            suggestions = [
+                "Hello!",
+                "Can you provide a data analysis summary?",
+                "I need a health recommendation.",
+                "Tell me a joke.",
+                "What's your favorite color?"
+            ]
+            for suggestion in suggestions:
+                if st.button(suggestion, key=f"suggestion_{suggestion}"):
+                    st.session_state["input"] = suggestion
 
-        # Check if there is an input from suggestions or chat input
+        # Display previous messages
+        for message in st.session_state["messages"]:
+            with st.chat_message(message["role"]):
+                st.markdown(message["content"])
+
+        # Message input
+        prompt = st.chat_input("Enter your message:")
+
+        # Handle input from suggestions
         if "input" in st.session_state:
             prompt = st.session_state.pop("input")
-        else:
-            prompt = st.chat_input("Enter your message:")
 
         if prompt:
             st.session_state["messages"].append({"role": "user", "content": prompt})
@@ -70,6 +75,6 @@ class Chatbot:
 
             responses = self.send_message(prompt)
             for resp in responses:
+                st.session_state["messages"].append({"role": "assistant", "content": resp.get("text", "No response from chatbot.")})
                 with st.chat_message("assistant"):
                     st.markdown(resp.get("text", "No response from chatbot."))
-                st.session_state["messages"].append({"role": "assistant", "content": resp.get("text", "")})

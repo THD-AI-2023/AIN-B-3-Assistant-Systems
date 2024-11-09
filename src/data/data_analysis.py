@@ -146,12 +146,17 @@ class DataAnalysis:
             # Age filter
             age_min, age_max = int(self.data['age'].min()), int(self.data['age'].max())
             age_range = st.slider('Age Range', min_value=age_min, max_value=age_max, value=st.session_state['age_range'])
+            gender_selected = st.multiselect('Gender', options=self.data['gender'].unique().tolist(), default=st.session_state['gender_selected'])
+            hypertension_selected = st.multiselect('Hypertension', options=self.data['hypertension'].unique().tolist(), default=st.session_state['hypertension_selected'])
+            heart_disease_selected = st.multiselect('Heart Disease', options=self.data['heart_disease'].unique().tolist(), default=st.session_state['heart_disease_selected'])
+            smoking_selected = st.multiselect('Smoking Status', options=self.data['smoking_status'].unique().tolist(), default=st.session_state['smoking_selected'])
+
             current_filters = {
                 'age_range': age_range,
-                'gender_selected': st.multiselect('Gender', options=self.data['gender'].unique().tolist(), default=st.session_state['gender_selected']),
-                'hypertension_selected': st.multiselect('Hypertension', options=self.data['hypertension'].unique().tolist(), default=st.session_state['hypertension_selected']),
-                'heart_disease_selected': st.multiselect('Heart Disease', options=self.data['heart_disease'].unique().tolist(), default=st.session_state['heart_disease_selected']),
-                'smoking_selected': st.multiselect('Smoking Status', options=self.data['smoking_status'].unique().tolist(), default=st.session_state['smoking_selected']),
+                'gender_selected': tuple(sorted(gender_selected)),
+                'hypertension_selected': tuple(sorted(hypertension_selected)),
+                'heart_disease_selected': tuple(sorted(heart_disease_selected)),
+                'smoking_selected': tuple(sorted(smoking_selected)),
             }
 
             # Determine if filters have changed
@@ -161,10 +166,10 @@ class DataAnalysis:
 
             # Update session state
             st.session_state['age_range'] = age_range
-            st.session_state['gender_selected'] = current_filters['gender_selected']
-            st.session_state['hypertension_selected'] = current_filters['hypertension_selected']
-            st.session_state['heart_disease_selected'] = current_filters['heart_disease_selected']
-            st.session_state['smoking_selected'] = current_filters['smoking_selected']
+            st.session_state['gender_selected'] = gender_selected
+            st.session_state['hypertension_selected'] = hypertension_selected
+            st.session_state['heart_disease_selected'] = heart_disease_selected
+            st.session_state['smoking_selected'] = smoking_selected
 
         # Filter the data based on selections
         filtered_data = self.data[
