@@ -8,6 +8,9 @@
 <!-- - [Demo](#demo) -->
 - [Installation](#installation)
 - [Usage](#usage)
+  - [Running the Application with Docker](#running-the-application-with-docker)
+  - [Training the Rasa Chatbot](#training-the-rasa-chatbot)
+  <!-- - [Running the Application Locally (Optional)](#running-the-application-locally-optional) -->
 - [Chatbot Integration](#chatbot-integration)
 - [Data](#data)
 - [Modeling](#modeling)
@@ -38,10 +41,10 @@
 
 ### Prerequisites
 
-- **Docker & Docker Compose:** Ensure Docker and Docker Compose are installed on your system.
+- **Docker:** Ensure Docker is installed on your system.
 - **Git:** For cloning the repository and managing submodules.
 
-### Steps v1
+### Steps
 
 1. **Clone the Repository:**
     ```bash
@@ -49,54 +52,181 @@
     cd project-apero
     ```
 
-2. **Set Up Virtual Environment:**
+<!--
+2. **Set Up Virtual Environments (Optional):**
+    If you prefer to run the application without Docker, you can set up virtual environments for each component.
+
+    **Create and Activate Virtual Environment for Streamlit App:**
     ```bash
-    py -3.9 -m venv venv 
-    source venv/bin/activate  # On Windows: venv\Scripts\activate
+    python3 -m venv venv_streamlit
+    source venv_streamlit/bin/activate  # On Windows: venv_streamlit\Scripts\activate
     ```
 
-3. **Install Dependencies:**
+    **Install Dependencies for Streamlit App:**
     ```bash
     pip install --upgrade pip
     pip install -r requirements.txt
     ```
 
-## Usage v1
-
-### Running the Streamlit App
-
-```bash
-streamlit run src/app.py
-```
-
-## Steps v2
-
-1. **Clone the Repository:**
+    **Create and Activate Virtual Environment for Rasa Server:**
+    Open a new terminal window for the Rasa server.
     ```bash
-    git clone https://github.com/yourusername/project-apero.git
-    cd project-apero
+    python3 -m venv venv_rasa
+    source venv_rasa/bin/activate  # On Windows: venv_rasa\Scripts\activate
     ```
 
+    **Install Dependencies for Rasa Server:**
+    ```bash
+    pip install rasa==3.6.2
+    ```
+
+    **Create and Activate Virtual Environment for Rasa Action Server:**
+    Open another terminal window for the Rasa action server.
+    ```bash
+    python3 -m venv venv_rasa_actions
+    source venv_rasa_actions/bin/activate  # On Windows: venv_rasa_actions\Scripts\activate
+    ```
+
+    **Install Dependencies for Rasa Action Server:**
+    ```bash
+    pip install rasa-sdk==3.6.2
+    pip install -r actions/requirements-actions.txt
+    ```
+-->
+
+## Usage
+
+### Running the Application with Docker
+
+1. **Ensure Docker Engine is Installed:**
+    Make sure Docker is installed and running on your system.
+
 2. **Build and Start Services:**
+    Navigate to the project root directory and execute:
     ```bash
     docker-compose up --build
     ```
-
     This command builds the Docker images and starts all services as defined in `docker-compose.yml`.
 
-## Usage v2
+3. **Access the Streamlit Application:**
+    Open your browser and navigate to [http://localhost:8501](http://localhost:8501) to access the interactive web interface.
 
-Access the application at `http://localhost:8501`.
+### Training the Rasa Chatbot
 
-### Accessing the Application
+If a Rasa model has not been trained in the `models/chatbot/` directory, follow these steps:
 
-- **Streamlit App:** Open your browser and navigate to [http://localhost:8501](http://localhost:8501) to access the interactive web interface.
+1. **Access the Rasa Server Container:**
+    ```bash
+    docker exec -it rasa_server bash
+    ```
 
-### Interacting with the Chatbot
+2. **Train the Rasa Model:**
+    Inside the container, execute:
+    ```bash
+    rasa train
+    ```
 
-- The integrated Rasa chatbot is accessible within the Streamlit interface.
-- Ensure the Rasa server is running (handled by Docker Compose).
-- Use the chatbot to get personalized recommendations and assistance based on your interactions.
+3. **Move Trained Models:**
+    After training completes, move the trained model files from the `models/` directory to `models/chatbot/`:
+    ```bash
+    mv models/* models/chatbot/
+    ```
+
+4. **Restart Services:**
+    Exit the container and rebuild the Docker services:
+    ```bash
+    exit
+    docker-compose up --build
+    ```
+
+5. **Monitor Rasa Server Logs:**
+    Ensure the Rasa server is running by checking the logs for messages like:
+    ```
+    2024-11-09 01:15:42 INFO     root  - Rasa server is up and running.
+    2024-11-09 01:15:42 INFO     root  - Enabling coroutine debugging. Loop id 93825087865808.
+    ```
+
+6. **Finalize Setup:**
+    - Navigate to the Data Analysis page in the Streamlit app and wait for the evaluation models to finish training.
+    - Once evaluations are complete, models will be available for use within the Chatbot.
+    - Ensure that data filters are applied as needed and that session management maintains these filters when switching between Data Analysis and Chatbot sections.
+
+<!--
+### Running the Application Locally (Optional)
+
+If you prefer to run the application without Docker, follow these steps. Ensure that you have set up the virtual environments as described in the Installation section.
+
+#### 1. Start the Rasa Action Server
+
+In the terminal window with the `venv_rasa_actions` environment activated:
+
+```bash
+rasa run actions --port 5055
+```
+
+This will start the Rasa Action Server on port `5055`.
+
+#### 2. Start the Rasa Server
+
+In the terminal window with the `venv_rasa` environment activated:
+
+```bash
+rasa run --enable-api --cors "*" --debug --endpoints endpoints.yml
+```
+
+This will start the Rasa Server on port `5005`.
+
+#### 3. Start the Streamlit App
+
+In the terminal window with the `venv_streamlit` environment activated:
+
+Ensure that the `RASA_SERVER` environment variable points to your local Rasa server:
+
+```bash
+export RASA_SERVER=http://localhost:5005/webhooks/rest/webhook
+```
+
+Then start the Streamlit app:
+
+```bash
+streamlit run src/app.py --server.port=8501 --server.address=0.0.0.0
+```
+
+This will start the Streamlit application on port `8501`.
+
+#### 4. Access the Application
+
+Open your browser and navigate to [http://localhost:8501](http://localhost:8501) to interact with the application.
+
+#### 5. Training the Rasa Chatbot Locally
+
+If a Rasa model has not been trained, you need to train it:
+
+In the terminal window with the `venv_rasa` environment activated:
+
+```bash
+rasa train
+```
+
+This will train the Rasa model and save it in the `models` directory.
+
+#### 6. Ensure Correct File Paths
+
+Make sure that the file paths in your `credentials.yml`, `endpoints.yml`, and other configuration files are correctly set up to reflect the local setup.
+
+#### 7. (Optional) Start Duckling Server Locally
+
+If your Rasa model uses Duckling for entity extraction, you need to start the Duckling server.
+
+In a new terminal window:
+
+```bash
+docker run -p 8000:8000 rasa/duckling
+```
+
+This will start Duckling on port `8000`.
+
+-->
 
 ## Chatbot Integration
 
@@ -153,9 +283,9 @@ The project is containerized using Docker and orchestrated with Docker Compose t
 
 ### Services
 
-- **Rasa Server (`rasa`):** Handles natural language understanding (NLU) and dialogue management.
-- **Rasa Action Server (`rasa_action`):** Executes custom actions defined in the project.
-- **Streamlit App (`streamlit`):** Provides the interactive frontend for users.
+- **Rasa Server (`rasa_server`):** Handles natural language understanding (NLU) and dialogue management.
+- **Rasa Action Server (`rasa_action_server`):** Executes custom actions defined in the project.
+- **Streamlit App (`streamlit_app`):** Provides the interactive frontend for users.
 - **Duckling (`duckling`):** (Optional) Extracts entities like dates, times, and numbers from user inputs.
 
 ### Running the Services
@@ -179,26 +309,37 @@ docker-compose up --build
 project-apero/
 ├── actions/
 │   ├── actions.py
+│   ├── Dockerfile
 │   ├── requirements-actions.txt
-│   └── ...
+│   └── __init__.py
 ├── data/
+│   ├── data_analysis.py
+│   ├── data_augmentation.py
+│   ├── data_loader.py
+│   ├── data_preprocessor.py
+│   ├── data_visualization.py
 │   ├── nlu.yml
-│   ├── stories.yml
-│   └── ...
+│   ├── processed/
+│   ├── raw/
+│   └── stories.yml
 ├── models/
-│   └── ...
+│   ├── chatbot/
+│   └── data_analysis/
+│       └── evaluations/
 ├── src/
 │   ├── app.py
 │   ├── chatbot/
 │   │   ├── rasa_chatbot.py
-│   │   └── ...
-│   └── ...
+│   │   └── __init__.py
+│   └── __init__.py
+├── .dockerignore
+├── .gitignore
 ├── Dockerfile
 ├── docker-compose.yml
 ├── requirements.txt
 ├── README.md
-├── .gitignore
-└── ...
+└── docs/
+    └── Project_Outline.md
 ```
 
 ## License
