@@ -5,9 +5,9 @@ from chatbot.rasa_chatbot import Chatbot
 from data.data_analysis import DataAnalysis
 
 def main():
-    st.set_page_config(page_title="Project Apero", layout="wide")
+    st.set_page_config(page_title="Assistance Systems Project", layout="wide")
 
-    st.title("Project Apero (Assistance Systems Project)")
+    st.title("Assistance Systems Project (Assistance Systems Project)")
 
     # Sidebar for navigation
     menu = ["Home", "Data Analysis", "Recommendations", "Chatbot"]
@@ -62,7 +62,7 @@ def main():
             st.write("Model evaluations are not available.")
 
     if choice == "Home":
-        st.subheader("Welcome to Project Apero")
+        st.subheader("Welcome to Assistance Systems Project")
         st.write("Use the sidebar to navigate through the application.")
 
     elif choice == "Data Analysis":
