@@ -8,6 +8,11 @@ stories:
     - intent: ask_recommendation
     - action: action_generate_recommendation
 
+- story: User asks for data analysis
+  steps:
+    - intent: ask_data_analysis
+    - action: action_show_data_analysis
+
 - story: Greet and ask for data analysis
   steps:
     - intent: greet
