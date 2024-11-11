@@ -1,6 +1,6 @@
-![Project Apero Banner](./banner.png)
+![Assistance Systems Project Banner](./docs/ASP_Banner.png)
 
-# Project Apero
+# Assistance Systems Project
 
 ## Table of Contents
 - [Introduction](#introduction)
@@ -18,7 +18,7 @@
 
 ## Introduction
 
-**Project Apero** is an advanced recommendation system designed to enhance user experience by providing personalized suggestions based on user behavior and preferences. Leveraging modern technologies such as Streamlit for the frontend and Rasa for chatbot integration, this project aims to deliver an intuitive and efficient system for diverse applications.
+**Assistance Systems Project** is an advanced recommendation system designed to enhance user experience by providing personalized suggestions based on user behavior and preferences. Leveraging modern technologies such as Streamlit for the frontend and Rasa for chatbot integration, this project aims to deliver an intuitive and efficient system for diverse applications.
 
 ## Features
 
@@ -30,9 +30,9 @@
 
 <!-- ## Demo -->
 
-<!-- ![Project Apero Demo](./demo.gif) -->
+<!-- ![Assistance Systems Project Demo](./demo.gif) -->
 
-<!-- Experience a live demonstration of Project Apero [here](https://your-deployment-url.com). -->
+<!-- Experience a live demonstration of Assistance Systems Project [here](https://your-deployment-url.com). -->
 
 ## Installation
 
