@@ -1,4 +1,6 @@
 import pandas as pd
+from sklearn.impute import SimpleImputer
+
 
 def preprocess_data(data):
     """
@@ -11,10 +13,12 @@ def preprocess_data(data):
     Returns:
     - pd.DataFrame: The preprocessed dataset.
     """
-    # TODO: Handle missing values (e.g., imputation, removal)
+    # Handle missing values in 'bmi' by imputing with mean
+    imputer = SimpleImputer(strategy="mean")
+    data["bmi"] = imputer.fit_transform(data[["bmi"]])
 
-    # TODO: Encode categorical variables (e.g., One-Hot Encoding, Label Encoding)
+    # Drop unnecessary columns
+    data = data.drop(columns=["id"])
 
-    # TODO: Normalize or scale numerical features
-
+    # No need to encode or scale here; it will be handled in the pipeline
     return data

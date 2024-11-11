@@ -21,9 +21,16 @@ ENV/
 
 # Output files
 output.json
+*.csv
 
 # Kaggle API credentials
 .kaggle/kaggle.json
 
 # Models
-models/*.tar.gz
+models/chatbot/*.tar.gz
+models/*.tag.gz
+models/data_analysis/*.pkl
+
+# Processed CSV files
+data/processed/cleaned_file.csv
+data/processed/filtered_data.csv
