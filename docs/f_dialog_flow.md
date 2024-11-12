@@ -108,25 +108,7 @@ Understanding the conversational flow is essential for designing an effective ch
 
 Below is a simplified diagram illustrating the high-level dialog flow:
 
-```mermaid
-graph TD
-    A[User Initiates Conversation] --> B[Greeting and Intent Recognition]
-    B --> C{User Intent}
-    C -->|Request Summary| D[Provide Data Analysis Summary]
-    C -->|Seek Recommendations| E[Provide Personalized Recommendations]
-    C -->|Understand Metrics| F[Explain Specific Health Metrics]
-    C -->|Chitchat| G[Engage in Light Conversation]
-    C -->|Goodbye| H[End Conversation]
-    C -->|Unrecognized| I[Handle Errors]
-    D --> J[Offer Further Assistance]
-    E --> J
-    F --> J
-    G --> J
-    I --> J
-    J --> K{Continue or End}
-    K -->|Continue| B
-    K -->|End| H
-```
+![Dialog Flow Diagram](./f_dialog_flow.svg)
 
 ---
 

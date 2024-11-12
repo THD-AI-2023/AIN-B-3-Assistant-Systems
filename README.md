@@ -1,6 +1,6 @@
-Lastname1,Firstname1, 123456
+Lastname1, Firstname1, 123456
 
-Lastname2,Firstname2, 123456
+Lastname2, Firstname2, 123456
 
 Assistance Systems Project
 
@@ -20,17 +20,6 @@ https://mygit.th-deg.de/username/assistance-systems-project/wiki
 
 - **Docker:** Ensure Docker is installed on your system.
 - **Git:** For cloning the repository and managing submodules.
-
-### Used Versions
-
-- **Python**: 3.9
-- **Streamlit**: 1.25.0
-- **Rasa**: 3.6.2
-- **Rasa SDK**: 3.6.2
-- **Scikit-Learn**: 1.3.0
-- **Pandas**: 2.1.1
-- **Matplotlib**: 3.7.2
-- **Altair**: 5.1.1
 
 ### Steps
 
