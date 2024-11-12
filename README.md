@@ -1,41 +1,18 @@
+Lastname1,Firstname1, 123456
+
+Lastname2,Firstname2, 123456
+
+Assistance Systems Project
+
+https://mygit.th-deg.de/username/assistance-systems-project
+
+https://mygit.th-deg.de/username/assistance-systems-project/wiki
+
 ![Assistance Systems Project Banner](./docs/ASP_Banner.png)
 
-# Assistance Systems Project
-
-## Table of Contents
-- [Introduction](#introduction)
-- [Features](#features)
-<!-- - [Demo](#demo) -->
-- [Installation](#installation)
-- [Usage](#usage)
-  - [Running the Application with Docker](#running-the-application-with-docker)
-  - [Training the Rasa Chatbot](#training-the-rasa-chatbot)
-  <!-- - [Running the Application Locally (Optional)](#running-the-application-locally-optional) -->
-- [Chatbot Integration](#chatbot-integration)
-- [Data](#data)
-- [Modeling](#modeling)
-- [Docker Setup](#docker-setup)
-- [Project Structure](#project-structure)
-- [License](#license)
-- [Contact](#contact)
-
-## Introduction
+## Project description
 
 **Assistance Systems Project** is an advanced recommendation system designed to enhance user experience by providing personalized suggestions based on user behavior and preferences. Leveraging modern technologies such as Streamlit for the frontend and Rasa for chatbot integration, this project aims to deliver an intuitive and efficient system for diverse applications.
-
-## Features
-
-- **Interactive Web Interface:** Built with Streamlit, offering a seamless and responsive user experience.
-- **Personalized Recommendations:** Utilizes Scikit-Learn algorithms to provide tailored suggestions.
-- **Data Analysis & Visualization:** Employs Pandas and Matplotlib for insightful data analysis and visualization.
-- **Chatbot Support:** Integrates a Rasa-powered chatbot to assist users and enhance interaction.
-- **Robust Data Handling:** Implements strategies for outlier detection and augmentation with realistic fake data.
-
-<!-- ## Demo -->
-
-<!-- ![Assistance Systems Project Demo](./demo.gif) -->
-
-<!-- Experience a live demonstration of Assistance Systems Project [here](https://your-deployment-url.com). -->
 
 ## Installation
 
@@ -44,12 +21,23 @@
 - **Docker:** Ensure Docker is installed on your system.
 - **Git:** For cloning the repository and managing submodules.
 
+### Used Versions
+
+- **Python**: 3.9
+- **Streamlit**: 1.25.0
+- **Rasa**: 3.6.2
+- **Rasa SDK**: 3.6.2
+- **Scikit-Learn**: 1.3.0
+- **Pandas**: 2.1.1
+- **Matplotlib**: 3.7.2
+- **Altair**: 5.1.1
+
 ### Steps
 
 1. **Clone the Repository:**
     ```bash
-    git clone https://github.com/yourusername/project-apero.git
-    cd project-apero
+    git clone https://mygit.th-deg.de/yourusername/assistance-systems-project.git
+    cd assistance-systems-project
     ```
 
 <!--
@@ -94,7 +82,27 @@
     ```
 -->
 
-## Usage
+2. **Build and Start Services:**
+    ```bash
+    docker-compose up --build
+    ```
+
+3. **Access the Streamlit Application:**
+    Open your browser and navigate to [http://localhost:8501](http://localhost:8501) to access the interactive web interface.
+
+## Data
+
+### Dataset
+
+We utilize the [Stroke Prediction Dataset](https://www.kaggle.com/datasets/fedesoriano/stroke-prediction-dataset) from Kaggle for training and evaluation.
+
+### Data Handling
+
+- **Outlier Detection:** Implemented using the Z-score method to identify and handle anomalies.
+- **Data Augmentation:** Added 30% realistic synthetic data to enhance dataset robustness.
+- **Data Transformation:** Normalized numerical features following best practices outlined in [Google's Machine Learning Crash Course](https://developers.google.com/machine-learning/crash-course/numerical-data).
+
+## Basic Usage
 
 ### Running the Application with Docker
 
@@ -151,82 +159,25 @@ If a Rasa model has not been trained in the `models/chatbot/` directory, follow 
     - Once evaluations are complete, models will be available for use within the Chatbot.
     - Ensure that data filters are applied as needed and that session management maintains these filters when switching between Data Analysis and Chatbot sections.
 
-<!--
-### Running the Application Locally (Optional)
+## Implementation of the Requests
 
-If you prefer to run the application without Docker, follow these steps. Ensure that you have set up the virtual environments as described in the Installation section.
+*This section will be completed later, detailing how each request has been implemented and individual contributions.*
 
-#### 1. Start the Rasa Action Server
+## Right-fit Question for Chatbot
 
-In the terminal window with the `venv_rasa_actions` environment activated:
+*This section will provide an argument about the "right-fit" question for using a chatbot in the application. To be added later.*
 
-```bash
-rasa run actions --port 5055
-```
+## Work done
 
-This will start the Rasa Action Server on port `5055`.
+*This section will describe who has implemented each request. To be added later.*
 
-#### 2. Start the Rasa Server
+## Features
 
-In the terminal window with the `venv_rasa` environment activated:
-
-```bash
-rasa run --enable-api --cors "*" --debug --endpoints endpoints.yml
-```
-
-This will start the Rasa Server on port `5005`.
-
-#### 3. Start the Streamlit App
-
-In the terminal window with the `venv_streamlit` environment activated:
-
-Ensure that the `RASA_SERVER` environment variable points to your local Rasa server:
-
-```bash
-export RASA_SERVER=http://localhost:5005/webhooks/rest/webhook
-```
-
-Then start the Streamlit app:
-
-```bash
-streamlit run src/app.py --server.port=8501 --server.address=0.0.0.0
-```
-
-This will start the Streamlit application on port `8501`.
-
-#### 4. Access the Application
-
-Open your browser and navigate to [http://localhost:8501](http://localhost:8501) to interact with the application.
-
-#### 5. Training the Rasa Chatbot Locally
-
-If a Rasa model has not been trained, you need to train it:
-
-In the terminal window with the `venv_rasa` environment activated:
-
-```bash
-rasa train
-```
-
-This will train the Rasa model and save it in the `models` directory.
-
-#### 6. Ensure Correct File Paths
-
-Make sure that the file paths in your `credentials.yml`, `endpoints.yml`, and other configuration files are correctly set up to reflect the local setup.
-
-#### 7. (Optional) Start Duckling Server Locally
-
-If your Rasa model uses Duckling for entity extraction, you need to start the Duckling server.
-
-In a new terminal window:
-
-```bash
-docker run -p 8000:8000 rasa/duckling
-```
-
-This will start Duckling on port `8000`.
-
--->
+- **Interactive Web Interface:** Built with Streamlit, offering a seamless and responsive user experience.
+- **Personalized Recommendations:** Utilizes Scikit-Learn algorithms to provide tailored suggestions.
+- **Data Analysis & Visualization:** Employs Pandas and Matplotlib for insightful data analysis and visualization.
+- **Chatbot Support:** Integrates a Rasa-powered chatbot to assist users and enhance interaction.
+- **Robust Data Handling:** Implements strategies for outlier detection and augmentation with realistic fake data.
 
 ## Chatbot Integration
 
@@ -249,22 +200,6 @@ The chatbot is built using the Rasa framework and is designed to interact contex
 ### Custom Actions
 
 Custom actions are implemented in `actions/actions.py` to enable the chatbot to fetch and present data analysis results. These actions interact with the Streamlit app's data processing modules to retrieve relevant insights based on user queries.
-
-## Data
-
-### Dataset
-
-We utilize the [Stroke Prediction Dataset](https://www.kaggle.com/datasets/fedesoriano/stroke-prediction-dataset) from Kaggle for training and evaluation.
-
-### Data Handling
-
-- **Outlier Detection:** Implemented using the Z-score method to identify and handle anomalies.
-- **Data Augmentation:** Added 30% realistic synthetic data to enhance dataset robustness.
-- **Data Transformation:** Normalized numerical features following best practices outlined in [Google's Machine Learning Crash Course](https://developers.google.com/machine-learning/crash-course/numerical-data).
-
-### Data Pipeline
-
-The data pipeline is managed within the `data/` directory, ensuring organized data processing and management.
 
 ## Modeling
 
@@ -306,7 +241,7 @@ docker-compose up --build
 ## Project Structure
 
 ```
-project-apero/
+assistance-systems-project/
 ├── actions/
 │   ├── actions.py
 │   ├── Dockerfile
@@ -348,4 +283,4 @@ This project is licensed under the [GNU GENERAL PUBLIC LICENSE](./LICENSE).
 
 ## Contact
 
-For any inquiries or support, please open an issue in the [GitHub Repository](https://github.com/hlexnc/project-apero). 
+For any inquiries or support, please open an issue in the [MyGit Repository](https://mygit.th-deg.de/username/assistance-systems-project).
