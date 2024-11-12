@@ -33,3 +33,4 @@ models/data_analysis/*.pkl
 # Processed CSV files
 data/processed/cleaned_file.csv
 data/processed/filtered_data.csv
+models/data_analysis/evaluations/model_evaluations.csv

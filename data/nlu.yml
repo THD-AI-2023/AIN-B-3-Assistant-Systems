@@ -1,4 +1,4 @@
-version: "2.0"
+version: "3.1"
 
 nlu:
 - intent: greet
@@ -70,50 +70,61 @@ nlu:
     - Recommend something for me.
     - Can you offer a recommendation?
 
-- intent: ask_bmi_effect
+- intent: inform
   examples: |
-    - How does my BMI affect my stroke risk?
-    - Can you explain the impact of BMI on stroke?
-    - What does my BMI indicate about my health?
-    - Explain how BMI influences stroke risk.
-    - What is the relationship between BMI and stroke?
+    - I am [25](age)
+    - My age is [30](age)
+    - I'm [40](age) years old
+    - I am a [male](gender)
+    - I'm a [female](gender)
+    - My gender is [non-binary](gender)
+    - I have [hypertension](hypertension:yes)
+    - I don't have [hypertension](hypertension:no)
+    - Yes, I have [heart disease](heart_disease:yes)
+    - No, I don't have [heart disease](heart_disease:no)
+    - My BMI is [22.5](bmi)
+    - BMI is [24](bmi)
+    - I'm [25](age) and [male](gender)
+    - No [heart disease](heart_disease:no) and no [hypertension](hypertension:no)
+    - Yes [hypertension](hypertension:yes) and [heart disease](heart_disease:yes)
+    - I weigh [70 kilograms](weight)
+    - My height is [1.75 meters](height)
+    - I'm [180 cm](height) tall
+    - I don't have [heart disease](heart_disease:no) but I have [hypertension](hypertension:yes)
+    - I'm a [40](age)-year-old [female](gender)
+    - My BMI is [27](bmi) and I have [hypertension](hypertension:yes)
 
-- intent: ask_stroke_risk_reduction
+- intent: chitchat_ask_name
   examples: |
-    - I want to reduce my stroke risk. Any recommendations?
-    - How can I lower my risk of stroke?
-    - What can I do to prevent a stroke?
-    - Tips to decrease stroke risk.
-    - Advice on reducing stroke chances.
-
-- intent: ask_data_analysis
-  examples: |
-    - Could you provide a summary of my latest data analysis?
-    - Show me my data analysis summary.
-    - Summarize my health data.
-    - Give me a summary of my data.
-    - Explain my recent data analysis results.
-
-- intent: chitchat
-  examples: |
-    - How are you?
-    - Tell me a joke
     - What's your name?
-    - What's the meaning of life?
-    - Can you sing a song?
-    - Do you like pizza?
+    - Who are you?
+    - May I know your name?
+    - Tell me your name
+    - What's your name again?
+
+- intent: chitchat_tell_joke
+  examples: |
+    - Tell me a joke
+    - Make me laugh
+    - Do you know any jokes?
+    - I need a good laugh
+    - Cheer me up with a joke
+
+- intent: chitchat_favorite_color
+  examples: |
     - What's your favorite color?
-    - Do you have any hobbies?
-    - What's your favorite movie?
-    - Can you dance?
-    - Do you like music?
-    - What's your favorite book?
-    - Do you have any pets?
+    - Do you have a favorite color?
+    - Which color do you like?
+    - What's the color you prefer?
+    - Favorite color?
+
+- intent: chitchat_weather
+  examples: |
     - What's the weather like?
-    - What's your favorite food?
-    - Are you a robot?
-    - How old are you?
-    - Where are you from?
+    - How's the weather?
+    - Is it raining?
+    - Tell me about the weather
+    - Weather update please
 
 - intent: out_of_scope
   examples: |
@@ -121,3 +132,25 @@ nlu:
     - How do I bake a cake?
     - Tell me about quantum physics.
     - What's the population of Mars?
+    - How to invest in stocks?
+    - Who won the football match yesterday?
+
+# Synonyms
+- synonym: yes
+  examples: |
+    - yes
+    - yeah
+    - yep
+    - y
+    - sure
+    - of course
+    - affirmative
+
+- synonym: no
+  examples: |
+    - no
+    - nope
+    - n
+    - not really
+    - absolutely not
+    - negative

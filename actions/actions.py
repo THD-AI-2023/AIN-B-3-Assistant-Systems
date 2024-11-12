@@ -81,27 +81,21 @@ class ActionGenerateRecommendation(Action):
             tracker: Tracker,
             domain: dict) -> list:
 
-        # Required slots
-        required_slots = ["age", "gender", "hypertension", "heart_disease", "bmi"]
-
-        # Check for missing slots
-        missing_slots = []
-        for slot in required_slots:
-            if tracker.get_slot(slot) is None:
-                missing_slots.append(slot)
-
-        if missing_slots:
-            # Prompt the user for missing information
-            for slot in missing_slots:
-                dispatcher.utter_message(text=f"Could you please provide your {slot.replace('_', ' ')}?")
-            return [FollowupAction(name="action_listen")]
-
-        # All slots are filled, proceed to generate recommendation
-        age = float(tracker.get_slot("age"))
+        # Get slot values
+        age = tracker.get_slot("age")
         gender = tracker.get_slot("gender")
-        hypertension = int(tracker.get_slot("hypertension"))
-        heart_disease = int(tracker.get_slot("heart_disease"))
-        bmi = float(tracker.get_slot("bmi"))
+        hypertension = tracker.get_slot("hypertension")
+        heart_disease = tracker.get_slot("heart_disease")
+        bmi = tracker.get_slot("bmi")
+
+        # Validate slots
+        if not all([age, gender, hypertension, heart_disease, bmi]):
+            dispatcher.utter_message(text="I'm missing some information to generate a recommendation.")
+            return []
+
+        # Convert categorical slots to numerical values
+        hypertension = 1 if hypertension.lower() in ["yes", "1", "true"] else 0
+        heart_disease = 1 if heart_disease.lower() in ["yes", "1", "true"] else 0
 
         # Load the best performing model
         model_path = os.path.join("models", "data_analysis", "Random_Forest_augmented.pkl")
@@ -118,12 +112,12 @@ class ActionGenerateRecommendation(Action):
         # Prepare input data
         input_data = pd.DataFrame({
             'gender': [gender],
-            'age': [age],
+            'age': [float(age)],
             'hypertension': [hypertension],
             'heart_disease': [heart_disease],
             'avg_glucose_level': [100.0],  # Placeholder
-            'bmi': [bmi],
-            'ever_married': ["Yes" if age >= 18 else "No"],
+            'bmi': [float(bmi)],
+            'ever_married': ["Yes" if float(age) >= 18 else "No"],
             'work_type': ["Private"],
             'Residence_type': ["Urban"],
             'smoking_status': ["never smoked"],

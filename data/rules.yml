@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/RasaHQ/rasa/refs/heads/main/rasa/shared/utils/schemas/stories.yml
+version: "3.1"
+
+rules:
+  - rule: Activate health form
+    steps:
+      - intent: ask_recommendation
+      - action: health_form
+      - active_loop: health_form
+
+  - rule: Submit health form
+    condition:
+      - active_loop: health_form
+    steps:
+      - action: health_form
+      - active_loop: null
+      - action: action_generate_recommendation
+
+  - rule: Handle chitchat ask name
+    steps:
+      - intent: chitchat_ask_name
+      - action: utter_chitchat_ask_name
+
+  - rule: Handle chitchat tell joke
+    steps:
+      - intent: chitchat_tell_joke
+      - action: utter_chitchat_tell_joke
+
+  - rule: Handle chitchat favorite color
+    steps:
+      - intent: chitchat_favorite_color
+      - action: utter_chitchat_favorite_color
+
+  - rule: Handle chitchat weather
+    steps:
+      - intent: chitchat_weather
+      - action: utter_chitchat_weather
+
+  - rule: Fallback rule
+    steps:
+      - intent: nlu_fallback
+      - action: utter_out_of_scope
