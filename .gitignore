@@ -21,7 +21,6 @@ ENV/
 
 # Output files
 output.json
-*.csv
 
 # Kaggle API credentials
 .kaggle/kaggle.json

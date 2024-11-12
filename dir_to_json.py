@@ -6,8 +6,8 @@ import mimetypes
 # Define the extensions that require partial content
 PARTIAL_READ_EXTENSIONS = {'.csv', '.jsonl', '.txt', '.log'}  # Add more extensions as needed
 
-# Initialize explicit filenames to ignore
-EXPLICIT_IGNORE_FILES = {'LICENSE', 'CHANGELOG.md', 'dir_to_json.py'}  # Default filenames
+# Initialize explicit filenames to ignore (but include with "..." in JSON)
+EXPLICIT_IGNORE_FILES = {'LICENSE', 'CHANGELOG.md', 'dir_to_json.py', '.dockerignore', '.gitignore', 'requirements.txt', 'f_dialog_flow.md', 'c_outlier_handling.md'}  # Default filenames
 
 def parse_ignore_file(ignore_file_path):
     """
@@ -60,6 +60,8 @@ def read_file(file_path):
     For image files, it returns '...'.
     For other text files, it returns the full content with backticks replaced by tildes.
     """
+    if os.path.basename(file_path) in EXPLICIT_IGNORE_FILES:
+        return "..."
     try:
         mime_type, _ = mimetypes.guess_type(file_path)
         if mime_type and mime_type.startswith('image'):
@@ -138,11 +140,12 @@ def dir_to_json(directory, submodules, ignore_submodules=False):
                 sub_result = sub_result.setdefault(part, {})
 
         for file in files:
-            if file in EXPLICIT_IGNORE_FILES:
-                continue
-
             file_path = os.path.join(root, file)
             relative_file_path = os.path.relpath(file_path, directory)
+
+            if file in EXPLICIT_IGNORE_FILES:
+                sub_result[file] = "..."
+                continue
 
             if is_ignored(relative_file_path, ignore_patterns):
                 continue
