@@ -8,7 +8,7 @@ https://mygit.th-deg.de/username/assistance-systems-project
 
 https://mygit.th-deg.de/username/assistance-systems-project/wiki
 
-![Assistance Systems Project Banner](./docs/ASP_Banner.png)
+![Assistance Systems Project Banner](./docs/.ASP_Banner.png)
 
 ## Project description
 
