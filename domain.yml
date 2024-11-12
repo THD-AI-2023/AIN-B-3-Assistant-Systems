@@ -8,6 +8,8 @@ intents:
   - ask_recommendation
   - ask_data_analysis
   - ask_recommendation_by_feature
+  - ask_bmi_effect
+  - ask_stroke_risk_reduction
   - chitchat
   - out_of_scope
   - ask_faq
@@ -41,6 +43,7 @@ slots:
     mappings:
       - type: from_entity
         entity: bmi
+      - type: from_text
   heart_disease:
     type: bool
     mappings:
@@ -81,6 +84,12 @@ responses:
     - text: "I was created recently to help you."  # For "How old are you?"
     - text: "I'm from the cloud."  # For "Where are you from?"
 
+  utter_ask_bmi:
+    - text: "Could you please tell me your BMI?"
+
+  utter_bmi_info_unavailable:
+    - text: "I'm sorry, I don't have your BMI information. Could you please provide it?"
+
   utter_out_of_scope:
     - text: "I'm sorry, I can't help with that. Could you ask something else related to the application?"
 
@@ -88,6 +97,8 @@ actions:
   - action_generate_recommendation
   - action_show_data_analysis
   - action_provide_faq
+  - action_explain_bmi_effect
+  - action_provide_stroke_risk_reduction_advice
 
 session_config:
   session_expiration_time: 60

@@ -62,8 +62,35 @@ def main():
             st.write("Model evaluations are not available.")
 
     if choice == "Home":
-        st.subheader("Welcome to Assistance Systems Project")
-        st.write("Use the sidebar to navigate through the application.")
+        st.subheader("Welcome to the Assistance Systems Project")
+        st.write("Please enter your personal health information to receive personalized recommendations.")
+
+        # Initialize session state for user data
+        if 'user_data' not in st.session_state:
+            st.session_state['user_data'] = {}
+
+        with st.form(key='user_data_form'):
+            age = st.number_input("Age", min_value=0, max_value=120, value=25)
+            gender = st.selectbox("Gender", options=["Male", "Female", "Other"])
+            hypertension = st.selectbox("Do you have hypertension?", options=["No", "Yes"])
+            heart_disease = st.selectbox("Do you have heart disease?", options=["No", "Yes"])
+            bmi = st.number_input("BMI", min_value=0.0, max_value=100.0, value=25.0)
+            submitted = st.form_submit_button("Submit")
+
+        if submitted:
+            st.session_state['user_data'] = {
+                'age': age,
+                'gender': gender,
+                'hypertension': 1 if hypertension == "Yes" else 0,
+                'heart_disease': 1 if heart_disease == "Yes" else 0,
+                'bmi': bmi
+            }
+            st.success("Your information has been saved.")
+
+        # Display stored user data
+        if st.session_state['user_data']:
+            st.write("Your current health information:")
+            st.json(st.session_state['user_data'])
 
     elif choice == "Data Analysis":
         data_analysis.run()

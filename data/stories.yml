@@ -20,6 +20,21 @@ stories:
     - intent: ask_data_analysis
     - action: action_show_data_analysis
 
+- story: User asks about BMI effect
+  steps:
+    - intent: ask_bmi_effect
+    - action: action_explain_bmi_effect
+
+- story: User seeks stroke risk reduction advice
+  steps:
+    - intent: ask_stroke_risk_reduction
+    - action: action_provide_stroke_risk_reduction_advice
+
+- story: User requests data analysis summary
+  steps:
+    - intent: ask_data_analysis
+    - action: action_show_data_analysis
+
 - story: Greet, ask recommendation by feature, and goodbye
   steps:
     - intent: greet

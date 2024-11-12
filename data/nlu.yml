@@ -70,6 +70,30 @@ nlu:
     - Recommend something for me.
     - Can you offer a recommendation?
 
+- intent: ask_bmi_effect
+  examples: |
+    - How does my BMI affect my stroke risk?
+    - Can you explain the impact of BMI on stroke?
+    - What does my BMI indicate about my health?
+    - Explain how BMI influences stroke risk.
+    - What is the relationship between BMI and stroke?
+
+- intent: ask_stroke_risk_reduction
+  examples: |
+    - I want to reduce my stroke risk. Any recommendations?
+    - How can I lower my risk of stroke?
+    - What can I do to prevent a stroke?
+    - Tips to decrease stroke risk.
+    - Advice on reducing stroke chances.
+
+- intent: ask_data_analysis
+  examples: |
+    - Could you provide a summary of my latest data analysis?
+    - Show me my data analysis summary.
+    - Summarize my health data.
+    - Give me a summary of my data.
+    - Explain my recent data analysis results.
+
 - intent: chitchat
   examples: |
     - How are you?
