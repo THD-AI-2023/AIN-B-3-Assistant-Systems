@@ -1,6 +1,8 @@
 import pandas as pd
+import os
 
-def load_data(filepath='data/raw/healthcare-dataset-stroke-data.csv'):
+
+def load_data(filepath=None):
     """
     Loads the dataset from the specified filepath.
 
@@ -10,14 +12,14 @@ def load_data(filepath='data/raw/healthcare-dataset-stroke-data.csv'):
     Returns:
     - pd.DataFrame: Loaded dataset.
     """
+    if filepath is None:
+        filepath = os.path.join("data", "raw", "healthcare-dataset-stroke-data.csv")
     try:
         data = pd.read_csv(filepath)
         return data
     except FileNotFoundError:
-        # TODO: Handle the case where the file does not exist
         print(f"File not found: {filepath}")
         return pd.DataFrame()
     except Exception as e:
-        # TODO: Handle other potential exceptions
         print(f"An error occurred while loading data: {e}")
         return pd.DataFrame()

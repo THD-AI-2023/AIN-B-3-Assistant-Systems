@@ -3,11 +3,14 @@ services:
     image: rasa/rasa:3.6.2-full
     container_name: rasa_server
     platform: linux/amd64
+    # user: root # sudo chown -R $USER:$USER models
     ports:
       - "5005:5005"
     volumes:
       - ./data:/app/data
-      - ./models:/app/models
+      - ./models/:/app/models
+      - ./models/data_analysis:/app/models/data_analysis
+      - ./models/chatbot:/app/models/chatbot
       - ./config.yml:/app/config.yml
       - ./domain.yml:/app/domain.yml
       - ./endpoints.yml:/app/endpoints.yml
@@ -18,6 +21,8 @@ services:
       - --cors
       - "*"
       - --debug
+      - -m
+      - models/chatbot/
     depends_on:
       - rasa_action
     restart: unless-stopped
@@ -30,6 +35,10 @@ services:
     platform: linux/amd64
     ports:
       - "5055:5055"
+    volumes:
+      - ./data:/app/data
+      - ./models/data_analysis:/app/models/data_analysis
+      - ./models/chatbot:/app/models/chatbot
     restart: unless-stopped
 
   streamlit:
@@ -40,6 +49,10 @@ services:
     platform: linux/amd64
     ports:
       - "8501:8501"
+    volumes:
+      - ./data:/app/data
+      - ./models/data_analysis:/app/models/data_analysis
+      - ./models/chatbot:/app/models/chatbot
     environment:
       - RASA_SERVER=http://rasa:5005/webhooks/rest/webhook
     depends_on:
