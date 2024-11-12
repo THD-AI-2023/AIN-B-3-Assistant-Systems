@@ -44,9 +44,11 @@ The README.md must have the specific structure:
 
 - then an empty line must be included
 
--  lastname, firstname and the mat-no of the second student then an empty line must be included. 
+- If second student: lastname, firstname and the mat-no of the second student
 
-- The title name of the project 
+- If second student, then an empty line must be included
+
+- The title name of the project
 
 - then an empty line must be included
 
@@ -56,9 +58,9 @@ The README.md must have the specific structure:
 
 - A link to the MyGit Wiki
 
--  A MD chapter called "Project description". In this chapter you describe the basics of the project.
+- A MD chapter called "Project description". In this chapter you describe the basics of the project.
 
--  A MD chapter "Installation", which describes the prerequisites and installation of the project on another computer. Especially declare the used versions (of Python,scikit-learn,streamlit,rasa,...) here.
+- A MD chapter "Installation", which describes the prerequisites and installation of the project on another computer. Especially declare the used versions (of Python,scikit-learn,streamlit,rasa,...) here.
 
 - A MD chapter "Data" must be added. It must contain a link to the original data source, the approach for handling outliers and the one for creating fake data.
 
@@ -70,7 +72,7 @@ The README.md must have the specific structure:
 
 - Also, a MD chapter "Work done" must be added later. It must describe, who has implemented which request.
 
--  You may add additional chapters for more details about the project.
+- You may add additional chapters for more details about the project.
 
 ## Part 02 Requests
 
@@ -116,7 +118,7 @@ Create a data-driven web application that implements the following requests:
 
 21. This list of requests may be updated throughout the semester. You will be informed about this in lectures and/or mail-messages.
 
-## Grading
+### Grading
 
 In general, the project about a recommendation system has the fllowing parts:
 
@@ -146,7 +148,7 @@ Student 1:
 
 3) Sample dialogs
 
-Student 2:
+Other student:
 
 4) Strategies for outliers and fake data
 
