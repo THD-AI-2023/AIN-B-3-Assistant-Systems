@@ -1,4 +1,5 @@
 import os
+import json
 import pandas as pd
 import streamlit as st
 from chatbot.rasa_chatbot import Chatbot
@@ -18,6 +19,10 @@ def main():
         st.session_state["data_analysis"] = DataAnalysis()
 
     data_analysis = st.session_state["data_analysis"]
+
+  # Initialize session ID
+    if "session_id" not in st.session_state:
+        st.session_state["session_id"] = os.urandom(24).hex()
 
     # Display saved data analysis model files in the sidebar
     with st.sidebar.expander("Data Analysis Models", expanded=True):
@@ -87,6 +92,12 @@ def main():
             }
             st.success("Your information has been saved.")
 
+            # Save user data to a file
+            user_data_file = os.path.join("data", "user_data", f"{st.session_state['session_id']}.json")
+            os.makedirs(os.path.dirname(user_data_file), exist_ok=True)
+            with open(user_data_file, 'w') as f:
+                json.dump(st.session_state['user_data'], f)
+
         # Display stored user data
         if st.session_state['user_data']:
             st.write("Your current health information:")
@@ -102,8 +113,6 @@ def main():
 
     elif choice == "Chatbot":
         st.subheader("Chatbot Assistance")
-        if "session_id" not in st.session_state:
-            st.session_state["session_id"] = os.urandom(24).hex()
         rasa_server_url = os.getenv(
             "RASA_SERVER", "http://localhost:5005/webhooks/rest/webhook"
         )

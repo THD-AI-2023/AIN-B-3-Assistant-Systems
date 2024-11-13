@@ -1,14 +1,9 @@
 version: "3.1"
 
 stories:
-- story: Generate health recommendation with form
+- story: User asks for recommendation
   steps:
     - intent: ask_recommendation
-    - action: health_form
-    - active_loop: health_form
-    - intent: inform
-    - action: health_form
-    - active_loop: null
     - action: action_generate_recommendation
 
 - story: User asks for data analysis

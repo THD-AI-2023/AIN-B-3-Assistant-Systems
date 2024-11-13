@@ -14,71 +14,24 @@ intents:
   - chitchat_weather
   - out_of_scope
 
-entities:
-  - age
-  - hypertension
-  - gender
-  - bmi
-  - heart_disease
-  - weight
-  - height
+# entities:
+#   - age
+#   - hypertension
+#   - gender
+#   - bmi
+#   - heart_disease
+#   - weight
+#   - height
 
-slots:
-  age:
-    type: float
-    influence_conversation: false
-    mappings:
-      - type: from_entity
-        entity: age
-      - type: from_text
-  gender:
-    type: text
-    influence_conversation: false
-    mappings:
-      - type: from_entity
-        entity: gender
-      - type: from_text
-  hypertension:
-    type: categorical
-    values:
-      - yes
-      - no
-    influence_conversation: false
-    mappings:
-      - type: from_entity
-        entity: hypertension
-      - type: from_text
-  heart_disease:
-    type: categorical
-    values:
-      - yes
-      - no
-    influence_conversation: false
-    mappings:
-      - type: from_entity
-        entity: heart_disease
-      - type: from_text
-  bmi:
-    type: float
-    influence_conversation: false
-    mappings:
-      - type: from_entity
-        entity: bmi
-      - type: from_text
-  weight:
-    type: float
-    influence_conversation: false
-    mappings:
-      - type: from_entity
-        entity: weight
-      - type: from_text
-  height:
-    type: float
-    influence_conversation: false
-    mappings:
-      - type: from_entity
-        entity: height
-      - type: from_text
+# slots:
+#   age:
+#     type: float
+#     influence_conversation: false
+#     mappings:
+#       - type: from_entity
+#         entity: age
+#       - type: from_text
+#   ...
 
 responses:
   utter_greet:
@@ -86,21 +39,6 @@ responses:
 
   utter_goodbye:
     - text: "Goodbye! Have a great day!"
-
-  utter_ask_age:
-    - text: "Could you please provide your age?"
-
-  utter_ask_gender:
-    - text: "Could you please provide your gender?"
-
-  utter_ask_hypertension:
-    - text: "Do you have hypertension? (yes/no)"
-
-  utter_ask_heart_disease:
-    - text: "Do you have heart disease? (yes/no)"
-
-  utter_ask_bmi:
-    - text: "Could you please provide your BMI?"
 
   utter_chitchat_ask_name:
     - text: "I'm your friendly assistant bot, here to help you with recommendations and data analysis."
@@ -123,16 +61,16 @@ actions:
   - action_explain_bmi_effect
   - action_provide_stroke_risk_reduction_advice
 
-forms:
-  health_form:
-    required_slots:
-      - age
-      - gender
-      - hypertension
-      - heart_disease
-      - bmi
-      - weight
-      - height
+# forms:
+#   health_form:
+#     required_slots:
+#       - age
+#       - gender
+#       - hypertension
+#       - heart_disease
+#       - bmi
+#       - weight
+#       - height
 
 session_config:
   session_expiration_time: 60

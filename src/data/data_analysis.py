@@ -1,5 +1,3 @@
-# src/data/data_analysis.py
-
 import os
 import time
 import pandas as pd
@@ -266,7 +264,7 @@ class DataAnalysis:
                 ),
                 (
                     "cat",
-                    OneHotEncoder(drop="first", handle_unknown="ignore"),
+                    OneHotEncoder(handle_unknown="ignore", sparse=False),
                     self.categorical_cols,
                 ),
             ]

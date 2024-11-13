@@ -2,18 +2,9 @@
 version: "3.1"
 
 rules:
-  - rule: Activate health form
+  - rule: Generate recommendation
     steps:
       - intent: ask_recommendation
-      - action: health_form
-      - active_loop: health_form
-
-  - rule: Submit health form
-    condition:
-      - active_loop: health_form
-    steps:
-      - action: health_form
-      - active_loop: null
       - action: action_generate_recommendation
 
   - rule: Handle chitchat ask name

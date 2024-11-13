@@ -1,9 +1,15 @@
 import os
+import json
 import pandas as pd
 import joblib
+import logging
+from typing import List, Dict, Text
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
 from rasa_sdk.events import SlotSet, FollowupAction
+
+logging.basicConfig(level=logging.ERROR)
+logger = logging.getLogger(__name__)
 
 class ActionShowDataAnalysis(Action):
     def name(self) -> str:
@@ -74,38 +80,53 @@ class ActionShowDataAnalysis(Action):
         return []
 
 class ActionGenerateRecommendation(Action):
-    def name(self) -> str:
+    def name(self) -> Text:
         return "action_generate_recommendation"
 
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
-            domain: dict) -> list:
+            domain: Dict[Text, any]) -> List[Dict[Text, any]]:
 
-        # Get slot values
-        age = tracker.get_slot("age")
-        gender = tracker.get_slot("gender")
-        hypertension = tracker.get_slot("hypertension")
-        heart_disease = tracker.get_slot("heart_disease")
-        bmi = tracker.get_slot("bmi")
+        # Get the session_id from the tracker
+        session_id = tracker.sender_id
 
-        # Validate slots
-        if not all([age, gender, hypertension, heart_disease, bmi]):
-            dispatcher.utter_message(text="I'm missing some information to generate a recommendation.")
+        # Read user data from file
+        user_data_file = os.path.join("data", "user_data", f"{session_id}.json")
+        try:
+            with open(user_data_file, 'r') as f:
+                user_data = json.load(f)
+        except Exception as e:
+            logger.error(f"Error reading user data: {e}")
+            dispatcher.utter_message(text="I'm sorry, but I don't have your data to generate a recommendation. Please make sure you've provided your health information on the home page.")
             return []
 
-        # Convert categorical slots to numerical values
-        hypertension = 1 if hypertension.lower() in ["yes", "1", "true"] else 0
-        heart_disease = 1 if heart_disease.lower() in ["yes", "1", "true"] else 0
+        # Extract user data
+        age = user_data.get('age')
+        gender = user_data.get('gender')
+        hypertension = user_data.get('hypertension')
+        heart_disease = user_data.get('heart_disease')
+        bmi = user_data.get('bmi')
+
+        # Check if all necessary data is present
+        if None in [age, gender, hypertension, heart_disease, bmi]:
+            dispatcher.utter_message(text="Some of your health information is missing. Please ensure all fields are filled on the home page.")
+            return []
+
+        # Convert categorical data if necessary
+        hypertension = int(hypertension)
+        heart_disease = int(heart_disease)
 
         # Load the best performing model
         model_path = os.path.join("models", "data_analysis", "Random_Forest_augmented.pkl")
         if not os.path.exists(model_path):
+            logger.error(f"Model file not found at {model_path}")
             dispatcher.utter_message(text="I'm sorry, but I'm unable to generate a recommendation at this time.")
             return []
 
         try:
             model = joblib.load(model_path)
         except Exception as e:
+            logger.error(f"Error loading model: {e}")
             dispatcher.utter_message(text="I'm sorry, but I'm unable to generate a recommendation at this time.")
             return []
 
@@ -115,7 +136,7 @@ class ActionGenerateRecommendation(Action):
             'age': [float(age)],
             'hypertension': [hypertension],
             'heart_disease': [heart_disease],
-            'avg_glucose_level': [100.0],  # Placeholder
+            'avg_glucose_level': [100.0],  # Placeholder value
             'bmi': [float(bmi)],
             'ever_married': ["Yes" if float(age) >= 18 else "No"],
             'work_type': ["Private"],
@@ -126,6 +147,7 @@ class ActionGenerateRecommendation(Action):
         # Preprocess input data
         preprocessor_path = os.path.join("models", "data_analysis", "preprocessor.pkl")
         if not os.path.exists(preprocessor_path):
+            logger.error(f"Preprocessor file not found at {preprocessor_path}")
             dispatcher.utter_message(text="I'm sorry, but I'm unable to process your data at this time.")
             return []
 
@@ -133,6 +155,7 @@ class ActionGenerateRecommendation(Action):
             preprocessor = joblib.load(preprocessor_path)
             input_data_processed = preprocessor.transform(input_data)
         except Exception as e:
+            logger.error(f"Error preprocessing input data: {e}")
             dispatcher.utter_message(text="I'm sorry, but I'm unable to process your data at this time.")
             return []
 
@@ -141,18 +164,19 @@ class ActionGenerateRecommendation(Action):
             prediction = model.predict(input_data_processed)[0]
             prediction_proba = model.predict_proba(input_data_processed)[0][1]
         except Exception as e:
+            logger.error(f"Error generating prediction: {e}")
             dispatcher.utter_message(text="I'm sorry, but I'm unable to generate a recommendation at this time.")
             return []
 
         # Provide recommendation
         if prediction == 1:
             recommendation = (
-                f"Based on the information provided, you may have an elevated risk of stroke. "
+                f"Based on your data (Age: {age}, Gender: {gender}, BMI: {bmi}), you may have an elevated risk of stroke. "
                 "It's important to consult a healthcare professional for personalized advice."
             )
         else:
             recommendation = (
-                f"Based on your data, your risk of stroke appears to be low. "
+                f"Based on your data (Age: {age}, Gender: {gender}, BMI: {bmi}), your risk of stroke appears to be low. "
                 "Maintaining a healthy lifestyle can help keep it that way."
             )
 
