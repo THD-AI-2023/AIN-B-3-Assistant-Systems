@@ -4,11 +4,7 @@
 
 Understanding our users is crucial for designing an effective and user-friendly recommendation system. Below are three detailed personas representing the primary user groups for the **Assistance Systems Project**.
 
-## **Persona 1: Health-Conscious Helen**
-
-<div style="float: right; width: 150px; margin-left: 20px;">
-  <img src="./_helen.png" alt="Health-Conscious Helen" style="width: 100%; border-radius: 50%;">
-</div>
+## **Persona 1: Health-Conscious Helen** <img src="./_helen.png" alt="Health-Conscious Helen" width="150" align="right">
 
 ### **Background**
 - **Age:** 35
@@ -42,11 +38,7 @@ The **Assistance Systems Project** provides Helen with tailored health recommend
 
 ---
 
-## **Persona 2: Data Analyst David**
-
-<div style="float: right; width: 150px; margin-left: 20px;">
-  <img src="./_david.png" alt="Data Analyst David" style="width: 100%; border-radius: 50%;">
-</div>
+## **Persona 2: Data Analyst David**  <img src="./_david.png" alt="Data Analyst David" width="150" align="right">
 
 ### **Background**
 - **Age:** 28
@@ -80,11 +72,7 @@ The **Assistance Systems Project** offers David robust data analysis capabilitie
 
 ---
 
-## **Persona 3: Senior Citizen Sam**
-
-<div style="float: right; width: 150px; margin-left: 20px;">
-  <img src="./_sam.png" alt="Senior Citizen Sam" style="width: 100%; border-radius: 50%;">
-</div>
+## **Persona 3: Senior Citizen Sam** <img src="./_sam.png" alt="Senior Citizen Sam" width="150" align="right">
 
 ### **Background**
 - **Age:** 70
