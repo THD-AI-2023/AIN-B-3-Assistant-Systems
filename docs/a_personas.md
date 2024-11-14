@@ -6,6 +6,10 @@ Understanding our users is crucial for designing an effective and user-friendly 
 
 ## **Persona 1: Health-Conscious Helen**
 
+<div style="float: right; width: 150px; margin-left: 20px;">
+  <img src="./_helen.png" alt="Health-Conscious Helen" style="width: 100%; border-radius: 50%;">
+</div>
+
 ### **Background**
 - **Age:** 35
 - **Occupation:** Marketing Manager
@@ -40,6 +44,10 @@ The **Assistance Systems Project** provides Helen with tailored health recommend
 
 ## **Persona 2: Data Analyst David**
 
+<div style="float: right; width: 150px; margin-left: 20px;">
+  <img src="./_david.png" alt="Data Analyst David" style="width: 100%; border-radius: 50%;">
+</div>
+
 ### **Background**
 - **Age:** 28
 - **Occupation:** Data Analyst at a Tech Firm
@@ -73,6 +81,10 @@ The **Assistance Systems Project** offers David robust data analysis capabilitie
 ---
 
 ## **Persona 3: Senior Citizen Sam**
+
+<div style="float: right; width: 150px; margin-left: 20px;">
+  <img src="./_sam.png" alt="Senior Citizen Sam" style="width: 100%; border-radius: 50%;">
+</div>
 
 ### **Background**
 - **Age:** 70
