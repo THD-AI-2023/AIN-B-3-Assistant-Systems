@@ -20,7 +20,7 @@ def main():
 
     data_analysis = st.session_state["data_analysis"]
 
-  # Initialize session ID
+    # Initialize session ID
     if "session_id" not in st.session_state:
         st.session_state["session_id"] = os.urandom(24).hex()
 
@@ -80,6 +80,11 @@ def main():
             hypertension = st.selectbox("Do you have hypertension?", options=["No", "Yes"])
             heart_disease = st.selectbox("Do you have heart disease?", options=["No", "Yes"])
             bmi = st.number_input("BMI", min_value=0.0, max_value=100.0, value=25.0)
+            avg_glucose_level = st.number_input("Average Glucose Level", min_value=0.0, max_value=300.0, value=100.0)
+            ever_married = st.selectbox("Have you ever been married?", options=["No", "Yes"])
+            work_type = st.selectbox("Work Type", options=['Private', 'Self-employed', 'Govt_job', 'children', 'Never_worked'])
+            Residence_type = st.selectbox("Residence Type", options=['Urban', 'Rural'])
+            smoking_status = st.selectbox("Smoking Status", options=['never smoked', 'formerly smoked', 'smokes', 'Unknown'])
             submitted = st.form_submit_button("Submit")
 
         if submitted:
@@ -88,7 +93,12 @@ def main():
                 'gender': gender,
                 'hypertension': 1 if hypertension == "Yes" else 0,
                 'heart_disease': 1 if heart_disease == "Yes" else 0,
-                'bmi': bmi
+                'bmi': bmi,
+                'avg_glucose_level': avg_glucose_level,
+                'ever_married': ever_married,
+                'work_type': work_type,
+                'Residence_type': Residence_type,
+                'smoking_status': smoking_status
             }
             st.success("Your information has been saved.")
 

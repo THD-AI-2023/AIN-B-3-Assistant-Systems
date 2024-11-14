@@ -2,10 +2,21 @@
 version: "3.1"
 
 rules:
-  - rule: Generate recommendation
+  - rule: Provide stroke risk reduction advice
+    condition:
+      - slot_was_set:
+          - risk_level: high
     steps:
-      - intent: ask_recommendation
-      - action: action_generate_recommendation
+      - intent: affirm
+      - action: action_provide_stroke_risk_reduction_advice
+
+  - rule: Handle denial of advice
+    condition:
+      - slot_was_set:
+          - risk_level: high
+    steps:
+      - intent: deny
+      - action: utter_goodbye
 
   - rule: Handle chitchat ask name
     steps:
@@ -30,4 +41,4 @@ rules:
   - rule: Fallback rule
     steps:
       - intent: nlu_fallback
-      - action: utter_out_of_scope
+      - action: action_default_fallback

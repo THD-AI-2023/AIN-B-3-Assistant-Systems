@@ -14,24 +14,18 @@ intents:
   - chitchat_weather
   - out_of_scope
 
-# entities:
-#   - age
-#   - hypertension
-#   - gender
-#   - bmi
-#   - heart_disease
-#   - weight
-#   - height
+entities:
+  - age
+  - gender
+  - hypertension
+  - heart_disease
+  - bmi
 
-# slots:
-#   age:
-#     type: float
-#     influence_conversation: false
-#     mappings:
-#       - type: from_entity
-#         entity: age
-#       - type: from_text
-#   ...
+slots:
+  risk_level:
+    type: text
+    influence_conversation: false
+    mappings: []
 
 responses:
   utter_greet:
@@ -60,17 +54,7 @@ actions:
   - action_show_data_analysis
   - action_explain_bmi_effect
   - action_provide_stroke_risk_reduction_advice
-
-# forms:
-#   health_form:
-#     required_slots:
-#       - age
-#       - gender
-#       - hypertension
-#       - heart_disease
-#       - bmi
-#       - weight
-#       - height
+  - action_default_fallback
 
 session_config:
   session_expiration_time: 60

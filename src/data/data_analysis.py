@@ -480,12 +480,12 @@ class DataAnalysis:
             eval_df = pd.DataFrame([eval_data])
 
             if os.path.exists(eval_path):
-                eval_existing = pd.read_csv(eval_path)
-                eval_combined = pd.concat([eval_existing, eval_df], ignore_index=True)
-            else:
-                eval_combined = eval_df
-
-            eval_combined.to_csv(eval_path, index=False)
+                existing_eval_df = pd.read_csv(eval_path)
+                existing_eval_df = existing_eval_df[
+                    ~((existing_eval_df['Model'] == model_name) & (existing_eval_df['Data_Type'] == data_type))
+                ]
+                eval_df = pd.concat([existing_eval_df, eval_df], ignore_index=True)
+            eval_df.to_csv(eval_path, index=False)
 
         except Exception as e:
             st.error(f"Error evaluating {model_name}: {e}")
