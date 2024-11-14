@@ -8,9 +8,7 @@ services:
       - "5005:5005"
     volumes:
       - ./data:/app/data
-      - ./models/:/app/models
-      - ./models/data_analysis:/app/models/data_analysis
-      - ./models/chatbot:/app/models/chatbot
+      - ./models/chatbot:/app/models
       - ./config.yml:/app/config.yml
       - ./domain.yml:/app/domain.yml
       - ./endpoints.yml:/app/endpoints.yml
@@ -21,8 +19,6 @@ services:
       - --cors
       - "*"
       - --debug
-      - -m
-      - models/chatbot/
     depends_on:
       - rasa_action
     restart: unless-stopped
@@ -37,8 +33,7 @@ services:
       - "5055:5055"
     volumes:
       - ./data:/app/data
-      - ./models/data_analysis:/app/models/data_analysis
-      - ./models/chatbot:/app/models/chatbot
+      - ./models:/app/models
     restart: unless-stopped
 
   streamlit:
@@ -51,8 +46,7 @@ services:
       - "8501:8501"
     volumes:
       - ./data:/app/data
-      - ./models/data_analysis:/app/models/data_analysis
-      - ./models/chatbot:/app/models/chatbot
+      - ./models:/app/models
     environment:
       - RASA_SERVER=http://rasa:5005/webhooks/rest/webhook
     depends_on:

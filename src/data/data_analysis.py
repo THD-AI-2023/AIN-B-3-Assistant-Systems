@@ -1,5 +1,3 @@
-# src/data/data_analysis.py
-
 import os
 import time
 import pandas as pd
@@ -25,6 +23,7 @@ from data.data_preprocessor import preprocess_data
 from data.data_augmentation import augment_data
 from data.data_visualization import visualize_data
 import joblib
+
 
 class DataAnalysis:
     """
@@ -70,26 +69,36 @@ class DataAnalysis:
         progress_bar = st.sidebar.progress(0)
 
         # Load and preprocess data
-        self.load_and_preprocess_data(status_text, progress_bar)
+        status_text.text("Loading data...")
+        self.load_and_preprocess_data()
+        progress_bar.progress(20)
 
         # Display and apply data filters
         filters_changed = self.display_filters()
+        progress_bar.progress(30)
 
         # Visualize data
-        self.visualize_data(status_text, progress_bar)
+        self.visualize_data()
+        progress_bar.progress(50)
 
         # Split data
         if not self.split_data():
             return  # Stop execution if splitting fails
+        progress_bar.progress(60)
 
         # Augment data
         self.augment_data()
+        progress_bar.progress(65)
 
         # Define preprocessor
         self.define_preprocessor()
+        progress_bar.progress(70)
 
-        # Fit preprocessor
+        # Fit preprocessor and track creation
+        status_text.text("Fitting preprocessor and saving to preprocessor.pkl...")
         self.fit_preprocessor()
+        progress_bar.progress(75)
+        time.sleep(1)
 
         # Check if filters have changed to determine if retraining is needed
         if filters_changed:
@@ -107,21 +116,21 @@ class DataAnalysis:
 
         # Make sample prediction
         self.make_sample_prediction()
+        progress_bar.progress(100)
+        status_text.text("Data analysis workflow complete.")
+        time.sleep(1)
+        status_text.empty()
 
-    def load_and_preprocess_data(self, status_text, progress_bar):
+    def load_and_preprocess_data(self):
         """
         Loads and preprocesses the data.
         """
-        status_text.text("Loading data...")
         self.data = load_data()
         if self.data.empty:
             st.error("Failed to load data.")
             st.stop()
-        progress_bar.progress(10)
         self.data = preprocess_data(self.data)
-        progress_bar.progress(30)
         self.data.reset_index(drop=True, inplace=True)
-        progress_bar.progress(50)
 
     def display_filters(self):
         """
@@ -202,17 +211,11 @@ class DataAnalysis:
 
         return filters_changed
 
-    def visualize_data(self, status_text, progress_bar):
+    def visualize_data(self):
         """
         Visualizes the data.
         """
         visualize_data(self.data)
-        progress_bar.progress(80)
-        time.sleep(0.5)
-        progress_bar.empty()
-        status_text.text("Data loading and visualization complete.")
-        time.sleep(1)
-        status_text.empty()
 
     def split_data(self):
         """
@@ -266,7 +269,7 @@ class DataAnalysis:
                 ),
                 (
                     "cat",
-                    OneHotEncoder(drop="first", handle_unknown="ignore"),
+                    OneHotEncoder(handle_unknown="ignore", sparse=False),
                     self.categorical_cols,
                 ),
             ]
@@ -366,7 +369,7 @@ class DataAnalysis:
                 st.error(f"Error training {model_name}: {e}")
                 continue
             # Update progress
-            progress = int(((idx + 1) / total_models) * 50)
+            progress = 75 + int(((idx + 1) / total_models) * 10)  # Next 10% for real data models
             progress_bar.progress(progress)
 
         # Handle class imbalance using SMOTE on augmented data
@@ -395,6 +398,7 @@ class DataAnalysis:
 
         # Training models on augmented data
         status_text.text("Training models on augmented data...")
+        total_augmented_models = len(augmented_models)
         for idx, (model_name, model) in enumerate(augmented_models.items()):
             try:
                 model.fit(X_train_res_augmented, y_train_res_augmented)
@@ -411,10 +415,10 @@ class DataAnalysis:
                 st.error(f"Error training {model_name}: {e}")
                 continue
             # Update progress
-            progress = 50 + int(((idx + 1) / len(augmented_models)) * 50)  # Next 50% for augmented data
+            progress = 85 + int(((idx + 1) / total_augmented_models) * 10)  # Next 10% for augmented data models
             progress_bar.progress(progress)
 
-        progress_bar.empty()
+        progress_bar.progress(95)
         status_text.text("Model training complete.")
         time.sleep(1)
         status_text.empty()
@@ -476,12 +480,12 @@ class DataAnalysis:
             eval_df = pd.DataFrame([eval_data])
 
             if os.path.exists(eval_path):
-                eval_existing = pd.read_csv(eval_path)
-                eval_combined = pd.concat([eval_existing, eval_df], ignore_index=True)
-            else:
-                eval_combined = eval_df
-
-            eval_combined.to_csv(eval_path, index=False)
+                existing_eval_df = pd.read_csv(eval_path)
+                existing_eval_df = existing_eval_df[
+                    ~((existing_eval_df['Model'] == model_name) & (existing_eval_df['Data_Type'] == data_type))
+                ]
+                eval_df = pd.concat([existing_eval_df, eval_df], ignore_index=True)
+            eval_df.to_csv(eval_path, index=False)
 
         except Exception as e:
             st.error(f"Error evaluating {model_name}: {e}")
@@ -548,7 +552,7 @@ class DataAnalysis:
             for file in os.listdir(data_analysis_model_dir):
                 file_path = os.path.join(data_analysis_model_dir, file)
                 try:
-                    if os.path.isfile(file_path):
+                    if os.path.isfile(file_path) and file != "preprocessor.pkl":
                         os.remove(file_path)
                         st.write(f"Deleted existing data analysis model: {file}")
                 except Exception as e:

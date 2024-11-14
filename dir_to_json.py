@@ -6,27 +6,27 @@ import mimetypes
 # Define the extensions that require partial content
 PARTIAL_READ_EXTENSIONS = {'.csv', '.jsonl', '.txt', '.log'}  # Add more extensions as needed
 
-# Initialize explicit filenames to ignore (but include with "..." in JSON)
-EXPLICIT_IGNORE_FILES = {'LICENSE', 'CHANGELOG.md', 'dir_to_json.py', '.dockerignore', '.gitignore', 'requirements.txt', 'f_dialog_flow.md', 'c_outlier_handling.md'}  # Default filenames
+# Initialize explicit filenames to include as "..." in JSON
+EXPLICIT_IGNORE_FILES = {'LICENSE', 'CHANGELOG.md', 'README.md', 'dir_to_json.py', '.dockerignore', '.gitignore', '.ignore', 'a_personas.md', 'b_use_cases.md', 'c_outlier_handling.md', 'd_chatbot_use_case.md', 'e_sample_dialogs.md', 'f_dialog_flow.md', 'endpoints.yml'}  # Default filenames
 
 def parse_ignore_file(ignore_file_path):
     """
-    Parses an ignore file and returns a set of filenames to ignore.
+    Parses an ignore file and returns a set of filenames or patterns to ignore.
     """
-    ignored_files = set()
+    ignored_patterns = set()
     try:
         with open(ignore_file_path, 'r', encoding='utf-8') as file:
             for line in file:
                 line = line.strip()
                 if line and not line.startswith('#'):
-                    ignored_files.add(line)
+                    ignored_patterns.add(line)
     except FileNotFoundError:
-        pass  # If .ignore file does not exist, proceed with default ignore list
-    return ignored_files
+        pass  # If ignore file does not exist, proceed with default ignore list
+    return ignored_patterns
 
 # Optionally, extend the ignore list by parsing an external .ignore file
 IGNORE_FILE_PATH = os.path.join('.', '.ignore')  # Adjust the path if necessary
-EXPLICIT_IGNORE_FILES.update(parse_ignore_file(IGNORE_FILE_PATH))
+IGNORE_PATTERNS = parse_ignore_file(IGNORE_FILE_PATH)
 
 def read_partial_file(file_path, first_n=10, last_m=5):
     """
@@ -77,21 +77,6 @@ def read_file(file_path):
     except (UnicodeDecodeError, FileNotFoundError):
         return "..."
 
-def parse_gitignore(gitignore_path):
-    """
-    Parses a .gitignore file and returns a list of ignore patterns.
-    """
-    ignore_patterns = []
-    try:
-        with open(gitignore_path, 'r', encoding='utf-8') as file:
-            for line in file:
-                line = line.strip()
-                if line and not line.startswith('#'):
-                    ignore_patterns.append(line)
-    except FileNotFoundError:
-        pass
-    return ignore_patterns
-
 def is_ignored(file_path, ignore_patterns):
     """
     Checks if a file path matches any of the ignore patterns.
@@ -115,8 +100,11 @@ def dir_to_json(directory, submodules, ignore_submodules=False):
     Converts a directory structure into a JSON object, optionally ignoring submodules.
     """
     result = {}
-    ignore_patterns = ['.git', '.git/*']
     submodule_paths = [os.path.join(directory, submodule['path']) for submodule in submodules]
+
+    # Initialize ignore patterns
+    global_ignore_patterns = IGNORE_PATTERNS.copy()
+    global_gitignore_patterns = []
 
     for root, dirs, files in os.walk(directory):
         if '.git' in dirs:
@@ -127,8 +115,16 @@ def dir_to_json(directory, submodules, ignore_submodules=False):
         if ignore_submodules and is_in_submodule(root, submodule_paths) and not any('README' in file for file in files):
             continue
 
-        gitignore_path = os.path.join(root, '.gitignore')
-        ignore_patterns += parse_gitignore(gitignore_path)
+        # Parse .ignore and .gitignore files in the current directory
+        ignore_file_path = os.path.join(root, '.ignore')
+        gitignore_file_path = os.path.join(root, '.gitignore')
+
+        local_ignore_patterns = parse_ignore_file(ignore_file_path)
+        local_gitignore_patterns = parse_ignore_file(gitignore_file_path)
+
+        # Update global ignore patterns
+        global_ignore_patterns.update(local_ignore_patterns)
+        global_gitignore_patterns.extend(local_gitignore_patterns)
 
         relative_path = os.path.relpath(root, directory)
         if relative_path == ".":
@@ -143,11 +139,13 @@ def dir_to_json(directory, submodules, ignore_submodules=False):
             file_path = os.path.join(root, file)
             relative_file_path = os.path.relpath(file_path, directory)
 
-            if file in EXPLICIT_IGNORE_FILES:
-                sub_result[file] = "..."
-                continue
+            # Check if file should be completely ignored
+            if is_ignored(relative_file_path, global_ignore_patterns):
+                continue  # Do not include in JSON at all
 
-            if is_ignored(relative_file_path, ignore_patterns):
+            # Check if file should be included as "..." (from .gitignore)
+            if is_ignored(relative_file_path, global_gitignore_patterns) or file in EXPLICIT_IGNORE_FILES:
+                sub_result[file] = "..."
                 continue
 
             if ignore_submodules and is_in_submodule(file_path, submodule_paths) and 'README' not in file:
