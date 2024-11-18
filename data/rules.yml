@@ -1,0 +1,44 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/RasaHQ/rasa/refs/heads/main/rasa/shared/utils/schemas/stories.yml
+version: "3.1"
+
+rules:
+  - rule: Provide stroke risk reduction advice
+    condition:
+      - slot_was_set:
+          - risk_level: high
+    steps:
+      - intent: affirm
+      - action: action_provide_stroke_risk_reduction_advice
+
+  - rule: Handle denial of advice
+    condition:
+      - slot_was_set:
+          - risk_level: high
+    steps:
+      - intent: deny
+      - action: utter_goodbye
+
+  - rule: Handle chitchat ask name
+    steps:
+      - intent: chitchat_ask_name
+      - action: utter_chitchat_ask_name
+
+  - rule: Handle chitchat tell joke
+    steps:
+      - intent: chitchat_tell_joke
+      - action: utter_chitchat_tell_joke
+
+  - rule: Handle chitchat favorite color
+    steps:
+      - intent: chitchat_favorite_color
+      - action: utter_chitchat_favorite_color
+
+  - rule: Handle chitchat weather
+    steps:
+      - intent: chitchat_weather
+      - action: utter_chitchat_weather
+
+  - rule: Fallback rule
+    steps:
+      - intent: nlu_fallback
+      - action: action_default_fallback

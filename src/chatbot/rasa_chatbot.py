@@ -24,7 +24,10 @@ class Chatbot:
         Returns:
         - list: A list of responses from the chatbot.
         """
-        payload = {"sender": self.session_id, "message": message}
+        payload = {
+            "sender": self.session_id,
+            "message": message,
+        }
         try:
             response = requests.post(self.rasa_url, json=payload)
             response.raise_for_status()

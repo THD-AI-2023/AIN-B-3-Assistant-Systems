@@ -2,7 +2,7 @@ streamlit
 pydeck
 protobuf
 pandas
-scikit-learn
+scikit-learn==1.1.3
 faker
 seaborn
 altair
@@ -10,4 +10,3 @@ matplotlib
 rasa
 sqlalchemy<2.0
 imblearn
-

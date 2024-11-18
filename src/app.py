@@ -1,4 +1,5 @@
 import os
+import json
 import pandas as pd
 import streamlit as st
 from chatbot.rasa_chatbot import Chatbot
@@ -18,6 +19,10 @@ def main():
         st.session_state["data_analysis"] = DataAnalysis()
 
     data_analysis = st.session_state["data_analysis"]
+
+    # Initialize session ID
+    if "session_id" not in st.session_state:
+        st.session_state["session_id"] = os.urandom(24).hex()
 
     # Display saved data analysis model files in the sidebar
     with st.sidebar.expander("Data Analysis Models", expanded=True):
@@ -62,8 +67,51 @@ def main():
             st.write("Model evaluations are not available.")
 
     if choice == "Home":
-        st.subheader("Welcome to Assistance Systems Project")
-        st.write("Use the sidebar to navigate through the application.")
+        st.subheader("Welcome to the Assistance Systems Project")
+        st.write("Please enter your personal health information to receive personalized recommendations.")
+
+        # Initialize session state for user data
+        if 'user_data' not in st.session_state:
+            st.session_state['user_data'] = {}
+
+        with st.form(key='user_data_form'):
+            age = st.number_input("Age", min_value=0, max_value=120, value=25)
+            gender = st.selectbox("Gender", options=["Male", "Female", "Other"])
+            hypertension = st.selectbox("Do you have hypertension?", options=["No", "Yes"])
+            heart_disease = st.selectbox("Do you have heart disease?", options=["No", "Yes"])
+            bmi = st.number_input("BMI", min_value=0.0, max_value=100.0, value=25.0)
+            avg_glucose_level = st.number_input("Average Glucose Level", min_value=0.0, max_value=300.0, value=100.0)
+            ever_married = st.selectbox("Have you ever been married?", options=["No", "Yes"])
+            work_type = st.selectbox("Work Type", options=['Private', 'Self-employed', 'Govt_job', 'children', 'Never_worked'])
+            Residence_type = st.selectbox("Residence Type", options=['Urban', 'Rural'])
+            smoking_status = st.selectbox("Smoking Status", options=['never smoked', 'formerly smoked', 'smokes', 'Unknown'])
+            submitted = st.form_submit_button("Submit")
+
+        if submitted:
+            st.session_state['user_data'] = {
+                'age': age,
+                'gender': gender,
+                'hypertension': 1 if hypertension == "Yes" else 0,
+                'heart_disease': 1 if heart_disease == "Yes" else 0,
+                'bmi': bmi,
+                'avg_glucose_level': avg_glucose_level,
+                'ever_married': ever_married,
+                'work_type': work_type,
+                'Residence_type': Residence_type,
+                'smoking_status': smoking_status
+            }
+            st.success("Your information has been saved.")
+
+            # Save user data to a file
+            user_data_file = os.path.join("data", "user_data", f"{st.session_state['session_id']}.json")
+            os.makedirs(os.path.dirname(user_data_file), exist_ok=True)
+            with open(user_data_file, 'w') as f:
+                json.dump(st.session_state['user_data'], f)
+
+        # Display stored user data
+        if st.session_state['user_data']:
+            st.write("Your current health information:")
+            st.json(st.session_state['user_data'])
 
     elif choice == "Data Analysis":
         data_analysis.run()
@@ -75,8 +123,6 @@ def main():
 
     elif choice == "Chatbot":
         st.subheader("Chatbot Assistance")
-        if "session_id" not in st.session_state:
-            st.session_state["session_id"] = os.urandom(24).hex()
         rasa_server_url = os.getenv(
             "RASA_SERVER", "http://localhost:5005/webhooks/rest/webhook"
         )
