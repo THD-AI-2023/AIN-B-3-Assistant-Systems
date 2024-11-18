@@ -48,7 +48,7 @@ services:
       - ./data:/app/data
       - ./models:/app/models
     environment:
-      - RASA_SERVER=http://rasa:5005/webhooks/rest/webhook
+      - RASA_SERVER=http://rasa:5005
     depends_on:
       - rasa
     restart: unless-stopped

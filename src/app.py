@@ -123,11 +123,46 @@ def main():
 
     elif choice == "Chatbot":
         st.subheader("Chatbot Assistance")
-        rasa_server_url = os.getenv(
-            "RASA_SERVER", "http://localhost:5005/webhooks/rest/webhook"
-        )
+        rasa_server_url = os.getenv("RASA_SERVER", "http://rasa:5005")  # Correctly reference the Rasa service
         chatbot = Chatbot(rasa_url=rasa_server_url, session_id=st.session_state["session_id"])
-        chatbot.run()
+
+        # Display chatbot status
+        with st.spinner("Checking chatbot status..."):
+            model_ready = chatbot.is_model_ready()
+
+        if model_ready:
+            st.success("Chatbot is ready to assist you.")
+            chatbot.run()
+        else:
+            st.error("Chatbot is not available.")
+            st.markdown("""
+                **No model loaded in the Rasa server.**
+
+                To train and load a model, please follow these steps:
+
+                1. **Access the Rasa Server Container:**
+                    ```bash
+                    docker exec -it rasa_server bash
+                    ```
+
+                2. **Train the Rasa Model:**
+                    Inside the container, execute:
+                    ```bash
+                    rasa train
+                    ```
+                
+                3. **Restart Services:**
+                    Exit the container and restart the Docker services:
+                    ```bash
+                    exit
+                    docker-compose up --build
+                    ```
+                
+                After completing these steps, refresh the Streamlit app to interact with the chatbot.
+            """)
+            st.markdown("""
+                If you encounter issues during model training, please refer to the [README](./README.md) for detailed instructions.
+            """)
 
 if __name__ == "__main__":
     main()
