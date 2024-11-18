@@ -79,6 +79,10 @@ https://mygit.th-deg.de/username/assistance-systems-project/wiki
 3. **Access the Streamlit Application:**
     Open your browser and navigate to [http://localhost:8501](http://localhost:8501) to access the interactive web interface.
 
+> ### **IMPORTANT NOTE** :information_source:
+>
+> Before using the chatbot in the Streamlit application, **please ensure that the Rasa model has been properly trained**. Training the model is crucial for the chatbot to function correctly. Failing to train the Rasa model may result in unexpected behavior or errors when interacting with the chatbot.
+
 ## Data
 
 ### Dataset
@@ -103,7 +107,7 @@ We utilize the [Stroke Prediction Dataset](https://www.kaggle.com/datasets/fedes
     ```bash
     docker-compose up --build
     ```
-    This command builds the Docker images and starts all services as defined in `docker-compose.yml`.
+    This command builds the Docker images, trains the Rasa model, and starts all services as defined in `docker-compose.yml`.
 
 3. **Access the Streamlit Application:**
     Open your browser and navigate to [http://localhost:8501](http://localhost:8501) to access the interactive web interface.
@@ -112,41 +116,36 @@ We utilize the [Stroke Prediction Dataset](https://www.kaggle.com/datasets/fedes
 
 If a Rasa model has not been trained in the `models/chatbot/` directory, follow these steps:
 
-1. **Access the Rasa Server Container:**
-    ```bash
-    docker exec -it rasa_server bash
-    ```
-
-2. **Train the Rasa Model:**
-    Inside the container, execute:
-    ```bash
-    rasa train
-    ```
-
-3. **Move Trained Models:**
-    After training completes, move the trained model files from the `models/` directory to `models/chatbot/`:
-    ```bash
-    mv models/* models/chatbot/
-    ```
-
-4. **Restart Services:**
-    Exit the container and rebuild the Docker services:
-    ```bash
-    exit
-    docker-compose up --build
-    ```
-
-5. **Monitor Rasa Server Logs:**
-    Ensure the Rasa server is running by checking the logs for messages like:
-    ```
-    2024-11-09 01:15:42 INFO     root  - Rasa server is up and running.
-    2024-11-09 01:15:42 INFO     root  - Enabling coroutine debugging. Loop id 93825087865808.
-    ```
-
-6. **Finalize Setup:**
-    - Navigate to the Data Analysis page in the Streamlit app and wait for the evaluation models to finish training.
-    - Once evaluations are complete, models will be available for use within the Chatbot.
-    - Ensure that data filters are applied as needed and that session management maintains these filters when switching between Data Analysis and Chatbot sections.
+> 
+> 1. **Access the Rasa Server Container:**
+>     ```bash
+>     docker exec -it rasa_server bash
+>     ```
+> 
+> 2. **Train the Rasa Model:**
+>     Inside the container, execute:
+>     ```bash
+>     rasa train
+>     ```
+> 
+> 3. **Restart Services:**
+>     Exit the container and restart the Docker services:
+>     ```bash
+>     exit
+>     docker-compose up --build
+>     ```
+> 
+> 4. **Monitor Rasa Server Logs:**
+>     Ensure the Rasa server is running by checking the logs for messages like:
+>     ```
+>     2024-11-09 01:15:42 INFO     root  - Rasa server is up and running.
+>     ```
+> 
+> 5. **Finalize Setup:**
+>     - Navigate to the Data Analysis page in the Streamlit app and wait for the evaluation models to finish training.
+>     - Once evaluations are complete, models will be available for use within the Chatbot.
+>     - Ensure that data filters are applied as needed and that session management maintains these filters when switching between Data Analysis and Chatbot sections.
+>
 
 ## Implementation of the Requests
 
