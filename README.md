@@ -25,8 +25,8 @@ https://mygit.th-deg.de/username/assistance-systems-project/wiki
 
 1. **Clone the Repository:**
     ```bash
-    git clone https://mygit.th-deg.de/yourusername/assistance-systems-project.git
-    cd assistance-systems-project
+    git clone https://github.com/THD-AI-2023/AIN-B-3-Assistant-Systems.git
+    cd AIN-B-3-Assistant-Systems
     ```
 
 <!--
