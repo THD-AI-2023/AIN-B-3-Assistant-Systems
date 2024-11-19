@@ -165,6 +165,8 @@ A screencast demonstrating the key functionalities of the **Assistance Systems P
 - **Chatbot Functionalities:**
   - Exhibits interactions with the Rasa chatbot, including handling user queries, providing recommendations, and managing conversations.
 
+https://github.com/user-attachments/assets/3de3b449-6cf4-48e3-87d0-0b921487a1d4
+
 [Watch the Demo Video](./docs/.ASP_Demo.mp4)
 
 ## Implementation of the Requests
