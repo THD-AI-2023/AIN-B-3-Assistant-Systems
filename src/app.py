@@ -2,8 +2,10 @@ import os
 import json
 import pandas as pd
 import streamlit as st
+from PIL import Image
 from chatbot.rasa_chatbot import Chatbot
 from data.data_analysis import DataAnalysis
+import joblib
 
 def main():
     st.set_page_config(page_title="Assistance Systems Project", layout="wide")
@@ -11,7 +13,7 @@ def main():
     st.title("Assistance Systems Project")
 
     # Sidebar for navigation
-    menu = ["Home", "Data Analysis", "Recommendations", "Chatbot"]
+    menu = ["Home", "Data Analysis", "Personalized Recommendations", "Chatbot"]
     choice = st.sidebar.selectbox("Menu", menu)
 
     # Initialize DataAnalysis instance in session state
@@ -68,6 +70,27 @@ def main():
 
     if choice == "Home":
         st.subheader("Welcome to the Assistance Systems Project")
+
+        banner_path = os.path.join("docs", ".ASP_Banner.png")
+        if os.path.exists(banner_path):
+            image = Image.open(banner_path)
+            st.image(image, use_container_width=True)
+
+        st.write("""
+        **Assistance Systems Project** is a comprehensive web application designed to provide personalized health recommendations and data insights. Navigate through the sidebar to explore different functionalities:
+
+        - **Data Analysis:** Explore and visualize health-related data.
+        - **Personalized Recommendations:** Receive tailored health recommendations based on your personal information.
+        - **Chatbot:** Interact with our intelligent chatbot for assistance and information.
+
+        Get started by navigating to the **Personalized Recommendations** page to input your health data and receive customized advice.
+        """)
+
+    elif choice == "Data Analysis":
+        data_analysis.run()
+
+    elif choice == "Personalized Recommendations":
+        st.subheader("Personalized Recommendations")
         st.write("Please enter your personal health information to receive personalized recommendations.")
 
         # Initialize session state for user data
@@ -110,16 +133,61 @@ def main():
 
         # Display stored user data
         if st.session_state['user_data']:
-            st.write("Your current health information:")
+            st.write("### Your Current Health Information:")
             st.json(st.session_state['user_data'])
 
-    elif choice == "Data Analysis":
-        data_analysis.run()
+            # Personalized Recommendations
+            st.write("### Recommendations")
+            try:
+                # Load the preprocessor
+                preprocessor_path = os.path.join("models", "data_analysis", "preprocessor.pkl")
+                if not os.path.exists(preprocessor_path):
+                    st.error("Preprocessor not found. Please ensure the preprocessor is trained and available.")
+                else:
+                    preprocessor = joblib.load(preprocessor_path)
 
-    elif choice == "Recommendations":
-        st.subheader("Personalized Recommendations")
-        st.write("This section will display personalized recommendations based on your data filters.")
-        # TODO: Implement recommendation system interface here if needed.
+                    # Load the trained model (assuming Random Forest is the best model)
+                    model_path = os.path.join("models", "data_analysis", "Random_Forest_augmented.pkl")
+                    if not os.path.exists(model_path):
+                        st.error("Recommendation model not found. Please ensure the model is trained and available.")
+                    else:
+                        model = joblib.load(model_path)
+
+                        # Prepare user data for prediction
+                        user_data = pd.DataFrame([st.session_state['user_data']])
+                        user_data_processed = preprocessor.transform(user_data)
+
+                        # Make prediction
+                        prediction = model.predict(user_data_processed)[0]
+                        prediction_proba = model.predict_proba(user_data_processed)[0][1]
+
+                        # Display recommendations based on prediction
+                        if prediction == 1:
+                            risk_level = "High"
+                            st.markdown(f"**Risk Level:** {risk_level}")
+                            st.markdown("""
+                            Based on your provided information, you have a **high risk of stroke**. Here are some recommendations:
+                            
+                            1. **Consult a Healthcare Professional:** It's important to seek medical advice for personalized care.
+                            2. **Manage Blood Pressure:** Maintain a healthy blood pressure through diet, exercise, and medication if prescribed.
+                            3. **Maintain a Healthy BMI:** Work towards achieving and maintaining a healthy Body Mass Index.
+                            4. **Quit Smoking:** If you smoke, consider quitting to reduce your risk.
+                            5. **Regular Physical Activity:** Engage in regular exercise to improve overall health.
+                            """)
+                        else:
+                            risk_level = "Low"
+                            st.markdown(f"**Risk Level:** {risk_level}")
+                            st.markdown("""
+                            Based on your provided information, you have a **low risk of stroke**. Here are some recommendations to maintain your health:
+                            
+                            1. **Balanced Diet:** Continue to eat a balanced diet rich in fruits, vegetables, and whole grains.
+                            2. **Regular Exercise:** Maintain regular physical activity to keep your BMI in a healthy range.
+                            3. **Avoid Smoking:** Continue to avoid smoking to sustain your low-risk status.
+                            4. **Monitor Health Indicators:** Keep an eye on your blood pressure and glucose levels.
+                            5. **Stress Management:** Practice stress-reducing techniques such as meditation or yoga.
+                            """)
+            except Exception as e:
+                st.error(f"An error occurred while generating recommendations: {e}")
 
     elif choice == "Chatbot":
         st.subheader("Chatbot Assistance")
