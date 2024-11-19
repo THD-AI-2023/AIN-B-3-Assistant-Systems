@@ -146,6 +146,27 @@ If a Rasa model has not been trained in the `models/chatbot/` directory, follow 
     - Once evaluations are complete, models will be available for use within the Chatbot.
     - Ensure that data filters are applied as needed and that session management maintains these filters when switching between Data Analysis and Chatbot sections.
 
+## Demonstration Video
+
+A screencast demonstrating the key functionalities of the **Assistance Systems Project**. The demo includes:
+
+- **Application Workflow Without Rasa Model:**
+  - Showcases the application's basic functionalities when the Rasa model is not trained, highlighting data analysis and recommendation features.
+  
+- **Training the Rasa Model:**
+  - Demonstrates the steps to train the Rasa model, ensuring the chatbot is operational.
+  
+- **Data Analysis Workflow:**
+  - Walks through the data analysis process, including loading data, preprocessing, outlier detection, and visualization.
+  
+- **Generating Recommendations:**
+  - Illustrates how personalized health recommendations are generated based on user input and model predictions.
+  
+- **Chatbot Functionalities:**
+  - Exhibits interactions with the Rasa chatbot, including handling user queries, providing recommendations, and managing conversations.
+
+[Watch the Demo Video](./docs/.ASP_Demo.mp4)
+
 ## Implementation of the Requests
 
 The **Assistance Systems Project** encompasses a multi-faceted approach to developing a data-driven web application integrated with a chatbot for personalized health recommendations. Below is an overview of how each project request has been implemented:
