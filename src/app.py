@@ -68,6 +68,13 @@ def main():
 
     if choice == "Home":
         st.subheader("Welcome to the Assistance Systems Project")
+        st.write("Navigate through the sidebar to explore different functionalities of the application.")
+
+    elif choice == "Data Analysis":
+        data_analysis.run()
+
+    elif choice == "Recommendations":
+        st.subheader("Personalized Recommendations")
         st.write("Please enter your personal health information to receive personalized recommendations.")
 
         # Initialize session state for user data
@@ -110,16 +117,14 @@ def main():
 
         # Display stored user data
         if st.session_state['user_data']:
-            st.write("Your current health information:")
+            st.write("### Your Current Health Information:")
             st.json(st.session_state['user_data'])
 
-    elif choice == "Data Analysis":
-        data_analysis.run()
-
-    elif choice == "Recommendations":
-        st.subheader("Personalized Recommendations")
-        st.write("This section will display personalized recommendations based on your data filters.")
-        # TODO: Implement recommendation system interface here if needed.
+        # Placeholder for displaying personalized recommendations
+        st.write("### Recommendations")
+        if st.session_state['user_data']:
+            st.write("Here you can implement personalized recommendations based on your health information.")
+            # TODO: Integrate recommendation logic here.
 
     elif choice == "Chatbot":
         st.subheader("Chatbot Assistance")
