@@ -21,6 +21,7 @@ class Chatbot:
         self.webhook_url = f"{self.rasa_url}/webhooks/rest/webhook"
         self.status_url = f"{self.rasa_url}/status"
         self.session_id = session_id or "user"
+        self.model_path = os.path.join("models", "chatbot")  # Adjust as per your model directory
 
     def send_message(self, message):
         """
@@ -65,11 +66,10 @@ class Chatbot:
                 logger.error(f"HTTP error occurred while fetching status: {http_err}")
                 return {}
         except requests.exceptions.RequestException as e:
-            st.error(f"Error fetching chatbot status: {e}")
             logger.error(f"Error fetching chatbot status: {e}")
             return {}
 
-    def is_model_ready(self, max_retries=5, backoff_factor=2):
+    def is_model_ready(self, max_retries=10, backoff_factor=2):
         """
         Checks if the Rasa model is loaded and ready.
 
@@ -78,7 +78,9 @@ class Chatbot:
         - backoff_factor (int): Factor by which to increase wait time between retries.
 
         Returns:
-        - bool: True if the model is ready, False otherwise.
+        - tuple:
+            - bool: True if the model is ready, False otherwise.
+            - str: Status message indicating the current state.
         """
         for attempt in range(1, max_retries + 1):
             status = self.get_status()
@@ -88,18 +90,36 @@ class Chatbot:
 
             if model_file and num_active_training_jobs == 0:
                 logger.info("Rasa model is ready.")
-                return True
-            elif num_active_training_jobs > 0:
+                return True, "ready"
+            elif model_file and num_active_training_jobs > 0:
                 wait_time = backoff_factor ** attempt
-                st.info(f"Rasa model is still loading (active training jobs: {num_active_training_jobs}). Retrying in {wait_time} seconds...")
+                st.info(f"Rasa model is loading (active training jobs: {num_active_training_jobs}). Retrying in {wait_time} seconds...")
                 time.sleep(wait_time)
+            elif not model_file:
+                # Check if model file exists locally
+                if os.path.exists(self.model_path):
+                    local_model_files = os.listdir(self.model_path)
+                    if local_model_files:
+                        logger.warning("Model file exists locally but Rasa has not loaded it yet.")
+                        st.warning("Model file exists but is not loaded yet. Waiting for the model to load...")
+                        wait_time = backoff_factor ** attempt
+                        time.sleep(wait_time)
+                    else:
+                        logger.warning("Rasa model file does not exist.")
+                        st.warning("No model found. Please train a model using `rasa train`.")
+                        return False, "no_model"
+                else:
+                    logger.warning("Rasa model file does not exist.")
+                    st.warning("No model found. Please train a model using `rasa train`.")
+                    return False, "no_model"
             else:
-                logger.warning("Rasa model status is unknown or not ready.")
-                st.warning("Chatbot status is unknown. Please ensure the Rasa server is running correctly.")
-                return False
+                # Other unknown statuses
+                logger.warning("Model file exists but hasn't loaded yet.")
+                wait_time = backoff_factor ** attempt
+                time.sleep(wait_time)
 
         st.error("Chatbot is not ready after multiple attempts. Please ensure a model is trained and loaded correctly.")
-        return False
+        return False, "failed_to_load"
 
     def run(self):
         """
@@ -138,8 +158,15 @@ class Chatbot:
 
         if prompt:
             # Check if the model is ready before sending the message
-            if not self.is_model_ready():
-                st.warning("Chatbot is currently unavailable. Please train and load a model as per the README instructions.")
+            model_ready, status = self.is_model_ready()
+
+            if not model_ready:
+                if status == "no_model":
+                    st.warning("No chatbot model is currently trained. Please train a model to enable the chatbot.")
+                elif status == "model_not_loaded":
+                    st.warning("Chatbot model is loading. Please wait a moment and try again.")
+                else:
+                    st.warning("Chatbot is unavailable at the moment.")
                 return  # Exit the function without sending the message
 
             # Proceed to send the message
