@@ -132,16 +132,11 @@ If a Rasa model has not been trained in the `models/chatbot/` directory, follow 
     Exit the container and restart the Docker services:
     ```bash
     exit
+    docker-compose down
     docker-compose up --build
     ```
 
-4. **Monitor Rasa Server Logs:**
-    Ensure the Rasa server is running by checking the logs for messages like:
-    ```
-    2024-11-09 01:15:42 INFO     root  - Rasa server is up and running.
-    ```
-
-5. **Finalize Setup:**
+4. **Finalize Setup:**
     - Navigate to the Data Analysis page in the Streamlit app and wait for the evaluation models to finish training.
     - Once evaluations are complete, models will be available for use within the Chatbot.
     - Ensure that data filters are applied as needed and that session management maintains these filters when switching between Data Analysis and Chatbot sections.
