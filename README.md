@@ -10,7 +10,7 @@ https://mygit.th-deg.de/ar08397/Assistant-Systems-Project/-/wikis/home
 
 ![Assistance Systems Project Banner](./docs/.ASP_Banner.png)
 
-## Project description
+## Project Description
 
 **Assistance Systems Project** is an advanced recommendation system designed to enhance user experience by providing personalized suggestions based on user behavior and preferences. Leveraging modern technologies such as Streamlit for the frontend and Rasa for chatbot integration, this project aims to deliver an intuitive and efficient system for diverse applications.
 
@@ -116,7 +116,6 @@ We utilize the [Stroke Prediction Dataset](https://www.kaggle.com/datasets/fedes
 
 If a Rasa model has not been trained in the `models/chatbot/` directory, follow these steps:
 
-
 1. **Access the Rasa Server Container:**
     ```bash
     docker exec -it rasa_server bash
@@ -133,7 +132,7 @@ If a Rasa model has not been trained in the `models/chatbot/` directory, follow 
     ```bash
     exit
     docker-compose down
-    docker-compose up --build
+    docker-compose up --build -d
     ```
 
 4. **Finalize Setup:**
@@ -168,20 +167,20 @@ The **Assistance Systems Project** encompasses a multi-faceted approach to devel
 
 1. **Multi-page Web App with Streamlit**:
     - **Home Page**:
-        - **File**: `src/app.py`
-        - **Function**: `main()`
+        - **File**: `src/web/home.py`
+        - **Function**: `run()`
         - **Description**: Implements the user interface for collecting personal health information through interactive forms using Streamlit's form functionalities.
     - **Data Analysis Page**:
-        - **File**: `src/data/data_analysis.py`
-        - **Function**: `DataAnalysis.run()`
+        - **File**: `src/web/data_analysis_page.py`
+        - **Function**: `run()`
         - **Description**: Handles data analysis operations, including loading, preprocessing, filtering, visualization, and model training.
-    - **Recommendations Page**:
-        - **File**: `src/app.py`
-        - **Function**: Placeholder within `main()` function (implementation to be completed as needed)
-        - **Description**: Intended to display personalized health recommendations based on user input and predictive modeling.
+    - **Personalized Recommendations Page**:
+        - **File**: `src/web/recommendations.py`
+        - **Function**: `run()`
+        - **Description**: Displays personalized health recommendations based on user input and predictive modeling.
     - **Chatbot Page**:
-        - **File**: `src/chatbot/rasa_chatbot.py`
-        - **Function**: `Chatbot.run()`
+        - **File**: `src/web/chatbot_page.py`
+        - **Function**: `run()`
         - **Description**: Integrates the Rasa-based chatbot within the Streamlit application, enabling real-time user interactions and assistance.
 
 2. **Data Handling and Augmentation**:
@@ -196,7 +195,7 @@ The **Assistance Systems Project** encompasses a multi-faceted approach to devel
     - **Fake Data Generation**:
         - **File**: `src/data/data_augmentation.py`
         - **Function**: `augment_data(X, y, augmentation_factor=0.3)`
-        - **Description**: Utilizes the Faker library to generate synthetic data, augmenting the original dataset by 25-50% to improve model robustness.
+        - **Description**: Utilizes the Faker library to generate synthetic data, augmenting the original dataset by 30% to improve model robustness.
 
 3. **Machine Learning Integration with Scikit-Learn**:
     - **Model Training**:
@@ -208,21 +207,25 @@ The **Assistance Systems Project** encompasses a multi-faceted approach to devel
         - **Function**: `DataAnalysis.evaluate_model(model, model_name, X_test, y_test, data_type="")`
         - **Description**: Assesses model performance using metrics such as Accuracy, Precision, Recall, F1 Score, and ROC AUC, with results visualized within the application.
     - **Recommendation System**:
+        - **File**: `src/web/recommendations.py`
+        - **Function**: `run()`
+        - **Description**: Generates personalized health recommendations based on user-provided data and predictive modeling outputs.
+
+    - **Chat Recommendation System**:
         - **File**: `actions/actions.py`
         - **Function**: `ActionGenerateRecommendation.run(dispatcher, tracker, domain)`
         - **Description**: Generates personalized health recommendations based on user-provided data and predictive modeling outputs.
-
 4. **Chatbot Development with Rasa**:
     - **Intent Recognition and Entity Extraction**:
-        - **Files**: `domain.yml`, `nlu.yml`
-        - **Function**: Defined intents and entities within Rasa's configuration files to enable accurate understanding of user inputs.
+        - **Files**: `data/nlu.yml`, `data/domain.yml`
+        - **Description**: Defined intents and entities within Rasa's configuration files to enable accurate understanding of user inputs.
     - **Custom Actions**:
         - **File**: `actions/actions.py`
         - **Functions**: `ActionShowDataAnalysis.run()`, `ActionGenerateRecommendation.run()`, `ActionProvideStrokeRiskReductionAdvice.run()`, `ActionFallback.run()`
         - **Description**: Implements custom actions to handle data analysis summaries, generate recommendations, provide stroke risk reduction advice, and manage fallback responses.
     - **Integration with Streamlit**:
-        - **File**: `src/chatbot/rasa_chatbot.py`
-        - **Function**: `Chatbot.run()`
+        - **File**: `src/web/chatbot_page.py`
+        - **Function**: `run()`
         - **Description**: Ensures seamless communication between the Streamlit application and the Rasa chatbot through REST APIs.
 
 5. **Documentation and Version Control**:
@@ -234,7 +237,6 @@ The **Assistance Systems Project** encompasses a multi-faceted approach to devel
         - **Description**: Adheres to the specified structure, providing clear instructions, project details, and comprehensive information on setup and usage.
 
 Each component has been meticulously developed to ensure a cohesive and user-friendly application that leverages data analysis and machine learning to deliver meaningful health recommendations.
-
 
 ## Work Done
 
@@ -290,7 +292,7 @@ This collaborative effort resulted in a well-rounded and functional application 
 
 - **Interactive Web Interface:** Built with Streamlit, offering a seamless and responsive user experience.
 - **Personalized Recommendations:** Utilizes Scikit-Learn algorithms to provide tailored suggestions.
-- **Data Analysis & Visualization:** Employs Pandas and Matplotlib for insightful data analysis and visualization.
+- **Data Analysis & Visualization:** Employs Pandas and Altair for insightful data analysis and visualization.
 - **Chatbot Support:** Integrates a Rasa-powered chatbot to assist users and enhance interaction.
 - **Robust Data Handling:** Implements strategies for outlier detection and augmentation with realistic fake data.
 
@@ -370,16 +372,27 @@ assistance-systems-project/
 │   ├── data_visualization.py
 │   ├── nlu.yml
 │   ├── processed/
+│   │   └── ...
 │   ├── raw/
-│   └── stories.yml
+│   │   └── healthcare-dataset-stroke-data.csv
+│   ├── stories.yml
+│   └── user_data/
+│       └── ...
 ├── models/
 │   ├── chatbot/
+│   │   └── ...
 │   └── data_analysis/
-│       └── evaluations/
+│       └── ...
 ├── src/
 │   ├── app.py
 │   ├── chatbot/
 │   │   ├── rasa_chatbot.py
+│   │   └── __init__.py
+│   ├── web/
+│   │   ├── home.py
+│   │   ├── recommendations.py
+│   │   ├── chatbot_page.py
+│   │   ├── data_analysis_page.py
 │   │   └── __init__.py
 │   └── __init__.py
 ├── .dockerignore
@@ -389,7 +402,7 @@ assistance-systems-project/
 ├── requirements.txt
 ├── README.md
 └── docs/
-    └── Project_Outline.md
+    └── ...
 ```
 
 ## License
