@@ -7,8 +7,14 @@ def run():
 
     banner_path = os.path.join("docs", ".ASP_Banner.png")
     if os.path.exists(banner_path):
-        image = Image.open(banner_path)
-        st.image(image, use_container_width=True)
+        try:
+            image = Image.open(banner_path)
+            st.image(image, use_container_width=True)
+        except Exception as e:
+            st.error(f"Error loading banner image: {e}")
+    else:
+        st.warning(f"Banner image not found. Please ensure '{banner_path}' exists in the 'docs' directory.")
+
 
     st.write("""
     **Assistance Systems Project** is a comprehensive web application designed to provide personalized health recommendations and data insights. Navigate through the sidebar to explore different functionalities:

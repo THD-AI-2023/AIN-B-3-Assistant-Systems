@@ -89,6 +89,7 @@ def run():
                         4. **Quit Smoking:** If you smoke, consider quitting to reduce your risk.
                         5. **Regular Physical Activity:** Engage in regular exercise to improve overall health.
                         """)
+                        st.write(prediction_proba, prediction)
                     else:
                         risk_level = "Low"
                         st.markdown(f"**Risk Level:** {risk_level}")
@@ -101,5 +102,6 @@ def run():
                         4. **Monitor Health Indicators:** Keep an eye on your blood pressure and glucose levels.
                         5. **Stress Management:** Practice stress-reducing techniques such as meditation or yoga.
                         """)
+                        st.write(prediction_proba, prediction)
         except Exception as e:
             st.error(f"An error occurred while generating recommendations: {e}")
