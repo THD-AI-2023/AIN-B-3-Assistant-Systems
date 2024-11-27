@@ -1,12 +1,12 @@
-Lastname1, Firstname1, 123456
+Rudaev, Alexander, 22303397
 
-Lastname2, Firstname2, 123456
+Rahman, Kazi Shafwanur, 22305619
 
 Assistance Systems Project
 
-https://mygit.th-deg.de/username/assistance-systems-project
+https://mygit.th-deg.de/ar08397/Assistant-Systems-Project
 
-https://mygit.th-deg.de/username/assistance-systems-project/wiki
+https://mygit.th-deg.de/ar08397/Assistant-Systems-Project/-/wikis/home
 
 ![Assistance Systems Project Banner](./docs/.ASP_Banner.png)
 
@@ -25,8 +25,8 @@ https://mygit.th-deg.de/username/assistance-systems-project/wiki
 
 1. **Clone the Repository:**
     ```bash
-    git clone https://github.com/THD-AI-2023/AIN-B-3-Assistant-Systems.git
-    cd AIN-B-3-Assistant-Systems
+    git clone https://mygit.th-deg.de/ar08397/Assistant-Systems-Project.git
+    cd Assistant-Systems-Project
     ```
 
 <!--
@@ -132,16 +132,11 @@ If a Rasa model has not been trained in the `models/chatbot/` directory, follow 
     Exit the container and restart the Docker services:
     ```bash
     exit
+    docker-compose down
     docker-compose up --build
     ```
 
-4. **Monitor Rasa Server Logs:**
-    Ensure the Rasa server is running by checking the logs for messages like:
-    ```
-    2024-11-09 01:15:42 INFO     root  - Rasa server is up and running.
-    ```
-
-5. **Finalize Setup:**
+4. **Finalize Setup:**
     - Navigate to the Data Analysis page in the Streamlit app and wait for the evaluation models to finish training.
     - Once evaluations are complete, models will be available for use within the Chatbot.
     - Ensure that data filters are applied as needed and that session management maintains these filters when switching between Data Analysis and Chatbot sections.
@@ -164,8 +159,6 @@ A screencast demonstrating the key functionalities of the **Assistance Systems P
   
 - **Chatbot Functionalities:**
   - Exhibits interactions with the Rasa chatbot, including handling user queries, providing recommendations, and managing conversations.
-
-https://github.com/user-attachments/assets/79420d34-a249-499e-8bb3-339df89907cc
 
 [Watch the Demo Video](./docs/.ASP_Demo.mp4)
 
@@ -242,56 +235,12 @@ The **Assistance Systems Project** encompasses a multi-faceted approach to devel
 
 Each component has been meticulously developed to ensure a cohesive and user-friendly application that leverages data analysis and machine learning to deliver meaningful health recommendations.
 
-## Right-fit Question for Chatbot
-
-Integrating a chatbot within the **Assistance Systems Project** is a strategic decision grounded in enhancing user engagement and providing real-time assistance. To determine whether conversation design is the right fit for this feature, we conducted a self-assessment based on Google's guidelines.
-
-### Is conversation the right fit?
-
-Review the following statements to determine whether conversation design is the right strategy for your feature. If you're checking off most of them, it's likely that dialog is a good fit.
-
-| Check to see whether each statement is true about your feature | Benefits of Conversation |
-| --- | --- |
-| - [x] Users already have human-to-human conversations about this task or topic.<br><br> - [x] The interaction is brief, with minimal back-and-forth dialog. | **Conversation is intuitive.** It lets users say what they want to get what they want. |
-| - [x] Users would have to tap multiple times to complete the task with a screen.<br><br> - [x] Users might have to navigate multiple apps or widgets to complete the task with a screen.<br><br> - [ ] The feature is difficult or cumbersome to find. | **Conversation saves the user more time and effort than a screen-based UI.** Conversation can be the ultimate shortcut. It reduces friction by quickly getting the user what they want. |
-| - [x] Users can do this task while multitasking.<br><br> - [x] Users can do this task when their hands or eyes are busy. | **Conversation lets users multitask.** It helps them when they're busy, especially in situations when their hands or eyes are occupied, or when they're on the move. |
-| - [x] Users feel comfortable talking or typing about this topic. | **Conversation lets users speak freely.** Spoken conversations are best in private spaces or familiar shared spaces. Written conversations are best for personal devices. |
-
----
-
-### Explanation of Checked Statements:
-
-1. **Users already have human-to-human conversations about this task or topic.**
-    - Health-related advice and discussions are common in everyday conversations, making conversation a natural fit for delivering personalized recommendations.
-
-2. **The interaction is brief, with minimal back-and-forth dialog.**
-    - Users typically seek quick and concise health recommendations, allowing for brief interactions without the need for extensive dialog.
-
-3. **Users would have to tap multiple times to complete the task with a screen.**
-    - Without a chatbot, users might navigate through multiple pages or forms to receive recommendations, which can be time-consuming.
-
-4. **Users might have to navigate multiple apps or widgets to complete the task with a screen.**
-    - A chatbot centralizes the interaction, reducing the need to switch between different applications or tools.
-
-5. **Users can do this task while multitasking.**
-    - Users can interact with the chatbot while performing other tasks, enhancing convenience and accessibility.
-
-6. **Users can do this task when their hands or eyes are busy.**
-    - The chatbot supports voice interactions, allowing users to receive recommendations even when their hands or eyes are occupied.
-
-7. **Users feel comfortable talking or typing about this topic.**
-    - Users are generally comfortable discussing health-related topics, especially in a private and secure conversational interface.
-
-### Conclusion
-
-Based on the above assessment, incorporating a chatbot aligns perfectly with the project's objectives. It offers an intuitive, efficient, and user-friendly interface for delivering personalized health recommendations, enhancing overall user experience and engagement.
-
 
 ## Work Done
 
 The **Assistance Systems Project** was developed collaboratively by two team members, each contributing distinct components to ensure a comprehensive and robust application.
 
-### **Student 1: [Firstname Lastname, Mat-No: 123456]**
+### **Student 1: [Alexander Rudaev, Mat-No: 22303397]**
 
 1. **Graphical User Interface (GUI) / Visualization**:
     - Developed the Streamlit-based multi-page web application interface.
@@ -308,7 +257,7 @@ The **Assistance Systems Project** was developed collaboratively by two team mem
     - Ensured that dialogues effectively cover use cases such as data analysis requests and health recommendations.
     - Collaborated on refining chatbot responses to align with user intents.
 
-### **Student 2: [Firstname Lastname, Mat-No: 654321]**
+### **Student 2: [Kazi Shafwanur Rahman, Mat-No: 22305619]**
 
 4. **Strategies for Outliers and Fake Data**:
     - Developed algorithms for identifying and managing outliers within the dataset.
@@ -449,4 +398,4 @@ This project is licensed under the [GNU GENERAL PUBLIC LICENSE](./LICENSE).
 
 ## Contact
 
-For any inquiries or support, please open an issue in the [MyGit Repository](https://mygit.th-deg.de/username/assistance-systems-project).
+For any inquiries or support, please open an issue in the [MyGit Repository](https://mygit.th-deg.de/ar08397/Assistant-Systems-Project).
