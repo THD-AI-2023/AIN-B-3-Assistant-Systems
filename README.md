@@ -235,50 +235,6 @@ The **Assistance Systems Project** encompasses a multi-faceted approach to devel
 
 Each component has been meticulously developed to ensure a cohesive and user-friendly application that leverages data analysis and machine learning to deliver meaningful health recommendations.
 
-## Right-fit Question for Chatbot
-
-Integrating a chatbot within the **Assistance Systems Project** is a strategic decision grounded in enhancing user engagement and providing real-time assistance. To determine whether conversation design is the right fit for this feature, we conducted a self-assessment based on Google's guidelines.
-
-### Is conversation the right fit?
-
-Review the following statements to determine whether conversation design is the right strategy for your feature. If you're checking off most of them, it's likely that dialog is a good fit.
-
-| Check to see whether each statement is true about your feature | Benefits of Conversation |
-| --- | --- |
-| - [x] Users already have human-to-human conversations about this task or topic.<br><br> - [x] The interaction is brief, with minimal back-and-forth dialog. | **Conversation is intuitive.** It lets users say what they want to get what they want. |
-| - [x] Users would have to tap multiple times to complete the task with a screen.<br><br> - [x] Users might have to navigate multiple apps or widgets to complete the task with a screen.<br><br> - [ ] The feature is difficult or cumbersome to find. | **Conversation saves the user more time and effort than a screen-based UI.** Conversation can be the ultimate shortcut. It reduces friction by quickly getting the user what they want. |
-| - [x] Users can do this task while multitasking.<br><br> - [x] Users can do this task when their hands or eyes are busy. | **Conversation lets users multitask.** It helps them when they're busy, especially in situations when their hands or eyes are occupied, or when they're on the move. |
-| - [x] Users feel comfortable talking or typing about this topic. | **Conversation lets users speak freely.** Spoken conversations are best in private spaces or familiar shared spaces. Written conversations are best for personal devices. |
-
----
-
-### Explanation of Checked Statements:
-
-1. **Users already have human-to-human conversations about this task or topic.**
-    - Health-related advice and discussions are common in everyday conversations, making conversation a natural fit for delivering personalized recommendations.
-
-2. **The interaction is brief, with minimal back-and-forth dialog.**
-    - Users typically seek quick and concise health recommendations, allowing for brief interactions without the need for extensive dialog.
-
-3. **Users would have to tap multiple times to complete the task with a screen.**
-    - Without a chatbot, users might navigate through multiple pages or forms to receive recommendations, which can be time-consuming.
-
-4. **Users might have to navigate multiple apps or widgets to complete the task with a screen.**
-    - A chatbot centralizes the interaction, reducing the need to switch between different applications or tools.
-
-5. **Users can do this task while multitasking.**
-    - Users can interact with the chatbot while performing other tasks, enhancing convenience and accessibility.
-
-6. **Users can do this task when their hands or eyes are busy.**
-    - The chatbot supports voice interactions, allowing users to receive recommendations even when their hands or eyes are occupied.
-
-7. **Users feel comfortable talking or typing about this topic.**
-    - Users are generally comfortable discussing health-related topics, especially in a private and secure conversational interface.
-
-### Conclusion
-
-Based on the above assessment, incorporating a chatbot aligns perfectly with the project's objectives. It offers an intuitive, efficient, and user-friendly interface for delivering personalized health recommendations, enhancing overall user experience and engagement.
-
 
 ## Work Done
 
