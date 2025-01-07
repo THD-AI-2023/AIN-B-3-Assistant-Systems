@@ -6,10 +6,183 @@ import logging
 from typing import List, Dict, Text, Any
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
-from rasa_sdk.events import SlotSet, FollowupAction
+from rasa_sdk.events import SlotSet
 
 logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)
+
+
+class ActionSaveName(Action):
+    """Custom action to extract the user's name from the message and set the 'name' slot."""
+
+    def name(self) -> str:
+        return "action_save_name"
+
+    def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Dict[Text, Any]]:
+        # Retrieve the recognized 'name' entity (if any)
+        name_entity = next(tracker.get_latest_entity_values("name"), None)
+
+        if name_entity:
+            return [SlotSet("name", name_entity)]
+        else:
+            # If no name was recognized, inform the user
+            dispatcher.utter_message(text="I didn't catch your name. Could you please repeat it?")
+            return []
+
+
+class ActionSaveHealthInfo(Action):
+    """
+    Extract partial user health info from 'inform' intent, check if user data file
+    already exists, and if so, ask for overwrite confirmation.
+    """
+
+    def name(self) -> str:
+        return "action_save_health_info"
+
+    def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Dict[Text, Any]]:
+        session_id = tracker.sender_id
+        user_data_file = os.path.join("data", "user_data", f"{session_id}.json")
+
+        # Parse recognized entities from the last user message
+        age = None
+        gender = None
+        hypertension = None
+        heart_disease = None
+        bmi = None
+
+        for ent in tracker.latest_message.get("entities", []):
+            if ent["entity"] == "age":
+                age = ent["value"]
+            elif ent["entity"] == "gender":
+                gender = ent["value"]
+            elif ent["entity"] == "hypertension":
+                hypertension = 1 if ent["value"] == "yes" else 0
+            elif ent["entity"] == "heart_disease":
+                heart_disease = 1 if ent["value"] == "yes" else 0
+            elif ent["entity"] == "bmi":
+                bmi = ent["value"]
+
+        # Build a partial dict with new data
+        updated_data = {}
+        if age is not None:
+            updated_data["age"] = float(age)
+        if gender is not None:
+            updated_data["gender"] = gender
+        if hypertension is not None:
+            updated_data["hypertension"] = hypertension
+        if heart_disease is not None:
+            updated_data["heart_disease"] = heart_disease
+        if bmi is not None:
+            updated_data["bmi"] = float(bmi)
+
+        if not updated_data:
+            dispatcher.utter_message(
+                text="I didn't detect any new health information to save."
+            )
+            return []
+
+        # Check if user_data_file already exists
+        if os.path.exists(user_data_file):
+            # We have existing data, ask for overwrite confirmation
+            dispatcher.utter_message(response="utter_ask_overwrite_data")
+            return [
+                SlotSet("pending_update", True),
+                SlotSet("user_new_data", updated_data),
+            ]
+        else:
+            # No file => directly save the info
+            try:
+                with open(user_data_file, "w") as f:
+                    json.dump(updated_data, f)
+                dispatcher.utter_message(text="Your health info has been saved!")
+            except Exception as e:
+                logger.error(f"Error saving user data: {e}")
+                dispatcher.utter_message(
+                    text="Sorry, I couldn't save your info due to an error."
+                )
+            return []
+
+
+class ActionConfirmOverwrite(Action):
+    """
+    Overwrites the existing user_data.json with the new partial info
+    stored in the 'user_new_data' slot.
+    """
+
+    def name(self) -> str:
+        return "action_confirm_overwrite"
+
+    def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Dict[Text, Any]]:
+        session_id = tracker.sender_id
+        user_data_file = os.path.join("data", "user_data", f"{session_id}.json")
+
+        new_data = tracker.get_slot("user_new_data")
+        if not new_data:
+            dispatcher.utter_message(text="I have no new data to save, sorry.")
+            return [SlotSet("pending_update", False), SlotSet("user_new_data", None)]
+
+        # Attempt to read existing data
+        try:
+            with open(user_data_file, "r") as f:
+                existing_data = json.load(f)
+        except Exception:
+            existing_data = {}
+
+        # Overwrite or merge existing data
+        existing_data.update(new_data)
+
+        # Save
+        try:
+            with open(user_data_file, "w") as f:
+                json.dump(existing_data, f)
+            dispatcher.utter_message(response="utter_overwrite_confirmed")
+        except Exception as e:
+            logger.error(f"Error overwriting user data: {e}")
+            dispatcher.utter_message(
+                text="I encountered an error while overwriting your information."
+            )
+
+        return [
+            SlotSet("pending_update", False),
+            SlotSet("user_new_data", None),
+        ]
+
+
+class ActionCancelOverwrite(Action):
+    """
+    Cancels overwriting existing data. We do nothing but reset relevant slots.
+    """
+
+    def name(self) -> str:
+        return "action_cancel_overwrite"
+
+    def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Dict[Text, Any]]:
+        dispatcher.utter_message(response="utter_overwrite_cancelled")
+        return [
+            SlotSet("pending_update", False),
+            SlotSet("user_new_data", None),
+        ]
+
 
 class ActionSaveName(Action):
     """Custom action to extract the user's name from the message and set the 'name' slot."""

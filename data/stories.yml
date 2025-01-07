@@ -91,6 +91,27 @@ stories:
     - intent: ask_capabilities
     - action: utter_capabilities
 
+- story: User informs health data already exists
+  steps:
+    - intent: inform
+    - action: action_save_health_info
+    # The action might set pending_update=true and ask for overwrite
+    # Next user message can be affirm or deny
+
+- story: User affirms overwrite
+  steps:
+    - slot_was_set:
+        - pending_update: true
+    - intent: affirm
+    - action: action_confirm_overwrite
+
+- story: User denies overwrite
+  steps:
+    - slot_was_set:
+        - pending_update: true
+    - intent: deny
+    - action: action_cancel_overwrite
+
     
 # -----------------------------
 # More conversational, multi-turn story chains
