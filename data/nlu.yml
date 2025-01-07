@@ -2,7 +2,6 @@ version: "3.1"
 
 nlu:
 
-# Simple greetings & goodbyes
 - intent: greet
   examples: |
     - Hi
@@ -37,7 +36,6 @@ nlu:
     - No way
     - Absolutely not
 
-# Ask for data analysis
 - intent: ask_data_analysis
   examples: |
     - Can you provide a data analysis summary?
@@ -61,7 +59,6 @@ nlu:
     - Give me the insights from the data.
     - Please display the data summary.
 
-# Ask for recommendations
 - intent: ask_recommendation
   examples: |
     - Can you generate a recommendation for me?
@@ -74,7 +71,6 @@ nlu:
     - Recommend something for me.
     - Can you offer a recommendation?
 
-# Asking the bot's capabilities
 - intent: ask_capabilities
   examples: |
     - What can you do?
@@ -83,7 +79,6 @@ nlu:
     - What services do you provide?
     - What are you able to do?
 
-# The user informs personal details (age, gender, bmi, hypertension, etc.)
 - intent: inform
   examples: |
     - I am [25](age)
@@ -94,8 +89,8 @@ nlu:
     - My gender is [non-binary](gender)
     - I have [hypertension](hypertension:yes)
     - I don't have [hypertension](hypertension:no)
-    - Yes, I have [heart disease](heart_disease:yes)
-    - No, I don't have [heart disease](heart_disease:no)
+    - Yes, I have [heart_disease](heart_disease:yes)
+    - No, I don't have [heart_disease](heart_disease:no)
     - My BMI is [22.5](bmi)
     - BMI is [24](bmi)
     - I'm [25](age) and [male](gender)
@@ -105,8 +100,7 @@ nlu:
     - I don't have [heart disease](heart_disease:no) but I have [hypertension](hypertension:yes)
     - I'm a [40](age)-year-old [female](gender)
     - My BMI is [27](bmi) and I have [hypertension](hypertension:yes)
-
-    - I'm [45](age) years old, [male](gender), BMI is [28](bmi), and I have [hypertension](hypertension:yes)
+    - I'm [45](age) years old, [male](gender), BMI is [28](bmi), and I have [hypertension](hypertension:yes) but no [heart_disease](heart_disease:no)
     - Age [30](age), [female](gender), BMI [22](bmi), no [hypertension](hypertension:no)
     - My age is [40](age) and I have [heart_disease](heart_disease:yes)
     - I have [hypertension](hypertension:yes)
@@ -116,7 +110,6 @@ nlu:
     - Age [30](age), [female](gender), BMI [22](bmi), no [heart_disease](heart_disease:no)
     - I'm [33](age) with [bmi](bmi:27), and I have [hypertension](hypertension:yes) but no [heart_disease](heart_disease:no)
 
-# The user introduces their name
 - intent: introduce_name
   examples: |
     - My name is [Alex](name)
@@ -126,7 +119,6 @@ nlu:
     - I am [Alexa](name)
     - Hello, I'm [Emily](name)
 
-# Chitchat & out-of-scope
 - intent: chitchat_ask_name
   examples: |
     - What's your name?
@@ -167,4 +159,3 @@ nlu:
     - What's the population of Mars?
     - How to invest in stocks?
     - Who won the football match yesterday?
-

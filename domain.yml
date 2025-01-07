@@ -94,7 +94,6 @@ actions:
   - action_save_health_info
   - action_confirm_overwrite
   - action_cancel_overwrite
-
   - action_generate_recommendation
   - action_show_data_analysis
   - action_explain_bmi_effect
