@@ -8,7 +8,7 @@ https://mygit.th-deg.de/ar08397/Assistant-Systems-Project
 
 https://mygit.th-deg.de/ar08397/Assistant-Systems-Project/-/wikis/home
 
-![Assistance Systems Project Banner](./docs/.ASP_Banner.png)
+![Assistance Systems Project Banner](./docs/img/ASP_Banner.png)
 
 ## Project Description
 
@@ -167,7 +167,7 @@ A screencast demonstrating the key functionalities of the **Assistance Systems P
 - **Chatbot Functionalities:**
   - Exhibits interactions with the Rasa chatbot, including handling user queries, providing recommendations, and managing conversations.
 
-[Watch the Demo Video](./docs/.ASP_Demo.mp4)
+[Watch the Demo Video](./docs/img/ASP_Demo.mp4)
 
 ## Implementation of the Requests
 
