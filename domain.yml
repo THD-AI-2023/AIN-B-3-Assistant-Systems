@@ -90,7 +90,6 @@ responses:
     - text: "Your information has been updated. Thank you!"
 
 actions:
-  - action_save_name
   - action_save_health_info
   - action_confirm_overwrite
   - action_cancel_overwrite

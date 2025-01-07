@@ -2,10 +2,29 @@
 version: "3.1"
 
 rules:
+
+  - rule: Overwrite existing data
+    condition:
+      - slot_was_set:
+          - pending_update: true
+    steps:
+      - intent: affirm
+      - action: action_confirm_overwrite
+
+  - rule: Cancel overwrite
+    condition:
+      - slot_was_set:
+          - pending_update: true
+    steps:
+      - intent: deny
+      - action: action_cancel_overwrite
+
   - rule: Provide stroke risk reduction advice
     condition:
       - slot_was_set:
           - risk_level: high
+      - slot_was_set:
+          - pending_update: false
     steps:
       - intent: affirm
       - action: action_provide_stroke_risk_reduction_advice
@@ -14,9 +33,16 @@ rules:
     condition:
       - slot_was_set:
           - risk_level: high
+      - slot_was_set:
+          - pending_update: false
     steps:
       - intent: deny
       - action: utter_goodbye
+
+  - rule: Fallback rule
+    steps:
+      - intent: nlu_fallback
+      - action: action_default_fallback
 
   - rule: Introduction of name
     steps:
@@ -43,24 +69,3 @@ rules:
     steps:
       - intent: chitchat_weather
       - action: utter_chitchat_weather
-
-  - rule: Fallback rule
-    steps:
-      - intent: nlu_fallback
-      - action: action_default_fallback
-
-  - rule: Overwrite existing data
-    condition:
-      - slot_was_set:
-          - pending_update: true
-    steps:
-      - intent: affirm
-      - action: action_confirm_overwrite
-
-  - rule: Cancel overwrite
-    condition:
-      - slot_was_set:
-          - pending_update: true
-    steps:
-      - intent: deny
-      - action: action_cancel_overwrite
