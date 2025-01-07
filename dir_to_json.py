@@ -8,11 +8,10 @@ PARTIAL_READ_EXTENSIONS = {'.csv', '.jsonl', '.txt', '.log'}  # Add more extensi
 
 # Initialize explicit filenames to include as "..." in JSON
 EXPLICIT_IGNORE_FILES = {
-    'LICENSE', 'CHANGELOG.md', 'README.md', '.dockerignore', '.gitignore',
+    'LICENSE', 'CHANGELOG.md', '.dockerignore', '.gitignore',
     '.ignore', 'a_personas.md', 'b_use_cases.md', 'c_outlier_handling.md',
     'd_chatbot_use_case.md', 'e_sample_dialogs.md', 'f_dialog_flow.md',
-    'endpoints.yml', 'dir_to_json.py', 'nlu.yml', 'config.yml', 'domain.yml',
-    'rules.yml', 'stories.yml', 'credentials.yml'
+    'g_data.md', 'h_data.md', 'endpoints.yml', 'dir_to_json.py'
 }  # Default filenames
 
 def parse_ignore_file(ignore_file_path):
