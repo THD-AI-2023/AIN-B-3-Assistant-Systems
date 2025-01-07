@@ -1,12 +1,16 @@
 version: "3.1"
 
 stories:
+
+# -----------------------------
+# Short stories
+# -----------------------------
 - story: User asks for recommendation and wants advice
   steps:
     - intent: ask_recommendation
     - action: action_generate_recommendation
     - slot_was_set:
-        - risk_level: high
+      - risk_level: high
     - intent: affirm
     - action: action_provide_stroke_risk_reduction_advice
 
@@ -15,7 +19,7 @@ stories:
     - intent: ask_recommendation
     - action: action_generate_recommendation
     - slot_was_set:
-        - risk_level: high
+      - risk_level: high
     - intent: deny
     - action: utter_goodbye
 
@@ -28,6 +32,12 @@ stories:
   steps:
     - intent: ask_data_analysis
     - action: action_show_data_analysis
+
+- story: Introduce name
+  steps:
+    - intent: introduce_name
+    - action: action_save_name
+    - action: utter_greet_with_name
 
 - story: Handle chitchat ask name
   steps:
@@ -62,5 +72,72 @@ stories:
   steps:
     - intent: greet
     - action: utter_greet
+    - intent: goodbye
+    - action: utter_goodbye
+
+
+# Use the `inform` intent in a simple story
+- story: User provides personal health info
+  steps:
+    - intent: inform
+    - action: utter_greet  # or any placeholder response
+      # You might eventually use a custom action like "action_save_health_info" if you wish to store the info
+    - intent: ask_recommendation
+    - action: action_generate_recommendation
+
+# A quick story for user asking capabilities
+- story: User asks capabilities
+  steps:
+    - intent: ask_capabilities
+    - action: utter_capabilities
+
+    
+# -----------------------------
+# More conversational, multi-turn story chains
+# -----------------------------
+
+# Full conversation (High Risk Scenario)
+- story: Full conversation (High Risk Scenario)
+  steps:
+    # 1. Greet
+    - intent: greet
+    - action: utter_greet
+    # 2. Introduce name
+    - intent: introduce_name
+    - action: action_save_name
+    - action: utter_greet_with_name
+    # 3. Ask for data analysis
+    - intent: ask_data_analysis
+    - action: action_show_data_analysis
+    # 4. Ask for a recommendation
+    - intent: ask_recommendation
+    - action: action_generate_recommendation
+    - slot_was_set:
+      - risk_level: high
+    # 5. Affirm risk reduction
+    - intent: affirm
+    - action: action_provide_stroke_risk_reduction_advice
+    # 6. Possibly user denies further help
+    - intent: deny
+    - action: utter_goodbye
+
+# Full conversation (Low Risk Scenario)
+- story: Full conversation (Low Risk Scenario)
+  steps:
+    # 1. Greet
+    - intent: greet
+    - action: utter_greet
+    # 2. Introduce name
+    - intent: introduce_name
+    - action: action_save_name
+    - action: utter_greet_with_name
+    # 3. Ask for data analysis
+    - intent: ask_data_analysis
+    - action: action_show_data_analysis
+    # 4. Ask for a recommendation
+    - intent: ask_recommendation
+    - action: action_generate_recommendation
+    # Suppose the model indicates low risk, so no risk_level slot is set
+    # 5. user says goodbye
     - intent: goodbye
     - action: utter_goodbye

@@ -11,6 +11,28 @@ from rasa_sdk.events import SlotSet, FollowupAction
 logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)
 
+class ActionSaveName(Action):
+    """Custom action to extract the user's name from the message and set the 'name' slot."""
+
+    def name(self) -> str:
+        return "action_save_name"
+
+    def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Dict[Text, Any]]:
+        # Retrieve the recognized 'name' entity (if any)
+        name_entity = next(tracker.get_latest_entity_values("name"), None)
+
+        if name_entity:
+            return [SlotSet("name", name_entity)]
+        else:
+            # If no name was recognized, inform the user
+            dispatcher.utter_message(text="I didn't catch your name. Could you please repeat it?")
+            return []
+
 class ActionShowDataAnalysis(Action):
     def name(self) -> str:
         return "action_show_data_analysis"

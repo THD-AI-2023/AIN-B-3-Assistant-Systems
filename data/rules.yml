@@ -18,6 +18,12 @@ rules:
       - intent: deny
       - action: utter_goodbye
 
+  - rule: Introduction of name
+    steps:
+      - intent: introduce_name
+      - action: action_save_name
+      - action: utter_greet_with_name
+
   - rule: Handle chitchat ask name
     steps:
       - intent: chitchat_ask_name

@@ -8,11 +8,13 @@ intents:
   - ask_recommendation
   - ask_data_analysis
   - inform
+  - introduce_name
   - chitchat_ask_name
   - chitchat_tell_joke
   - chitchat_favorite_color
   - chitchat_weather
   - out_of_scope
+  - ask_capabilities
 
 entities:
   - age
@@ -20,11 +22,17 @@ entities:
   - hypertension
   - heart_disease
   - bmi
+  - name
 
 slots:
   risk_level:
     type: text
     influence_conversation: false
+    mappings: []
+
+  name:
+    type: text
+    influence_conversation: true
     mappings: []
 
 responses:
@@ -34,8 +42,14 @@ responses:
   utter_goodbye:
     - text: "Goodbye! Have a great day!"
 
+  utter_capabilities:
+    - text: >
+        I can analyze your health data, provide stroke risk assessments, and
+        offer personalized recommendations. I also share tips on reducing stroke
+        risk. How can I help you today?
+
   utter_chitchat_ask_name:
-    - text: "I'm your friendly assistant bot, here to help you with recommendations and data analysis."
+    - text: "I'm your friendly assistant bot, here to help with recommendations and data analysis."
 
   utter_chitchat_tell_joke:
     - text: "Why did the computer show up at work late? It had a hard drive!"
@@ -49,12 +63,16 @@ responses:
   utter_out_of_scope:
     - text: "I'm sorry, I can't help with that. Could you ask something else related to the application?"
 
+  utter_greet_with_name:
+    - text: "Nice to meet you, {name}! How can I assist you today?"
+
 actions:
   - action_generate_recommendation
   - action_show_data_analysis
   - action_explain_bmi_effect
   - action_provide_stroke_risk_reduction_advice
   - action_default_fallback
+  - action_save_name
 
 session_config:
   session_expiration_time: 60
