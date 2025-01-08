@@ -4,7 +4,7 @@ version: "3.1"
 
 rules:
   # -----------------------------------------
-  # 1) Fallback / NLU Fallback Rule
+  # Fallback / NLU Fallback Rule
   # -----------------------------------------
   - rule: Fallback rule
     steps:
@@ -12,7 +12,7 @@ rules:
       - action: action_default_fallback
 
   # -----------------------------------------
-  # 2) Introduction of name
+  # Introduction of name
   # -----------------------------------------
   - rule: Introduction of name
     steps:
@@ -21,7 +21,7 @@ rules:
       - action: utter_greet_with_name
 
   # -----------------------------------------
-  # 3) Handle chitchat ask name
+  # Handle chitchat ask name
   # -----------------------------------------
   - rule: Handle chitchat ask name
     steps:
@@ -29,7 +29,7 @@ rules:
       - action: utter_chitchat_ask_name
 
   # -----------------------------------------
-  # 4) Handle chitchat tell joke
+  # Handle chitchat tell joke
   # -----------------------------------------
   - rule: Handle chitchat tell joke
     steps:
@@ -37,7 +37,7 @@ rules:
       - action: utter_chitchat_tell_joke
 
   # -----------------------------------------
-  # 5) Handle chitchat favorite color
+  # Handle chitchat favorite color
   # -----------------------------------------
   - rule: Handle chitchat favorite color
     steps:
@@ -45,9 +45,25 @@ rules:
       - action: utter_chitchat_favorite_color
 
   # -----------------------------------------
-  # 6) Handle chitchat weather
+  # Handle chitchat weather
   # -----------------------------------------
   - rule: Handle chitchat weather
     steps:
       - intent: chitchat_weather
       - action: utter_chitchat_weather
+
+  # -----------------------------------------
+  # Handle user gratitude
+  # -----------------------------------------
+  - rule: Handle thanks
+    steps:
+      - intent: thanks
+      - action: utter_thanks
+
+  # -----------------------------------------
+  # Handle user apologies
+  # -----------------------------------------
+  - rule: Handle apology
+    steps:
+      - intent: apology
+      - action: utter_apology

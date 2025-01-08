@@ -85,3 +85,13 @@ stories:
   - story: Fallback
     steps:
       - action: action_default_fallback
+
+  - story: User says thanks
+    steps:
+      - intent: thanks
+      - action: utter_thanks
+
+  - story: User apologizes
+    steps:
+      - intent: apology
+      - action: utter_apology

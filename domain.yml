@@ -14,6 +14,8 @@ intents:
   - chitchat_weather
   - out_of_scope
   - ask_capabilities
+  - thanks
+  - apology
 
 entities:
   - age
@@ -50,6 +52,12 @@ responses:
 
   utter_greet_with_name:
     - text: "Nice to meet you, {name}! How can I assist you today?"
+
+  utter_thanks:
+    - text: "You're welcome! Let me know if there's anything else I can do."
+
+  utter_apology:
+    - text: "No worries at all! How can I help you further?"
 
   # Removed utter_ask_overwrite_data, utter_overwrite_cancelled, utter_overwrite_confirmed
   # because we no longer do "overwrite" flows.
