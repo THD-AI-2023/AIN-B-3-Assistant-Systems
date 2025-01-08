@@ -1,10 +1,12 @@
-![Assistance Systems Project Banner](./.ASP_Banner.png)
+![Assistance Systems Project Banner](./img/ASP_Banner.png)
 
 # **User Personas**
 
-Understanding our users is crucial for designing an effective and user-friendly recommendation system. Below are three detailed personas representing the primary user groups for the **Assistance Systems Project**.
+Understanding our users is crucial for designing an effective and user-friendly recommendation system. Below are detailed personas representing the primary user groups for the **Assistance Systems Project**, including the system persona for our chatbot.
 
-## **Persona 1: Health-Conscious Helen** <img src="./_helen.png" alt="Health-Conscious Helen" width="200" align="right">
+---
+
+## **Persona 1: Health-Conscious Helen** <img src="./img/_helen.png" alt="Health-Conscious Helen" width="200" align="right">
 
 ### **Background**
 - **Age:** 35
@@ -38,7 +40,7 @@ The **Assistance Systems Project** provides Helen with tailored health recommend
 
 ---
 
-## **Persona 2: Data Analyst David**  <img src="./_david.png" alt="Data Analyst David" width="200" align="right">
+## **Persona 2: Data Analyst David**  <img src="./img/_david.png" alt="Data Analyst David" width="200" align="right">
 
 ### **Background**
 - **Age:** 28
@@ -72,7 +74,7 @@ The **Assistance Systems Project** offers David robust data analysis capabilitie
 
 ---
 
-## **Persona 3: Senior Citizen Sam** <img src="./_sam.png" alt="Senior Citizen Sam" width="200" align="right">
+## **Persona 3: Senior Citizen Sam** <img src="./img/_sam.png" alt="Senior Citizen Sam" width="200" align="right">
 
 ### **Background**
 - **Age:** 70
@@ -103,5 +105,15 @@ The **Assistance Systems Project** offers David robust data analysis capabilitie
 
 ### **How the Project Helps**
 The **Assistance Systems Project** provides Sam with an intuitive and accessible platform for monitoring his health, receiving personalized recommendations, and interacting with a chatbot designed to accommodate his comfort level with technology.
+
+---
+
+## **System Persona: Chatbot AIDEN**
+
+### **Chatbot: AIDEN (Artificial Intelligence Driven ENgine)**
+
+- **Role:** Virtual Health Assistant
+- **Personality:** Friendly, professional, and informative
+- **Background:** AIDEN is designed to assist users in navigating the application, provide personalized health recommendations, and answer queries related to health data analysis. AIDEN communicates in a clear and concise manner, ensuring users feel supported and informed.
 
 ---

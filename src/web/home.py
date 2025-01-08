@@ -5,7 +5,7 @@ from PIL import Image
 def run():
     st.subheader("Welcome to the Assistance Systems Project")
 
-    banner_path = os.path.join("docs", ".ASP_Banner.png")
+    banner_path = os.path.join("docs", "img", "ASP_Banner.png")
     if os.path.exists(banner_path):
         try:
             image = Image.open(banner_path)

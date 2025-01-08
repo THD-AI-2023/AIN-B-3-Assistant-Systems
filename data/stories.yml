@@ -1,66 +1,97 @@
 version: "3.1"
 
 stories:
-- story: User asks for recommendation and wants advice
-  steps:
-    - intent: ask_recommendation
-    - action: action_generate_recommendation
-    - slot_was_set:
-        - risk_level: high
-    - intent: affirm
-    - action: action_provide_stroke_risk_reduction_advice
+  # -----------------------------
+  # Basic: Greet and goodbye
+  # -----------------------------
+  - story: Greet and goodbye
+    steps:
+      - intent: greet
+      - action: utter_greet
+      - intent: goodbye
+      - action: utter_goodbye
 
-- story: User asks for recommendation and declines advice
-  steps:
-    - intent: ask_recommendation
-    - action: action_generate_recommendation
-    - slot_was_set:
-        - risk_level: high
-    - intent: deny
-    - action: utter_goodbye
+  # -----------------------------
+  # Data Analysis flow
+  # -----------------------------
+  - story: User asks for data analysis
+    steps:
+      - intent: ask_data_analysis
+      - action: action_show_data_analysis
 
-- story: User asks for recommendation with low risk
-  steps:
-    - intent: ask_recommendation
-    - action: action_generate_recommendation
+  # -----------------------------
+  # Simple recommendation request
+  # -----------------------------
+  - story: User asks for recommendation
+    steps:
+      - intent: ask_recommendation
+      - action: action_generate_recommendation
 
-- story: User asks for data analysis
-  steps:
-    - intent: ask_data_analysis
-    - action: action_show_data_analysis
+  # -----------------------------
+  # Provide personal info then ask recommendation
+  # -----------------------------
+  - story: User provides health info then asks recommendation
+    steps:
+      - intent: inform
+      - action: action_save_health_info
+      - intent: ask_recommendation
+      - action: action_generate_recommendation
 
-- story: Handle chitchat ask name
-  steps:
-    - intent: chitchat_ask_name
-    - action: utter_chitchat_ask_name
+  # -----------------------------
+  # Handle user capabilities
+  # -----------------------------
+  - story: User asks capabilities
+    steps:
+      - intent: ask_capabilities
+      - action: utter_capabilities
 
-- story: Handle chitchat tell joke
-  steps:
-    - intent: chitchat_tell_joke
-    - action: utter_chitchat_tell_joke
+  # -----------------------------
+  # Introduce name
+  # -----------------------------
+  - story: Introduce name
+    steps:
+      - intent: introduce_name
+      - action: action_save_name
+      - action: utter_greet_with_name
 
-- story: Handle chitchat favorite color
-  steps:
-    - intent: chitchat_favorite_color
-    - action: utter_chitchat_favorite_color
+  # -----------------------------
+  # Chitchat & fallback
+  # -----------------------------
+  - story: Handle chitchat ask name
+    steps:
+      - intent: chitchat_ask_name
+      - action: utter_chitchat_ask_name
 
-- story: Handle chitchat weather
-  steps:
-    - intent: chitchat_weather
-    - action: utter_chitchat_weather
+  - story: Handle chitchat tell joke
+    steps:
+      - intent: chitchat_tell_joke
+      - action: utter_chitchat_tell_joke
 
-- story: Out of scope query
-  steps:
-    - intent: out_of_scope
-    - action: utter_out_of_scope
+  - story: Handle chitchat favorite color
+    steps:
+      - intent: chitchat_favorite_color
+      - action: utter_chitchat_favorite_color
 
-- story: Fallback
-  steps:
-    - action: action_default_fallback
+  - story: Handle chitchat weather
+    steps:
+      - intent: chitchat_weather
+      - action: utter_chitchat_weather
 
-- story: Greet and goodbye
-  steps:
-    - intent: greet
-    - action: utter_greet
-    - intent: goodbye
-    - action: utter_goodbye
+  - story: Out of scope query
+    steps:
+      - intent: out_of_scope
+      - action: utter_out_of_scope
+
+  - story: Fallback
+    steps:
+      - action: action_default_fallback
+
+  - story: User says thanks
+    steps:
+      - intent: thanks
+      - action: utter_thanks
+
+  - story: User apologizes
+    steps:
+      - intent: apology
+      - action: utter_apology
