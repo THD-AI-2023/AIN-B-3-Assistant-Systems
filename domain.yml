@@ -7,7 +7,6 @@ intents:
   - deny
   - ask_recommendation
   - ask_data_analysis
-  - inform
   - introduce_name
   - chitchat_ask_name
   - chitchat_tell_joke
@@ -35,14 +34,12 @@ slots:
     influence_conversation: true
     mappings: []
 
-  # Tracks if user needs to confirm overwriting existing data
   pending_update:
     type: bool
     initial_value: false
     influence_conversation: false
     mappings: []
 
-  # Holds partial data the user just provided (to confirm overwrite)
   user_new_data:
     type: any
     influence_conversation: false
@@ -51,41 +48,26 @@ slots:
 responses:
   utter_greet:
     - text: "Hello! How can I assist you today?"
-
   utter_goodbye:
     - text: "Goodbye! Have a great day!"
-
   utter_capabilities:
-    - text: >
-        I can analyze your health data, provide stroke risk assessments, and
-        offer personalized recommendations. I also share tips on reducing stroke
-        risk. How can I help you today?
-
+    - text: "I can analyze your health data, provide stroke risk assessments, and offer personalized advice."
   utter_chitchat_ask_name:
-    - text: "I'm your friendly assistant bot, here to help with recommendations and data analysis."
-
+    - text: "I'm your friendly assistant bot."
   utter_chitchat_tell_joke:
     - text: "Why did the computer show up at work late? It had a hard drive!"
-
   utter_chitchat_favorite_color:
     - text: "I like all colors in the digital spectrum."
-
   utter_chitchat_weather:
     - text: "Weather doesn't affect me, but I hope it's nice where you are!"
-
   utter_out_of_scope:
-    - text: "I'm sorry, I can't help with that. Could you ask something else related to the application?"
-
+    - text: "I'm sorry, I can't help with that. Could you ask something else related to the app?"
   utter_greet_with_name:
     - text: "Nice to meet you, {name}! How can I assist you today?"
-
-  # Overwriting data responses
   utter_ask_overwrite_data:
     - text: "You already have some data saved. Are you sure you want to overwrite it?"
-
   utter_overwrite_cancelled:
     - text: "Okay, I'll keep your existing data as is."
-
   utter_overwrite_confirmed:
     - text: "Your information has been updated. Thank you!"
 

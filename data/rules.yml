@@ -2,11 +2,15 @@
 version: "3.1"
 
 rules:
-
+  # ------------------------------------------------
+  # Overwrite or Cancel Overwrite (only if risk_level is not set)
+  # ------------------------------------------------
   - rule: Overwrite existing data
     condition:
       - slot_was_set:
           - pending_update: true
+      - slot_was_set:
+          - risk_level: null
     steps:
       - intent: affirm
       - action: action_confirm_overwrite
@@ -15,10 +19,15 @@ rules:
     condition:
       - slot_was_set:
           - pending_update: true
+      - slot_was_set:
+          - risk_level: null
     steps:
       - intent: deny
       - action: action_cancel_overwrite
 
+  # ------------------------------------------------
+  # Provide stroke risk reduction advice (only if risk_level=high)
+  # ------------------------------------------------
   - rule: Provide stroke risk reduction advice
     condition:
       - slot_was_set:
@@ -29,6 +38,9 @@ rules:
       - intent: affirm
       - action: action_provide_stroke_risk_reduction_advice
 
+  # ------------------------------------------------
+  # Handle denial of advice (only if risk_level=high)
+  # ------------------------------------------------
   - rule: Handle denial of advice
     condition:
       - slot_was_set:
@@ -39,16 +51,19 @@ rules:
       - intent: deny
       - action: utter_goodbye
 
-  - rule: Fallback rule
-    steps:
-      - intent: nlu_fallback
-      - action: action_default_fallback
-
+  # ------------------------------------------------
+  # Additional rules (fallback, chitchat, name introduction, etc.)
+  # ------------------------------------------------
   - rule: Introduction of name
     steps:
       - intent: introduce_name
       - action: action_save_name
       - action: utter_greet_with_name
+
+  - rule: Fallback rule
+    steps:
+      - intent: nlu_fallback
+      - action: action_default_fallback
 
   - rule: Handle chitchat ask name
     steps:
