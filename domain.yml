@@ -23,28 +23,6 @@ entities:
   - bmi
   - name
 
-slots:
-  risk_level:
-    type: text
-    influence_conversation: false
-    mappings: []
-
-  name:
-    type: text
-    influence_conversation: true
-    mappings: []
-
-  pending_update:
-    type: bool
-    initial_value: false
-    influence_conversation: false
-    mappings: []
-
-  user_new_data:
-    type: any
-    influence_conversation: false
-    mappings: []
-
 responses:
   utter_greet:
     - text: "Hello! How can I assist you today?"
@@ -73,23 +51,16 @@ responses:
   utter_greet_with_name:
     - text: "Nice to meet you, {name}! How can I assist you today?"
 
-  utter_ask_overwrite_data:
-    - text: "You already have some data saved. Are you sure you want to overwrite it?"
-
-  utter_overwrite_cancelled:
-    - text: "Okay, I'll keep your existing data as is."
-
-  utter_overwrite_confirmed:
-    - text: "Your information has been updated. Thank you!"
+  # Removed utter_ask_overwrite_data, utter_overwrite_cancelled, utter_overwrite_confirmed
+  # because we no longer do "overwrite" flows.
 
 actions:
+  # Removed action_confirm_overwrite, action_cancel_overwrite, 
+  # action_provide_stroke_risk_reduction_advice since no longer used.
   - action_save_health_info
-  - action_confirm_overwrite
-  - action_cancel_overwrite
   - action_generate_recommendation
   - action_show_data_analysis
   - action_explain_bmi_effect
-  - action_provide_stroke_risk_reduction_advice
   - action_default_fallback
   - action_save_name
 
