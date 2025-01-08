@@ -1,11 +1,9 @@
 version: "3.1"
 
 stories:
-
   # -----------------------------
   # Short stories: Recommendations & Data Analysis
   # -----------------------------
-
   - story: User asks for recommendation and wants advice
     steps:
       - intent: ask_recommendation
@@ -28,7 +26,7 @@ stories:
     steps:
       - intent: ask_recommendation
       - action: action_generate_recommendation
-      # No risk_level slot is set, so no follow-up advice
+      # No risk_level slot => no advice
 
   - story: User asks for data analysis
     steps:
@@ -38,7 +36,6 @@ stories:
   # -----------------------------
   # Sample introductions & chitchat
   # -----------------------------
-
   - story: Introduce name
     steps:
       - intent: introduce_name
@@ -87,11 +84,11 @@ stories:
   - story: User provides personal health info
     steps:
       - intent: inform
-      - action: utter_greet  # Or any placeholder
+      - action: utter_greet  # or any placeholder action/response
       - intent: ask_recommendation
       - action: action_generate_recommendation
 
-  # A quick story for user asking capabilities
+  # Quick story for user asking capabilities
   - story: User asks capabilities
     steps:
       - intent: ask_capabilities
@@ -132,6 +129,6 @@ stories:
       - action: action_show_data_analysis
       - intent: ask_recommendation
       - action: action_generate_recommendation
-      # Suppose the model indicates low risk, so no risk_level slot is set
+      # Suppose the model indicates low risk => risk_level not set
       - intent: goodbye
       - action: utter_goodbye
