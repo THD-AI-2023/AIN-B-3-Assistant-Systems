@@ -11,7 +11,6 @@ from rasa_sdk.events import SlotSet
 logging.basicConfig(level=logging.ERROR)
 logger = logging.getLogger(__name__)
 
-
 class ActionSaveName(Action):
     """Custom action to extract the user's name from the message and set the 'name' slot."""
 
@@ -243,11 +242,17 @@ class ActionShowDataAnalysis(Action):
             strong_correlations = stroke_correlations.abs().sort_values(ascending=False)
             top_features = strong_correlations.head(3).index.tolist()
 
-            message = "Based on our data analysis, the factors that most strongly correlate with stroke are:\n"
+            message = (
+                "Based on our data analysis, the factors that most strongly "
+                "correlate with stroke are:\n"
+            )
 
             for feature in top_features:
                 corr_value = stroke_correlations[feature]
-                explanation = f"- **{feature.capitalize()}** with a correlation coefficient of {corr_value:.2f}\n"
+                explanation = (
+                    f"- **{feature.capitalize()}** with a correlation coefficient "
+                    f"of {corr_value:.2f}\n"
+                )
                 message += explanation
 
             explanations = {
@@ -279,7 +284,10 @@ class ActionShowDataAnalysis(Action):
         if os.path.exists(evaluation_path):
             try:
                 evaluations = pd.read_csv(evaluation_path)
-                evaluations = evaluations.drop_duplicates(subset=['Model', 'Data_Type'], keep='last')
+                # Remove duplicated rows on (Model, Data_Type), keep the last occurrence
+                evaluations = evaluations.drop_duplicates(
+                    subset=["Model", "Data_Type"], keep="last"
+                )
 
                 best_model = evaluations.sort_values("F1_Score", ascending=False).iloc[0]
                 model_name = (
@@ -303,6 +311,7 @@ class ActionShowDataAnalysis(Action):
             dispatcher.utter_message(text="Model evaluations are not available.")
 
         return []
+
 
 class ActionGenerateRecommendation(Action):
     def name(self) -> Text:
@@ -346,7 +355,18 @@ class ActionGenerateRecommendation(Action):
         smoking_status = user_data.get("smoking_status")
 
         # Check if all necessary data is present
-        if None in [age, gender, hypertension, heart_disease, bmi, avg_glucose_level, ever_married, work_type, Residence_type, smoking_status]:
+        if None in [
+            age,
+            gender,
+            hypertension,
+            heart_disease,
+            bmi,
+            avg_glucose_level,
+            ever_married,
+            work_type,
+            Residence_type,
+            smoking_status,
+        ]:
             dispatcher.utter_message(
                 text=(
                     "Some of your health information is missing. "
@@ -356,10 +376,15 @@ class ActionGenerateRecommendation(Action):
             return []
 
         # Convert categorical data if necessary
-        hypertension = int(hypertension)
-        heart_disease = int(heart_disease)
+        try:
+            hypertension = int(hypertension)
+            heart_disease = int(heart_disease)
+        except ValueError:
+            dispatcher.utter_message(text="Invalid numeric value in user data.")
+            return []
 
-        # Load the best performing model
+        # Load the best performing model (example path)
+        # NOTE: Adjust to your best model's name if different
         model_path = os.path.join(
             "models", "data_analysis", "Logistic_Regression_real.pkl"
         )
@@ -370,18 +395,22 @@ class ActionGenerateRecommendation(Action):
             )
             return []
 
-        try:
-            model = joblib.load(model_path)
-        except Exception as e:
-            logger.error(f"Error loading model: {e}")
+        # Load the preprocessor
+        preprocessor_path = os.path.join("models", "data_analysis", "preprocessor.pkl")
+        if not os.path.exists(preprocessor_path):
+            logger.error(f"Preprocessor file not found at {preprocessor_path}")
             dispatcher.utter_message(
-                text="I'm sorry, but I'm unable to generate a recommendation at this time."
+                text="I'm sorry, but I'm unable to process your data at this time."
             )
             return []
 
-        # Prepare input data
-        input_data = pd.DataFrame(
-            {
+        try:
+            # Load model and preprocessor
+            model = joblib.load(model_path)
+            preprocessor = joblib.load(preprocessor_path)
+
+            # Prepare input data
+            input_data = pd.DataFrame({
                 "gender": [gender],
                 "age": [float(age)],
                 "hypertension": [hypertension],
@@ -392,65 +421,45 @@ class ActionGenerateRecommendation(Action):
                 "work_type": [work_type],
                 "Residence_type": [Residence_type],
                 "smoking_status": [smoking_status],
-            }
-        )
+            })
 
-        # Preprocess input data
-        preprocessor_path = os.path.join(
-            "models", "data_analysis", "preprocessor.pkl"
-        )
-        if not os.path.exists(preprocessor_path):
-            logger.error(f"Preprocessor file not found at {preprocessor_path}")
-            dispatcher.utter_message(
-                text="I'm sorry, but I'm unable to process your data at this time."
-            )
-            return []
-
-        try:
-            preprocessor = joblib.load(preprocessor_path)
+            # Transform via preprocessor
             input_data_processed = preprocessor.transform(input_data)
-        except Exception as e:
-            logger.error(f"Error preprocessing input data: {e}")
-            dispatcher.utter_message(
-                text="I'm sorry, but I'm unable to process your data at this time."
-            )
-            return []
 
-        # Generate prediction
-        try:
-            prediction = model.predict(input_data_processed)[0]
-            prediction_proba = model.predict_proba(input_data_processed)[0][1]
+            # Use probability for stroke
+            stroke_probability = model.predict_proba(input_data_processed)[0][1]
+
+            # Threshold logic (optional)
+            if stroke_probability < 0.33:
+                risk_label = "low"
+            elif stroke_probability < 0.66:
+                risk_label = "moderate"
+            else:
+                risk_label = "high"
+
+            # Provide a response with the probability
+            message = (
+                f"Your estimated stroke probability is {stroke_probability:.2f}. "
+                f"This corresponds to a '{risk_label}' risk level."
+            )
+            dispatcher.utter_message(text=message)
+
+            # Optionally offer advice if risk is high
+            if risk_label == "high":
+                dispatcher.utter_message(
+                    text="Would you like some tips on how to reduce your stroke risk?"
+                )
+                return [SlotSet("risk_level", risk_label)]
+            else:
+                return []
+
         except Exception as e:
-            logger.error(f"Error generating prediction: {e}")
+            logger.error(f"Error generating probability-based recommendation: {e}")
             dispatcher.utter_message(
                 text="I'm sorry, but I'm unable to generate a recommendation at this time."
             )
             return []
 
-        # Provide recommendation
-        if prediction == 1:
-            risk_level = "high"
-            recommendation = (
-                f"Based on your data (Age: {age}, Gender: {gender}, BMI: {bmi}), you may have an elevated risk of stroke. "
-                "It's important to consult a healthcare professional for personalized advice."
-            )
-        else:
-            risk_level = "low"
-            recommendation = (
-                f"Based on your data (Age: {age}, Gender: {gender}, BMI: {bmi}), your risk of stroke appears to be low. "
-                "Maintaining a healthy lifestyle can help keep it that way."
-            )
-
-        # Additional advice
-        dispatcher.utter_message(text=recommendation)
-
-        if risk_level == "high":
-            dispatcher.utter_message(
-                text="Would you like some tips on how to reduce your stroke risk?"
-            )
-            return [SlotSet("risk_level", risk_level)]
-        else:
-            return []
 
 class ActionProvideStrokeRiskReductionAdvice(Action):
     def name(self) -> str:
@@ -475,6 +484,7 @@ class ActionProvideStrokeRiskReductionAdvice(Action):
         )
         dispatcher.utter_message(text=message)
         return []
+
 
 class ActionFallback(Action):
     def name(self) -> str:
