@@ -12,6 +12,7 @@ def run():
     if 'user_data' not in st.session_state:
         st.session_state['user_data'] = {}
 
+    # ======== User Input Form ========
     with st.form(key='user_data_form'):
         age = st.number_input("Age", min_value=0, max_value=120, value=25)
         gender = st.selectbox("Gender", options=["Male", "Female", "Other"])
@@ -20,17 +21,21 @@ def run():
         bmi = st.number_input("BMI", min_value=0.0, max_value=100.0, value=25.0)
         avg_glucose_level = st.number_input("Average Glucose Level", min_value=0.0, max_value=300.0, value=100.0)
         ever_married = st.selectbox("Have you ever been married?", options=["No", "Yes"])
-        work_type = st.selectbox("Work Type", options=['Private', 'Self-employed', 'Govt_job', 'children', 'Never_worked'])
-        Residence_type = st.selectbox("Residence Type", options=['Urban', 'Rural'])
-        smoking_status = st.selectbox("Smoking Status", options=['never smoked', 'formerly smoked', 'smokes', 'Unknown'])
+        work_type = st.selectbox("Work Type", options=["Private", "Self-employed", "Govt_job", "children", "Never_worked"])
+        Residence_type = st.selectbox("Residence Type", options=["Urban", "Rural"])
+        smoking_status = st.selectbox("Smoking Status", options=["never smoked", "formerly smoked", "smokes", "Unknown"])
         submitted = st.form_submit_button("Submit")
 
     if submitted:
+        # Convert Yes/No to numeric
+        hypertension_val = 1 if hypertension == "Yes" else 0
+        heart_disease_val = 1 if heart_disease == "Yes" else 0
+
         st.session_state['user_data'] = {
             'age': age,
             'gender': gender,
-            'hypertension': 1 if hypertension == "Yes" else 0,
-            'heart_disease': 1 if heart_disease == "Yes" else 0,
+            'hypertension': hypertension_val,
+            'heart_disease': heart_disease_val,
             'bmi': bmi,
             'avg_glucose_level': avg_glucose_level,
             'ever_married': ever_married,
@@ -40,68 +45,87 @@ def run():
         }
         st.success("Your information has been saved.")
 
-        # Save user data to a file
+        # Save user data to a file for possible access by Rasa or other modules
         user_data_file = os.path.join("data", "user_data", f"{st.session_state['session_id']}.json")
         os.makedirs(os.path.dirname(user_data_file), exist_ok=True)
         with open(user_data_file, 'w') as f:
             json.dump(st.session_state['user_data'], f)
 
-    # Display stored user data
+    # If we already have user data in session, show it and generate predictions
     if st.session_state['user_data']:
         st.write("### Your Current Health Information:")
         st.json(st.session_state['user_data'])
 
-        # Personalized Recommendations
+        # ========= Generate Probability-Based Recommendations =========
         st.write("### Recommendations")
         try:
             # Load the preprocessor
             preprocessor_path = os.path.join("models", "data_analysis", "preprocessor.pkl")
             if not os.path.exists(preprocessor_path):
                 st.error("Preprocessor not found. Please ensure the preprocessor is trained and available.")
+                return
+
+            preprocessor = joblib.load(preprocessor_path)
+
+            # Load a trained model (example: best-performing augmented RF)
+            model_path = os.path.join("models", "data_analysis", "Random_Forest_augmented.pkl")
+            if not os.path.exists(model_path):
+                st.error("Recommendation model not found. Please ensure the model is trained and available.")
+                return
+
+            model = joblib.load(model_path)
+
+            # Prepare user data for prediction
+            user_data_df = pd.DataFrame([st.session_state['user_data']])
+            user_data_processed = preprocessor.transform(user_data_df)
+
+            # Use probability (predict_proba)
+            stroke_probability = model.predict_proba(user_data_processed)[0][1]
+
+            # Basic thresholding (optional)
+            if stroke_probability < 0.33:
+                risk_label = "Low"
+            elif stroke_probability < 0.66:
+                risk_label = "Moderate"
             else:
-                preprocessor = joblib.load(preprocessor_path)
+                risk_label = "High"
 
-                # Load the trained model (assuming Random Forest is the best model)
-                model_path = os.path.join("models", "data_analysis", "Random_Forest_augmented.pkl")
-                if not os.path.exists(model_path):
-                    st.error("Recommendation model not found. Please ensure the model is trained and available.")
-                else:
-                    model = joblib.load(model_path)
+            # Display the stroke probability
+            st.markdown(f"**Stroke Probability:** {stroke_probability:.2f} (range: 0.0 to 1.0)")
+            st.markdown(f"**Risk Level:** {risk_label}")
 
-                    # Prepare user data for prediction
-                    user_data = pd.DataFrame([st.session_state['user_data']])
-                    user_data_processed = preprocessor.transform(user_data)
+            # Provide short recommendations
+            if risk_label == "High":
+                st.markdown(
+                    """
+                    Based on your data, you have a **high** probability of stroke.  
+                    **Recommendations**:
+                    1. Consult a healthcare professional for a personalized plan.  
+                    2. Manage hypertension (if applicable) and blood pressure.  
+                    3. Adopt a healthier diet and regular exercise regimen.  
+                    4. Quit smoking if you smoke.  
+                    """
+                )
+            elif risk_label == "Moderate":
+                st.markdown(
+                    """
+                    You have a **moderate** risk of stroke.  
+                    **Recommendations**:
+                    1. Maintain a balanced diet and moderate exercise.  
+                    2. Monitor blood pressure and cholesterol levels.  
+                    3. Follow up with healthcare providers for routine checks.  
+                    """
+                )
+            else:
+                st.markdown(
+                    """
+                    Your stroke risk probability is **relatively low**.  
+                    **Recommendations**:
+                    1. Balanced diet with plenty of fruits and vegetables.  
+                    2. Regular physical activity.  
+                    3. Avoid smoking and reduce alcohol consumption.  
+                    """
+                )
 
-                    # Make prediction
-                    prediction = model.predict(user_data_processed)[0]
-                    prediction_proba = model.predict_proba(user_data_processed)[0][1]
-
-                    # Display recommendations based on prediction
-                    if prediction == 1:
-                        risk_level = "High"
-                        st.markdown(f"**Risk Level:** {risk_level}")
-                        st.markdown("""
-                        Based on your provided information, you have a **high risk of stroke**. Here are some recommendations:
-
-                        1. **Consult a Healthcare Professional:** It's important to seek medical advice for personalized care.
-                        2. **Manage Blood Pressure:** Maintain a healthy blood pressure through diet, exercise, and medication if prescribed.
-                        3. **Maintain a Healthy BMI:** Work towards achieving and maintaining a healthy Body Mass Index.
-                        4. **Quit Smoking:** If you smoke, consider quitting to reduce your risk.
-                        5. **Regular Physical Activity:** Engage in regular exercise to improve overall health.
-                        """)
-                        st.write(prediction_proba, prediction)
-                    else:
-                        risk_level = "Low"
-                        st.markdown(f"**Risk Level:** {risk_level}")
-                        st.markdown("""
-                        Based on your provided information, you have a **low risk of stroke**. Here are some recommendations to maintain your health:
-
-                        1. **Balanced Diet:** Continue to eat a balanced diet rich in fruits, vegetables, and whole grains.
-                        2. **Regular Exercise:** Maintain regular physical activity to keep your BMI in a healthy range.
-                        3. **Avoid Smoking:** Continue to avoid smoking to sustain your low-risk status.
-                        4. **Monitor Health Indicators:** Keep an eye on your blood pressure and glucose levels.
-                        5. **Stress Management:** Practice stress-reducing techniques such as meditation or yoga.
-                        """)
-                        st.write(prediction_proba, prediction)
         except Exception as e:
             st.error(f"An error occurred while generating recommendations: {e}")
