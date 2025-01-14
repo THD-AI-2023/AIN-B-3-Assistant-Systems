@@ -1,5 +1,4 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/RasaHQ/rasa/refs/heads/main/rasa/shared/utils/schemas/stories.yml
-# yaml-language-server: $schema=https://raw.githubusercontent.com/RasaHQ/rasa/refs/heads/main/rasa/shared/utils/schemas/stories.yml
 version: "3.1"
 
 rules:
@@ -67,3 +66,14 @@ rules:
     steps:
       - intent: apology
       - action: utter_apology
+
+  # -----------------------------------------
+  # Provide stroke risk tips
+  # -----------------------------------------
+  - rule: Provide stroke risk tips
+    condition:
+      - slot_was_set:
+        - risk_level: "high"
+    steps:
+      - intent: affirm
+      - action: action_provide_stroke_risk_reduction_advice

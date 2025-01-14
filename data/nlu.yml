@@ -9,6 +9,8 @@ nlu:
       - Hi there
       - Good morning
       - Good evening
+      - Hey, how's it going?
+      - Hello there!
 
   - intent: goodbye
     examples: |
@@ -17,6 +19,9 @@ nlu:
       - See you later
       - Bye bye
       - Catch you later
+      - Take care
+      - Farewell
+      - Talk to you soon
 
   - intent: affirm
     examples: |
@@ -26,6 +31,8 @@ nlu:
       - Sure
       - Definitely
       - Of course
+      - Indeed
+      - That works for me
 
   - intent: deny
     examples: |
@@ -34,41 +41,29 @@ nlu:
       - Not really
       - No way
       - Absolutely not
+      - I'm afraid not
+      - Not at all
 
-  - intent: ask_data_analysis
+  - intent: thanks
     examples: |
-      - Can you provide a data analysis summary?
-      - Please show me the data analysis.
-      - I'd like to see the data analysis.
-      - Show me the data correlations.
-      - Provide the descriptive statistics.
-      - Can you display the data insights?
-      - I want to see the data analysis summary.
-      - Give me a summary of the data.
-      - Please provide data analysis.
-      - Show data analysis results.
-      - Could you present the data analysis?
-      - I'd like to review the data analysis.
-      - Can you share the data analysis with me?
-      - What are the data correlations?
-      - Could you explain the data analysis?
-      - I'd like to understand the data better.
-      - Show me the statistical summary.
-      - Provide the data analysis.
-      - Give me the insights from the data.
-      - Please display the data summary.
+      - Thanks
+      - Thank you
+      - I appreciate that
+      - Much appreciated
+      - Cheers
+      - Thx
+      - That was helpful
+      - Thank you so much
 
-  - intent: ask_recommendation
+  - intent: apology
     examples: |
-      - Can you generate a recommendation for me?
-      - I need a health recommendation.
-      - Provide a recommendation.
-      - Suggest something based on my data.
-      - Give me a recommendation.
-      - What do you recommend?
-      - I'd like a recommendation.
-      - Recommend something for me.
-      - Can you offer a recommendation?
+      - Sorry
+      - My apologies
+      - I'm sorry
+      - I apologize
+      - Pardon me
+      - Oops, my bad
+      - Excuse me
 
   - intent: ask_capabilities
     examples: |
@@ -77,10 +72,89 @@ nlu:
       - How can you help me?
       - What services do you provide?
       - What are you able to do?
+      - Could you tell me your capabilities?
+      - How do you assist users?
+
+  - intent: chitchat_ask_name
+    examples: |
+      - What's your name?
+      - Who are you?
+      - May I know your name?
+      - Tell me your name
+      - Are you named something?
+      - What should I call you?
+
+  - intent: chitchat_tell_joke
+    examples: |
+      - Tell me a joke
+      - Make me laugh
+      - Do you know any jokes?
+      - I need a good laugh
+      - Cheer me up with a joke
+      - Got any funny jokes?
+
+  - intent: chitchat_favorite_color
+    examples: |
+      - What's your favorite color?
+      - Do you have a favorite color?
+      - Which color do you like?
+      - What's your color preference?
+      - Favorite color?
+
+  - intent: chitchat_weather
+    examples: |
+      - What's the weather like?
+      - How's the weather?
+      - Is it raining?
+      - Tell me about the weather
+      - Weather update, please
+      - How hot is it outside?
+
+  - intent: out_of_scope
+    examples: |
+      - What's the capital of France?
+      - How do I bake a cake?
+      - Tell me about quantum physics
+      - How can I invest in stocks?
+      - Who won the football match yesterday?
+      - Can you help me fix my computer?
+
+  - intent: ask_data_analysis
+    examples: |
+      - Can you provide a data analysis summary?
+      - Show me the data analysis
+      - I'd like to see some insights from the data
+      - Display the data correlations
+      - Give me the descriptive statistics
+      - Summarize the data
+      - Give me a data overview
+      - Provide the data analysis, please
+
+  - intent: ask_recommendation
+    examples: |
+      - Can you generate a recommendation for me?
+      - I need a health recommendation
+      - Suggest something based on my data
+      - What do you recommend I do?
+      - Give me some health advice
+      - Recommend an action for me
+      - I'd like a health tip
+      - What can I do to improve?
+
+  - intent: introduce_name
+    examples: |
+      - My name is [Alex](name)
+      - I'm called [Michael](name)
+      - Hi, I'm [Sarah](name)
+      - Hello, my name is [John](name)
+      - I am [Alexa](name)
+      - I am [Emily](name)
+      - I'm [George](name)
+      - [Thomas](name) here
 
   - intent: inform
     examples: |
-      - I am [25](age)
+      - I am [25](age) years old
       - My age is [30](age)
       - I'm [40](age) years old
       - I am a [male](gender)
@@ -92,95 +166,19 @@ nlu:
       - No, I don't have [heart_disease](heart_disease:no)
       - My BMI is [22.5](bmi)
       - BMI is [24](bmi)
-      - I'm [25](age) and [male](gender)
-      - I weigh [70 kilograms](weight)
-      - My height is [1.75 meters](height)
       - I'm [180 cm](height) tall
-      - I don't have [heart disease](heart_disease:no) but I have [hypertension](hypertension:yes)
-      - I'm a [40](age)-year-old [female](gender)
-      - My BMI is [27](bmi) and I have [hypertension](hypertension:yes)
-      - I'm [45](age) years old, [male](gender), BMI is [28](bmi), and I have [hypertension](hypertension:yes) but no [heart_disease](heart_disease:no)
-      - Age [30](age), [female](gender), BMI [22](bmi), no [hypertension](hypertension:no)
-      - My age is [40](age) and I have [heart_disease](heart_disease:yes)
-      - I have [hypertension](hypertension:yes)
-      - No [heart_disease](heart_disease:no) and no [hypertension](hypertension:no)
-      - Yes [hypertension](hypertension:yes) and [heart_disease](heart_disease:yes)
-      - I'm [60](age), [female](gender), BMI [31](bmi), yes [heart_disease](heart_disease:yes)
-      - Age [30](age), [female](gender), BMI [22](bmi), no [heart_disease](heart_disease:no)
-      - I'm [33](age) with [bmi](bmi:27), and I have [hypertension](hypertension:yes) but no [heart_disease](heart_disease:no)
+      - I'm a [40](age)-year-old [female](gender) with [hypertension](hypertension:yes)
+      - [male](gender), [35](age), [bmi](bmi:23.5)
+      - I'm [70 kilograms](weight)
+      - My height is [1.75 meters](height)
+      - I have [heart_disease](heart_disease:yes) and [hypertension](hypertension:yes)
+      - No [heart_disease](heart_disease:no), but yes [hypertension](hypertension:yes)
+      - My BMI is [28](bmi), and I have [heart_disease](heart_disease:yes)
 
-  - intent: introduce_name
+  - intent: nlu_fallback
     examples: |
-      - My name is [Alex](name)
-      - I'm called [Michael](name)
-      - Hi, I'm [Sarah](name)
-      - Hello, my name is [John](name)
-      - I am [Alexa](name)
-      - Hello, I'm [Emily](name)
-
-  - intent: chitchat_ask_name
-    examples: |
-      - What's your name?
-      - Who are you?
-      - May I know your name?
-      - Tell me your name
-      - What's your name again?
-
-  - intent: thanks
-    examples: |
-      - thanks
-      - thank you
-      - i appreciate that
-      - much appreciated
-      - cheers
-      - thx
-      - that's helpful, thanks
-      - got it, thanks
-      - you helped me a lot
-      - that was really helpful
-  
-  - intent: apology
-    examples: |
-      - sorry
-      - my apologies
-      - I'm sorry
-      - i apologize
-      - sorry about that
-      - pardon me
-      - excuse me
-      - i didn't mean that
-      - sorry for that
-      - sorry for bothering
-
-  - intent: chitchat_tell_joke
-    examples: |
-      - Tell me a joke
-      - Make me laugh
-      - Do you know any jokes?
-      - I need a good laugh
-      - Cheer me up with a joke
-
-  - intent: chitchat_favorite_color
-    examples: |
-      - What's your favorite color?
-      - Do you have a favorite color?
-      - Which color do you like?
-      - What's the color you prefer?
-      - Favorite color?
-
-  - intent: chitchat_weather
-    examples: |
-      - What's the weather like?
-      - How's the weather?
-      - Is it raining?
-      - Tell me about the weather
-      - Weather update please
-
-  - intent: out_of_scope
-    examples: |
-      - What's the capital of France?
-      - How do I bake a cake?
-      - Tell me about quantum physics.
-      - What's the population of Mars?
-      - How to invest in stocks?
-      - Who won the football match yesterday?
+      - I'm not sure what I meant
+      - Blah blah blah
+      - asdkfj aslkj
+      - Nonsense input
+      - random text 1234
