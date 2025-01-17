@@ -73,7 +73,27 @@ rules:
   - rule: Provide stroke risk tips
     condition:
       - slot_was_set:
-        - risk_level: "high"
+          - risk_level: "high"
+      - slot_was_set:
+          - pending_update: false
+    steps:
+      - intent: affirm_risk_tips
+      - action: action_provide_stroke_risk_reduction_advice
+
+  # -----------------------------------------
+  # Confirm overwrite
+  # -----------------------------------------
+  - rule: Confirm overwrite
     steps:
       - intent: affirm
-      - action: action_provide_stroke_risk_reduction_advice
+      - slot_was_set:
+          - pending_update: true
+      - action: action_confirm_overwrite
+
+  - rule: Cancel overwrite
+    steps:
+      - intent: deny
+      - slot_was_set:
+          - pending_update: true
+      - action: action_cancel_overwrite
+

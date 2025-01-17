@@ -38,6 +38,14 @@ stories:
       - action: action_generate_recommendation
 
   # -----------------------------
+  # Ask correlation scenario
+  # -----------------------------
+  - story: Ask correlation
+    steps:
+      - intent: ask_correlation
+      - action: action_explain_correlation
+
+  # -----------------------------
   # Handle user capabilities
   # -----------------------------
   - story: User asks capabilities
