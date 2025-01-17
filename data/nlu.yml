@@ -140,8 +140,8 @@ nlu:
       - Recommend an action for me
       - I'd like a health tip
       - What can I do to improve?
-      - I'm [60](age), [male](gender), [BMI 26](bmi), can you recommend something for me?
-      - I need a health recommendation for my [45](age)-year-old [mom](relation). She has [hypertension](hypertension:yes).
+      - I'm [60](age) years old, [male](gender), BMI [26](bmi), can you recommend something?
+      - I need a health recommendation for my [45](age)-year-old mom. She has [hypertension](hypertension:yes).
 
   - intent: ask_correlation
     examples: |
@@ -150,10 +150,11 @@ nlu:
       - How does [bmi](factor) correlate with stroke?
       - Could you elaborate on how [age](factor) affects stroke risk?
       - I want to know how [avg_glucose_level](factor) correlates with stroke
+      - How does my [hypertension](factor) influence stroke risk?
 
   - intent: introduce_name
     examples: |
-      - My name is [Alex](name)
+      - my name is [Alex](name)
       - I'm called [Michael](name)
       - Hi, I'm [Sarah](name)
       - Hello, my name is [John](name)
@@ -167,22 +168,20 @@ nlu:
       - I am [25](age) years old
       - My age is [30](age)
       - I'm [40](age) years old
+      - I am [female](gender) with [hypertension](hypertension:yes)
       - I am a [male](gender)
+      - my [BMI](bmi) is [28](bmi)
       - I'm a [female](gender)
       - My gender is [non-binary](gender)
       - I have [hypertension](hypertension:yes)
       - I don't have [hypertension](hypertension:no)
-      - Yes, I have [heart_disease](heart_disease:yes)
+      - I have [heart_disease](heart_disease:yes)
       - No, I don't have [heart_disease](heart_disease:no)
-      - My BMI is [22.5](bmi)
-      - BMI is [24](bmi)
-      - I'm [180 cm](height) tall
-      - I'm a [40](age)-year-old [female](gender) with [hypertension](hypertension:yes)
-      - [male](gender), [35](age), [bmi](bmi:23.5)
       - I'm [70 kilograms](weight)
       - My height is [1.75 meters](height)
       - I have [heart_disease](heart_disease:yes) and [hypertension](hypertension:yes)
-      - My mom is [45](age) with [hypertension](hypertension:yes)
+      - I'm [60](age), [male](gender), BMI [26](bmi)
+      - my mom is [45](age) with [hypertension](hypertension:yes)
       - No [heart_disease](heart_disease:no), but yes [hypertension](hypertension:yes)
       - My BMI is [28](bmi), and I have [heart_disease](heart_disease:yes)
 
@@ -193,12 +192,16 @@ nlu:
       - asdkfj aslkj
       - Nonsense input
       - random text 1234
+      - nonsense
+
+  # Additional custom intent for user wanting tips if risk is high
   - intent: affirm_risk_tips
     examples: |
       - yes please
       - sure
       - definitely
       - I'd like to see those tips
+      - definitely
       - yes, I'd love to
       - yes, please
       - yes tips
