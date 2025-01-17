@@ -140,6 +140,16 @@ nlu:
       - Recommend an action for me
       - I'd like a health tip
       - What can I do to improve?
+      - I'm [60](age), [male](gender), [BMI 26](bmi), can you recommend something for me?
+      - I need a health recommendation for my [45](age)-year-old [mom](relation). She has [hypertension](hypertension:yes).
+
+  - intent: ask_correlation
+    examples: |
+      - Explain how [hypertension](factor) affects stroke risk
+      - What's the correlation between [heart disease](factor) and stroke?
+      - How does [bmi](factor) correlate with stroke?
+      - Could you elaborate on how [age](factor) affects stroke risk?
+      - I want to know how [avg_glucose_level](factor) correlates with stroke
 
   - intent: introduce_name
     examples: |
@@ -172,6 +182,7 @@ nlu:
       - I'm [70 kilograms](weight)
       - My height is [1.75 meters](height)
       - I have [heart_disease](heart_disease:yes) and [hypertension](hypertension:yes)
+      - My mom is [45](age) with [hypertension](hypertension:yes)
       - No [heart_disease](heart_disease:no), but yes [hypertension](hypertension:yes)
       - My BMI is [28](bmi), and I have [heart_disease](heart_disease:yes)
 
@@ -182,3 +193,13 @@ nlu:
       - asdkfj aslkj
       - Nonsense input
       - random text 1234
+  - intent: affirm_risk_tips
+    examples: |
+      - yes please
+      - sure
+      - definitely
+      - I'd like to see those tips
+      - yes, I'd love to
+      - yes, please
+      - yes tips
+      - absolutely, please share

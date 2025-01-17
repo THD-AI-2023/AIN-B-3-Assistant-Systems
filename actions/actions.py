@@ -312,6 +312,90 @@ class ActionShowDataAnalysis(Action):
 
         return []
 
+class ActionExplainCorrelation(Action):
+    """
+    Provides explanations for how a given factor (e.g., 'hypertension', 'heart_disease')
+    correlates with stroke, along with correlation coefficients.
+    """
+
+    def name(self) -> str:
+        return "action_explain_correlation"
+
+    def run(
+        self,
+        dispatcher: CollectingDispatcher,
+        tracker: Tracker,
+        domain: Dict[Text, Any],
+    ) -> List[Dict[Text, Any]]:
+        # Extract the 'factor' entity from user message
+        factor = next(tracker.get_latest_entity_values("factor"), None)
+
+        # For simplicity, store correlation values in a dictionary
+        # (These can be dynamically retrieved if you have them in a file)
+        correlation_info = {
+            "hypertension": {
+                "coef": 0.12,
+                "explanation": (
+                    "Having hypertension increases stress on blood vessels, "
+                    "elevating the risk of stroke."
+                ),
+            },
+            "heart disease": {
+                "coef": 0.13,
+                "explanation": (
+                    "Heart disease is associated with a higher stroke risk. "
+                    "Compromised heart function often leads to blood-flow issues."
+                ),
+            },
+            "bmi": {
+                "coef": 0.10,
+                "explanation": (
+                    "A higher BMI may indicate overweight or obesity, "
+                    "which can contribute to increased stroke risk."
+                ),
+            },
+            "age": {
+                "coef": 0.24,
+                "explanation": (
+                    "As age increases, the risk of stroke tends to increase, "
+                    "due to progressive changes in blood vessels."
+                ),
+            },
+            "avg_glucose_level": {
+                "coef": 0.15,
+                "explanation": (
+                    "Elevated glucose levels may indicate diabetes or pre-diabetes, "
+                    "which increases stroke risk over time."
+                ),
+            },
+        }
+
+        if not factor:
+            dispatcher.utter_message(
+                text="Could you specify which factor (e.g., hypertension, heart disease) you're curious about?"
+            )
+            return []
+
+        factor_lower = factor.lower().strip()
+        if factor_lower == "heart_disease":
+            factor_lower = "heart disease"
+
+        if factor_lower in correlation_info:
+            coef = correlation_info[factor_lower]["coef"]
+            explanation = correlation_info[factor_lower]["explanation"]
+            message = (
+                f"{explanation} In our dataset, {factor_lower} showed "
+                f"a correlation coefficient of around {coef:.2f} with stroke."
+            )
+            dispatcher.utter_message(text=message)
+        else:
+            dispatcher.utter_message(
+                text="I don't have correlation info for that factor. "
+                     "Try 'hypertension', 'heart disease', 'bmi', 'age', or 'avg_glucose_level'."
+            )
+
+        return []
+
 
 class ActionGenerateRecommendation(Action):
     def name(self) -> Text:
@@ -447,9 +531,13 @@ class ActionGenerateRecommendation(Action):
             # Optionally offer advice if risk is high
             if risk_label == "high":
                 dispatcher.utter_message(
-                    text="Would you like some tips on how to reduce your stroke risk?"
+                    text=(
+                        "You seem to have a high risk of stroke. "
+                        "Would you like some tips on reducing your stroke risk?"
+                    )
                 )
-                return [SlotSet("risk_level", risk_label)]
+                # Do NOT rely on normal 'affirm'; rely on 'affirm_risk_tips'
+                return [SlotSet("risk_level", "high")]
             else:
                 return []
 

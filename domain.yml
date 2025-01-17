@@ -16,6 +16,9 @@ intents:
   - ask_capabilities
   - thanks
   - apology
+  - ask_correlation
+  - inform
+  - nlu_fallback
 
 entities:
   - age
@@ -24,6 +27,7 @@ entities:
   - heart_disease
   - bmi
   - name
+  - factor
 
 slots:
   risk_level:
@@ -32,6 +36,15 @@ slots:
     mappings: []
     # ^ "influence_conversation: false" to avoid affecting conversation predictions
     #   unless you specifically need it in stories.
+  pending_update:
+    type: bool
+    influence_conversation: false
+    initial_value: false
+    mappings: []
+  user_new_data:
+    type: any
+    influence_conversation: false
+    mappings: []
 
 responses:
   utter_greet:
@@ -56,15 +69,24 @@ responses:
     - text: "You're welcome! Let me know if there's anything else I can do."
   utter_apology:
     - text: "No worries at all! How can I help you further?"
+  # utter_ask_overwrite_data:
+  #   - text: "I see you already have some data saved. Do you want to overwrite it?"
+  # utter_overwrite_confirmed:
+  #   - text: "Your previous data was overwritten with the new information."
+  # utter_overwrite_cancelled:
+  #   - text: "Your previous data was not overwritten."
 
 actions:
   - action_save_health_info
   - action_generate_recommendation
   - action_show_data_analysis
   - action_explain_bmi_effect
+  - action_explain_correlation
   - action_default_fallback
   - action_save_name
   - action_provide_stroke_risk_reduction_advice
+  - action_confirm_overwrite
+  - action_cancel_overwrite
 
 session_config:
   session_expiration_time: 60
