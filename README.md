@@ -8,7 +8,7 @@ https://mygit.th-deg.de/ar08397/Assistant-Systems-Project
 
 https://mygit.th-deg.de/ar08397/Assistant-Systems-Project/-/wikis/home
 
-[![Assistance Systems Project Banner](./docs/.ASP_Banner.png)](https://mygit.th-deg.de/ar08397/Assistant-Systems-Project)
+[![Assistance Systems Project Banner](./docs/img/ASP_Banner.png)](https://mygit.th-deg.de/ar08397/Assistant-Systems-Project)
 
 ## Project Description
 
