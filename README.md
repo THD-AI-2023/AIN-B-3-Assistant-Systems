@@ -135,8 +135,7 @@ If the chatbot isn't responding or you need to update its training data, follow 
 3. **Access the Streamlit Application:**
     Open your browser and navigate to [http://localhost:8501](http://localhost:8501) to access the interactive web interface.
 
-> ### **IMPORTANT NOTE** :information_source:
->
+> [!IMPORTANT]
 > If you are using the chatbot feature for the first time, **please ensure that the Rasa model has been properly trained**. Training the model is crucial for the chatbot to function correctly. To train the Rasa model, please follow the instructions in the [Training the Rasa Chatbot](#training-the-rasa-chatbot) section below. Failing to train the Rasa model may result in unexpected behavior or errors when interacting with the chatbot.
 
 ## Data
